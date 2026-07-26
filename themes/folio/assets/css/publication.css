@@ -104,6 +104,70 @@
 
 .post-body figure {
   margin: var(--space-xl) 0;
+
+  /* Skip rendering, layout and paint for plates that are off screen. On a
+     twenty-plate article this is most of the document, and the saving is
+     decode and raster memory on exactly the low-end devices this site is
+     aimed at. The <img> carries explicit width and height, so the box is
+     already reserved; the intrinsic size below only covers the interval
+     before first render. This is a rendering optimization — it is not a
+     substitute for loading=lazy and does not reliably prevent a fetch. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+/* ---------- On-demand plates (images.onDemand) ---------- */
+
+/* Content inside a closed <details> is display:none, which all three engines
+   honour by not fetching the image. This is the only JavaScript-free way to
+   guarantee a below-the-fold plate costs nothing until it is asked for. */
+
+.plate {
+  margin: var(--space-xl) 0;
+  border-top: var(--border-hairline);
+  border-bottom: var(--border-hairline);
+}
+
+.plate > .plate-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding-block: var(--space-sm);
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+  transition: color var(--dur-base) var(--ease-quiet);
+}
+
+.plate > .plate-summary::-webkit-details-marker { display: none; }
+
+.plate > .plate-summary::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border: 1px solid var(--color-text);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--dur-fast) var(--ease-quiet);
+}
+
+.plate[open] > .plate-summary::before {
+  background-color: var(--color-text);
+}
+
+.plate > .plate-summary:hover {
+  color: var(--color-text);
+}
+
+.plate > .plate-summary:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.plate figure {
+  margin-top: 0;
 }
 
 .post-body figure img {
