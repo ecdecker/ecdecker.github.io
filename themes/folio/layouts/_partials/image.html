@@ -94,7 +94,7 @@
             {{- $dir := .Dir -}}
             {{- range $r := $p.Resources.ByType "image" -}}
               {{- with index $table (strings.TrimPrefix "/" (path.Join $dir $r.Name)) -}}
-                {{- $sc.SetInMap "m" $r.RelPermalink . -}}
+                {{- $sc.SetInMap "m" $r.Key . -}}
               {{- end -}}
             {{- end -}}
           {{- end -}}
@@ -104,7 +104,7 @@
         {{- $byPath = $sc.Get "m" | default dict -}}
         {{- site.Store.Set "folioImageQuality" $byPath -}}
       {{- end -}}
-      {{- $entry = index $byPath $img.RelPermalink -}}
+      {{- $entry = index $byPath $img.Key -}}
     {{- end -}}
     {{- with $entry }}
       {{- if reflect.IsMap . -}}
