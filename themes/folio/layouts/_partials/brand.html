@@ -1,0 +1,8 @@
+{{- /*
+  The wordmark: four-point spark to the left of an italic-serif name.
+  DESIGN.md permits no other brand treatment.
+*/ -}}
+<a class="brand" href="{{ site.Home.RelPermalink }}" aria-label="{{ site.Title }}">
+  <svg class="brand-mark" aria-hidden="true"><use href="#folio-spark"/></svg>
+  <span class="brand-wordmark">{{ site.Title }}</span>
+</a>

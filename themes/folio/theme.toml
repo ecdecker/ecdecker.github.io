@@ -1,0 +1,18 @@
+name = "Folio"
+license = "Proprietary — Uiverse Design System License v1"
+licenselink = "https://design.uiverse.io"
+description = "An eternally simple, paper-thin design system built on warm bone neutrals, hairline borders, and editorial serif headlines."
+homepage = "https://design.uiverse.io"
+demosite = ""
+tags = ["minimal", "editorial", "serif", "paper", "light", "quiet"]
+features = ["multilingual", "no-javascript", "responsive", "accessible"]
+min_version = "0.146.0"
+
+# NOTE: This theme repackages a commercially licensed design system. The
+# license forbids redistributing it as a template or component library, so
+# this theme must not be published to the Hugo Themes showcase or any
+# public module path without written permission from Uiverse.
+
+[author]
+  name = "Uiverse"
+  homepage = "https://design.uiverse.io"

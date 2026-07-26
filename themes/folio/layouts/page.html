@@ -1,0 +1,31 @@
+{{ define "main" }}
+  {{/*
+    Long-form single column inside a Snow card. The card matters for
+    contrast: DESIGN.md reserves Stone body copy for white surfaces,
+    where it clears AA — on the Bone page background it does not.
+  */}}
+  <section class="section-block post-page">
+    <div class="container">
+      <article class="card post-article">
+        <header class="post-header">
+          <h1>{{ .Title }}</h1>
+          {{ with .Description }}<p>{{ . }}</p>{{ end }}
+          <div class="row justify-between">
+            <time class="label-sm" datetime="{{ .Date | time.Format "2006-01-02" }}">{{ .Date | time.Format ":date_long" }}</time>
+            {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
+          </div>
+        </header>
+
+        <div class="post-body">
+          {{ .Content }}
+        </div>
+
+        {{/* The selector lives in the site header, so it is not repeated
+             here. This divider closes the article instead. */}}
+        <div class="divider" aria-hidden="true">
+          <svg class="spark"><use href="#folio-spark"/></svg>
+        </div>
+      </article>
+    </div>
+  </section>
+{{ end }}

@@ -1,0 +1,9 @@
+<header class="page-header">
+  <div class="container page-header-inner">
+    {{ partial "brand.html" . }}
+    {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
+    <div class="header-actions">
+      {{ partial "language-selector.html" . }}
+    </div>
+  </div>
+</header>

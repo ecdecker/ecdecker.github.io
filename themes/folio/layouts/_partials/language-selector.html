@@ -1,0 +1,19 @@
+{{- /*
+  Language selector built from the existing .tabs / .tab composition —
+  text-only labels over a hairline, which the system already defines. No
+  new CSS is introduced.
+
+  .AllTranslations (not .Translations) so the current language is listed
+  alongside the others rather than omitted.
+*/ -}}
+{{- $all := .AllTranslations -}}
+{{- if gt (len $all) 1 -}}
+<nav class="tabs" aria-label="{{ T "language" }}">
+  {{- range $all }}
+  <a class="tab{{ if eq .Language.Lang $.Language.Lang }} tab--active{{ end }}"
+     href="{{ .RelPermalink }}"
+     hreflang="{{ .Language.Lang }}"
+     {{ if eq .Language.Lang $.Language.Lang }}aria-current="page"{{ end }}>{{ .Language.Label | default .Language.Lang }}</a>
+  {{- end }}
+</nav>
+{{- end -}}

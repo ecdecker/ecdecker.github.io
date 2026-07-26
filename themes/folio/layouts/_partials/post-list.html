@@ -1,0 +1,21 @@
+{{- /*
+  Hairline-separated index of pages. Receives a page collection as the
+  context, e.g. {{ partial "post-list.html" .Pages }}
+*/ -}}
+<ol class="post-list">
+  {{- range . }}
+  <li>
+    <article class="post-list-item">
+      <div class="post-list-meta">
+        <time class="label-sm" datetime="{{ .Date | time.Format "2006-01-02" }}">{{ .Date | time.Format ":date_long" }}</time>
+      </div>
+      <div>
+        <h2 class="headline-md"><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+        {{ with .Description | default .Summary }}<p>{{ . }}</p>{{ end }}
+      </div>
+    </article>
+  </li>
+  {{- else }}
+  <li class="post-list-empty body-md">{{ T "noPosts" }}</li>
+  {{- end }}
+</ol>

@@ -1,0 +1,149 @@
+/* ---------------------------------------------------------------------
+   Publication — index rows and long-form article pages
+
+   Authored for the theme rather than lifted from the source pack, which
+   ships marketing compositions only. Built strictly from existing
+   tokens: hairlines for separation, 64ch measure, no new color.
+   --------------------------------------------------------------------- */
+
+/* ---------- Skip link ---------- */
+
+.skip-link {
+  position: absolute;
+  left: var(--space-sm);
+  top: var(--space-sm);
+  z-index: 10;
+  transform: translateY(-200%);
+  transition: transform var(--dur-base) var(--ease-quiet);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ---------- Index rows ---------- */
+
+.post-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-lg) 0 0;
+  border-top: var(--border-hairline);
+}
+
+.post-list > li {
+  border-bottom: var(--border-hairline);
+}
+
+.post-list-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xs);
+  padding-block: var(--space-lg);
+}
+
+.post-list-item h2 a {
+  border-bottom: 0;
+}
+
+.post-list-item:hover h2 {
+  font-style: italic;
+}
+
+.post-list-item p {
+  max-width: 58ch;
+  margin-top: var(--space-3xs);
+}
+
+.post-list-empty {
+  padding-block: var(--space-lg);
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 720px) {
+  .post-list-item {
+    grid-template-columns: minmax(10rem, 0.5fr) minmax(0, 1fr);
+    align-items: baseline;
+  }
+}
+
+/* ---------- Article ---------- */
+
+.post-page {
+  padding-block: clamp(2rem, 6vw, 4.5rem);
+}
+
+.post-article {
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+.post-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding-bottom: clamp(2rem, 5vw, 3rem);
+  border-bottom: var(--border-hairline);
+}
+
+.post-header > p {
+  max-width: 60ch;
+}
+
+.post-body {
+  max-width: 64ch;
+  padding-block: clamp(2rem, 5vw, 3rem);
+}
+
+.post-body > * + * {
+  margin-top: var(--space-md);
+}
+
+.post-body > h2 {
+  margin-top: var(--space-xl);
+}
+
+.post-body figure {
+  margin: var(--space-xl) 0;
+}
+
+.post-body figure img {
+  border-radius: var(--radius-lg);
+  border: var(--border-hairline);
+}
+
+.post-body figcaption {
+  margin-top: var(--space-xs);
+  color: var(--color-text-muted);
+  font-size: var(--text-body-sm);
+}
+
+.post-body pre {
+  overflow-x: auto;
+  padding: var(--space-md);
+  background: var(--color-surface-subtle);
+  border: var(--border-hairline);
+  border-radius: var(--radius-md);
+}
+
+.post-body code {
+  font-size: 0.875em;
+}
+
+.post-body blockquote {
+  margin: var(--space-lg) 0;
+  padding-left: var(--space-md);
+  border-left: var(--border-hairline);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: var(--leading-tight);
+  color: var(--color-text);
+}
+
+/* ---------- Taxonomy terms ---------- */
+
+.terms {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  flex-wrap: wrap;
+}

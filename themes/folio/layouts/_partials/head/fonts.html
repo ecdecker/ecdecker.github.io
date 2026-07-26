@@ -1,0 +1,19 @@
+{{- /*
+  Instrument Serif (display) + Inter (body) — the only two families the
+  system permits. Emitted as <link> rather than a CSS @import so the
+  requests are not serialized behind the stylesheet.
+
+  Set params.folio.remoteFonts = false to opt out and fall back to the
+  local stacks declared in tokens.css.
+*/ -}}
+{{- $remote := true -}}
+{{- with site.Params.folio -}}
+  {{- if isset . "remotefonts" -}}
+    {{- $remote = .remoteFonts -}}
+  {{- end -}}
+{{- end -}}
+{{- if $remote -}}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap">
+{{- end -}}

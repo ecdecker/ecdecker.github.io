@@ -1,0 +1,93 @@
+baseURL = 'https://example.org/'
+title = 'Folio'
+theme = 'folio'
+defaultContentLanguage = 'en'
+defaultContentLanguageInSubdir = false
+enableRobotsTXT = true
+
+# Default language at /posts/<slug>/, translations at /<lang>/posts/<slug>/
+[languages]
+  [languages.en]
+    locale = 'en-US'
+    label = 'English'
+    title = 'Folio'
+    weight = 1
+    [languages.en.menus]
+      [[languages.en.menus.main]]
+        name = 'Index'
+        pageRef = '/'
+        weight = 10
+      [[languages.en.menus.main]]
+        name = 'Notes'
+        pageRef = '/posts'
+        weight = 20
+  [languages.fr]
+    locale = 'fr-FR'
+    label = 'Français'
+    title = 'Folio'
+    weight = 2
+    [languages.fr.menus]
+      [[languages.fr.menus.main]]
+        name = 'Accueil'
+        pageRef = '/'
+        weight = 10
+      [[languages.fr.menus.main]]
+        name = 'Notes'
+        pageRef = '/posts'
+        weight = 20
+
+[params]
+  description = 'A quieter way to put things on paper.'
+  [params.folio]
+    volume = 'Volume 01 · 2026'
+    headline = 'A quieter way<br>to put things on <em>paper</em>.'
+    subtitle = 'Folio is a small, monochrome system for editorial product work. Bone paper, hairline borders, one serif marquee — and nothing else asking for attention.'
+    features = [
+      'One warm neutral. One ink. No accent colors.',
+      'Instrument Serif for marquee, Inter for everything else.',
+      '1px hairlines carry every separation.',
+      'A single four-point spark, used sparingly.',
+    ]
+    hint = 'Set in two families, no exceptions.'
+    heroImage = 'images/folio-sketchbooks-stem.png'
+    heroImageCaption = 'Plate I — Reading shelf'
+    tagline = 'A quiet, paper-thin design system. Made on a desk by a window, not in a war room.'
+    principlesTitle = 'Three quiet rules.'
+    principlesIntro = 'Folio is small on purpose. The whole system runs on a handful of decisions that never get spent on decoration.'
+
+    [params.folio.primaryAction]
+      name = 'Read the notes'
+      url = '/posts/'
+    [params.folio.secondaryAction]
+      name = 'View the tags'
+      url = '/tags/'
+
+    [[params.folio.principles]]
+      icon = 'feather'
+      title = 'Set in serif.'
+      body = 'Headlines live in Instrument Serif from 32 to 96 pixels. Body in Inter 400/500. Two families, no exceptions.'
+      meta = 'Type'
+    [[params.folio.principles]]
+      icon = 'minus'
+      title = 'Built on hairlines.'
+      body = 'Every divider, card edge, input outline, and table line is a single Mist pixel. Depth is contrast, not shadow.'
+      meta = 'Structure'
+    [[params.folio.principles]]
+      icon = 'layers'
+      title = 'One ink only.'
+      body = 'Action is the only thing allowed to be ink-black. There is no accent color and no tinted hover state.'
+      meta = 'Color'
+
+    [[params.folio.footerColumns]]
+      title = 'Folio'
+      [[params.folio.footerColumns.links]]
+        name = 'Index'
+        url = '/'
+      [[params.folio.footerColumns.links]]
+        name = 'Notes'
+        url = '/posts/'
+    [[params.folio.footerColumns]]
+      title = 'System'
+      [[params.folio.footerColumns.links]]
+        name = 'Tags'
+        url = '/tags/'

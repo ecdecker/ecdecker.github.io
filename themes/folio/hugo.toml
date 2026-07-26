@@ -1,0 +1,7 @@
+# Theme-level configuration. Site-level settings (baseURL, title, menus,
+# languages) belong in the project's own hugo.toml, not here.
+
+[module]
+  [module.hugoVersion]
+    extended = false
+    min = '0.146.0'

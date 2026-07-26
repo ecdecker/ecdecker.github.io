@@ -1,0 +1,29 @@
+{{- /*
+  Inline SVG symbol sprite. Referenced via <use href="#id">, which is how
+  the source pack's own pages do it (html/cover.html, html/preview.html).
+
+  Inlining keeps the rendered site free of JavaScript — the source preview
+  page pulled in the Lucide CDN script purely to draw two icons.
+*/ -}}
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="folio-spark" viewBox="0 0 432 432">
+    <path fill="currentColor" d="M216,432c-.18-13.79-2.8-102.4-76.16-164.79C82.92,218.8,18.59,216.11,0,216c20.21-2.56,95.8-14.6,154.94-80.75C202.81,81.7,213.2,22.58,216,0c3.09,22.87,14.19,81.83,62.37,135.25,58.72,65.1,132.78,77.88,153.63,80.75-16.83.58-88.56,4.92-148.38,63.03-62.78,60.99-67.08,137.11-67.62,152.97Z"/>
+  </symbol>
+
+  {{- /* @license lucide-static v1.14.0 - ISC */}}
+  <symbol id="i-feather" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z"/>
+    <path d="M16 8 2 22"/><path d="M17.5 15H9"/>
+  </symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14"/>
+  </symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/>
+    <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/>
+    <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>
+  </symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+  </symbol>
+</svg>

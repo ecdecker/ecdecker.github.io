@@ -1,0 +1,106 @@
+{{ define "main" }}
+  {{- $f := site.Params.folio | default dict }}
+
+  {{/* Hero — the canonical split card: text left, single image right. */}}
+  <section class="hero">
+    <div class="container">
+      <article class="card card--leaf hero-card">
+        <div class="split">
+          <div class="hero-text">
+            <div class="hero-top">
+              {{ partial "brand.html" . }}
+              {{ with $f.volume }}<span class="hero-meta">{{ . }}</span>{{ end }}
+            </div>
+
+            <div>
+              <h1 class="hero-headline">{{ with $f.headline }}{{ . | safeHTML }}{{ else }}{{ site.Title }}{{ end }}</h1>
+              {{ with $f.subtitle }}<p class="hero-sub">{{ . }}</p>{{ end }}
+
+              {{- with $f.features }}
+              <ul class="feature-list hero-features">
+                {{- range . }}<li>{{ . }}</li>{{- end }}
+              </ul>
+              {{- end }}
+            </div>
+
+            <div class="hero-cta">
+              {{ with $f.primaryAction }}
+              <a class="btn btn--primary" href="{{ .url }}">
+                {{ .name }}
+                <svg width="14" height="14" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+              </a>
+              {{ end }}
+              {{ with $f.secondaryAction }}
+              <a class="btn btn--secondary" href="{{ .url }}">{{ .name }}</a>
+              {{ end }}
+              {{ with $f.hint }}<span class="hint">{{ . }}</span>{{ end }}
+            </div>
+          </div>
+
+          {{- with $f.heroImage }}
+          {{- with resources.Get . }}
+          <div class="hero-media" aria-hidden="true">
+            <img src="{{ .RelPermalink }}" alt="" width="{{ .Width }}" height="{{ .Height }}">
+            {{ with $f.heroImageCaption }}
+            <span class="hero-media-tag">
+              <svg aria-hidden="true"><use href="#folio-spark"/></svg>
+              {{ . }}
+            </span>
+            {{ end }}
+          </div>
+          {{- end }}
+          {{- end }}
+        </div>
+      </article>
+    </div>
+  </section>
+
+  {{/* Any body copy authored in content/_index.md */}}
+  {{- with .Content }}
+  <section class="section-block">
+    <div class="container">
+      <div class="section-head">{{ . }}</div>
+    </div>
+  </section>
+  {{- end }}
+
+  {{/* Feature grid — hairline-separated cells, no gaps. */}}
+  {{- with $f.principles }}
+  <section class="section-block" id="principles">
+    <div class="container">
+      <div class="section-head">
+        <h2>{{ $f.principlesTitle | default (T "principles") }}</h2>
+        {{ with $f.principlesIntro }}<p>{{ . }}</p>{{ end }}
+      </div>
+
+      <div class="feature-grid">
+        {{- range $i, $p := . }}
+        <article class="feature-item">
+          <span class="feature-item-icon" aria-hidden="true">
+            <svg><use href="#i-{{ $p.icon | default "minus" }}"/></svg>
+          </span>
+          <h3>{{ $p.title }}</h3>
+          <p>{{ $p.body }}</p>
+          <div class="feature-item-meta">
+            <span>{{ printf "%02d" (add $i 1) }}</span>
+            <span>{{ $p.meta }}</span>
+          </div>
+        </article>
+        {{- end }}
+      </div>
+    </div>
+  </section>
+  {{- end }}
+
+  {{/* Recent notes */}}
+  {{- with where site.RegularPages "Section" "posts" }}
+  <section class="section-block" id="notes">
+    <div class="container">
+      <div class="section-head">
+        <h2>{{ T "publishedNotes" }}</h2>
+      </div>
+      {{ partial "post-list.html" . }}
+    </div>
+  </section>
+  {{- end }}
+{{ end }}
