@@ -1,0 +1,148 @@
+{{- /*
+  Image quality comparison — a local decision aid, not a published page.
+
+  Byte counts alone cannot settle the AVIF-vs-WebP question, because a given
+  "q" value is not perceptually equivalent across the two codecs. This page
+  renders real crops at 1:1 so the quality floor can be set by eye, with the
+  byte cost of each choice shown alongside.
+
+  Kept out of listings and RSS via _build.list = never in the front matter.
+*/ -}}
+{{ define "main" }}
+  {{- $qualities := slice 30 35 40 45 50 60 70 -}}
+  {{- $deliveryWidth := 800 -}}
+  {{- $cropSpec := "480x320 Center" -}}
+  {{- $images := resources.Match "images/*.png" -}}
+  {{- $sc := newScratch -}}
+
+  <style>
+    /* Scoped to this tool. Crops must render at 1:1 — any scaling hides
+       exactly the artifacts we are trying to judge. */
+    .qc-scroll { overflow-x: auto; padding-bottom: var(--space-sm); }
+    .qc-table { border-collapse: collapse; width: max-content; }
+    .qc-table th, .qc-table td {
+      border-top: var(--border-hairline);
+      padding: var(--space-2xs) var(--space-sm);
+      text-align: left;
+      vertical-align: top;
+    }
+    .qc-table th { font: 500 var(--text-label-sm)/1.4 var(--font-body); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--color-text-muted); }
+    .qc-table img { max-width: none; width: 480px; height: 320px; border: var(--border-hairline); border-radius: var(--radius-sm); }
+    .qc-num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .qc-win { color: var(--color-text); font-weight: 500; }
+    .qc-lose { color: var(--color-text-muted); }
+    .qc-ref { max-width: 800px; }
+    .qc-ref img { width: 100%; height: auto; max-width: 100%; }
+    .qc-note { max-width: 64ch; }
+  </style>
+
+  <section class="section-block">
+    <div class="container">
+      <div class="section-head">
+        <h1>{{ .Title }}</h1>
+        <p class="qc-note">
+          Crops are {{ $cropSpec }} taken from each image after downscaling to
+          {{ $deliveryWidth }}px, so you are looking at real delivered pixels at
+          1:1. View at 100% browser zoom. Judge flat areas and high-contrast
+          edges first — that is where both codecs fail earliest.
+        </p>
+        <p class="qc-note">
+          A given <code>q</code> is <em>not</em> perceptually equivalent between
+          AVIF and WebP, so pick the lowest setting per codec that still looks
+          acceptable, then compare the byte costs of those two choices.
+        </p>
+      </div>
+
+      {{/* ---------- Totals, to inform the global default ---------- */}}
+      {{- range $q := $qualities }}
+        {{- range $img := $images }}
+          {{- $d := $img.Resize (printf "%dx" $deliveryWidth) -}}
+          {{- $sc.Add (printf "avif-%d" $q) (len ($d.Resize (printf "%dx avif q%d" $deliveryWidth $q)).Content) -}}
+          {{- $sc.Add (printf "webp-%d" $q) (len ($d.Resize (printf "%dx webp q%d" $deliveryWidth $q)).Content) -}}
+        {{- end }}
+      {{- end }}
+
+      <h2 class="headline-md" style="margin-top:var(--space-xl)">Total bytes, all {{ len $images }} images at {{ $deliveryWidth }}px</h2>
+      <div class="qc-scroll">
+        <table class="qc-table">
+          <thead>
+            <tr><th>Quality</th><th>AVIF</th><th>WebP</th><th>Smaller</th><th>Margin</th></tr>
+          </thead>
+          <tbody>
+            {{- range $q := $qualities }}
+              {{- $a := $sc.Get (printf "avif-%d" $q) -}}
+              {{- $w := $sc.Get (printf "webp-%d" $q) -}}
+              <tr>
+                <td class="qc-num">q{{ $q }}</td>
+                <td class="qc-num {{ if lt $a $w }}qc-win{{ else }}qc-lose{{ end }}">{{ lang.FormatNumber 0 (div (float $a) 1024) }} KB</td>
+                <td class="qc-num {{ if lt $w $a }}qc-win{{ else }}qc-lose{{ end }}">{{ lang.FormatNumber 0 (div (float $w) 1024) }} KB</td>
+                <td>{{ if lt $a $w }}AVIF{{ else }}WebP{{ end }}</td>
+                <td class="qc-num">{{ lang.FormatNumber 2 (div (float (math.Max $a $w)) (math.Min $a $w)) }}&times;</td>
+              </tr>
+            {{- end }}
+          </tbody>
+        </table>
+      </div>
+
+      {{/* ---------- Per-image detail ---------- */}}
+      {{- range $img := $images }}
+        {{- $name := path.Base $img.Name -}}
+        {{- $d := $img.Resize (printf "%dx" $deliveryWidth) -}}
+
+        <div class="divider" aria-hidden="true" style="margin-block:var(--space-2xl)">
+          <svg class="spark"><use href="#folio-spark"/></svg>
+        </div>
+
+        <h2 class="headline-md">{{ $name }}</h2>
+        <p class="label-sm">
+          Source {{ $img.Width }}&times;{{ $img.Height }} &middot;
+          {{ lang.FormatNumber 0 (div (float (len $img.Content)) 1024) }} KB PNG
+        </p>
+
+        <div class="qc-ref" style="margin-block:var(--space-md)">
+          <div class="media-frame">
+            <img src="{{ ($d.Resize (printf "%dx webp q80" $deliveryWidth)).RelPermalink }}"
+                 alt="" width="{{ $d.Width }}" height="{{ $d.Height }}" loading="lazy">
+          </div>
+          <p class="label-sm" style="margin-top:var(--space-2xs)">Context only &mdash; the crops below are the comparison</p>
+        </div>
+
+        <div class="qc-scroll">
+          <table class="qc-table">
+            <thead>
+              <tr>
+                <th>Quality</th>
+                <th>AVIF</th>
+                <th>WebP</th>
+                <th>Reference (lossless)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{- range $q := $qualities }}
+                {{- $ca := $d.Crop (printf "%s avif q%d" $cropSpec $q) -}}
+                {{- $cw := $d.Crop (printf "%s webp q%d" $cropSpec $q) -}}
+                <tr>
+                  <td class="qc-num">
+                    q{{ $q }}<br>
+                    <span class="{{ if lt (len $ca.Content) (len $cw.Content) }}qc-win{{ else }}qc-lose{{ end }}">
+                      A {{ lang.FormatNumber 1 (div (float (len $ca.Content)) 1024) }}K</span><br>
+                    <span class="{{ if lt (len $cw.Content) (len $ca.Content) }}qc-win{{ else }}qc-lose{{ end }}">
+                      W {{ lang.FormatNumber 1 (div (float (len $cw.Content)) 1024) }}K</span>
+                  </td>
+                  <td><img src="{{ $ca.RelPermalink }}" alt="AVIF q{{ $q }}" width="480" height="320" loading="lazy"></td>
+                  <td><img src="{{ $cw.RelPermalink }}" alt="WebP q{{ $q }}" width="480" height="320" loading="lazy"></td>
+                  {{- if eq $q (index $qualities 0) }}
+                  <td rowspan="{{ len $qualities }}">
+                    <img src="{{ ($d.Crop (printf "%s png" $cropSpec)).RelPermalink }}"
+                         alt="Lossless reference" width="480" height="320">
+                  </td>
+                  {{- end }}
+                </tr>
+              {{- end }}
+            </tbody>
+          </table>
+        </div>
+      {{- end }}
+    </div>
+  </section>
+{{ end }}
