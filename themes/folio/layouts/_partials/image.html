@@ -16,7 +16,8 @@
                      which over-fetches — always pass a real value.
     class   (string) classes for the <img>
     widths  (slice)  candidate widths; capped to the source width
-    quality (int)    encoder quality
+    quality (int)    encoder quality; overrides the measured per-image
+                     value from data/imagequality.json
     eager   (bool)   true for the one above-the-fold image
     fit     (string) "resize" (default) or "fill"
     ratio   (string) target aspect ratio for fit=fill, e.g. "16:9"
@@ -43,7 +44,44 @@
 
 {{- with $resolved }}
   {{- $img := . -}}
-  {{- warnf "PROBE name=%q key=%q relperm=%q resourcetype=%q title=%q src=%q" $img.Name $img.Key $img.RelPermalink $img.ResourceType $img.Title $src -}}
+
+  {{- /* Per-image quality. One global q is a bad trade: holding a fixed
+         perceptual floor (SSIM 0.92) takes q25 on a soft gradient and q70
+         on a fine texture, so a single value either wastes bytes on the
+         easy images or wrecks the hard ones. Measured per image by
+         tools/measure-image-quality.py --write-data; on this corpus that
+         is 1.70x fewer bytes than the cheapest global q clearing the same
+         floor.
+
+         The key is the source path relative to assets/ or content/. A
+         global asset's .Name is already "/images/plate.png"; a page-bundle
+         sibling's .Name is the bare "plate.png", so it needs the owning
+         page's directory. Both were verified against Hugo 0.164 — do not
+         swap in .RelPermalink, which carries the language prefix and any
+         slug, neither of which the source-path key has.
+
+         An explicit quality param still wins, and anything unmeasured
+         falls back to the global default. */ -}}
+  {{- if not $.quality }}
+    {{- $key := "" -}}
+    {{- if hasPrefix $img.Name "/" -}}
+      {{- $key = $img.Name -}}
+    {{- else -}}
+      {{- with page.File }}{{ $key = path.Join .Dir $img.Name }}{{ end -}}
+    {{- end -}}
+    {{- $key = strings.TrimPrefix "/" $key -}}
+    {{- $table := dict -}}
+    {{- /* hugo.Data, not site.Data: the latter is deprecated in 0.156+ and
+           builds must stay warning-free. */ -}}
+    {{- with hugo.Data.imagequality }}{{ with .images }}{{ $table = . }}{{ end }}{{ end -}}
+    {{- with and $key (index $table $key) }}
+      {{- if reflect.IsMap . -}}
+        {{- with .quality }}{{ $quality = int . }}{{ end -}}
+      {{- else -}}
+        {{- $quality = int . -}}
+      {{- end -}}
+    {{- end }}
+  {{- end }}
 
   {{- /* Never upscale: a width above the source invents pixels and costs
          real bytes. Always keep at least one candidate. */ -}}

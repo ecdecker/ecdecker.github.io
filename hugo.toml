@@ -21,11 +21,25 @@ enableRobotsTXT = true
         name = 'Notes'
         pageRef = '/posts'
         weight = 20
+  [languages.mg]
+    locale = 'mg-MG'
+    label = 'Malagasy'
+    title = 'Folio'
+    weight = 2
+    [languages.mg.menus]
+      [[languages.mg.menus.main]]
+        name = 'Fandraisana'
+        pageRef = '/'
+        weight = 10
+      [[languages.mg.menus.main]]
+        name = 'Fanamarihana'
+        pageRef = '/posts'
+        weight = 20
   [languages.fr]
     locale = 'fr-FR'
     label = 'Français'
     title = 'Folio'
-    weight = 2
+    weight = 3
     [languages.fr.menus]
       [[languages.fr.menus.main]]
         name = 'Accueil'
