@@ -1,10 +1,28 @@
 {{- /*
   Instrument Serif (display) + Inter (body) — the only two families the
-  system permits. Emitted as <link> rather than a CSS @import so the
-  requests are not serialized behind the stylesheet.
+  system permits.
 
-  Set params.folio.remoteFonts = false to opt out and fall back to the
-  local stacks declared in tokens.css.
+  Self-hosted rather than fetched from Google. Same bytes, but it removes
+  two third-party origins (fonts.googleapis.com, fonts.gstatic.com) and
+  with them two DNS + TCP + TLS handshakes, and it breaks the serialized
+  dependency where the browser had to fetch and parse Google's CSS before
+  it could even discover the font URLs. The old "shared cache" argument
+  for Google Fonts no longer applies: browsers have partitioned the HTTP
+  cache per-origin since ~2020, so a visitor gains nothing from having
+  downloaded Inter on some other site.
+
+  The @font-face rules are inlined rather than left in main.css so the
+  URLs are discoverable in the first response, and each file is
+  fingerprinted so it can be served immutable.
+
+  Only the `latin` subsets are shipped. That range covers U+0000-00FF
+  plus Œœ, smart punctuation and €, which is the whole of English and
+  French — including œuvre and every accent in the fr translation. A
+  language needing latin-ext, Greek or Cyrillic would need its subset
+  added here.
+
+  Set params.folio.remoteFonts = false to opt out entirely and fall back
+  to the local stacks declared in tokens.css.
 */ -}}
 {{- $remote := true -}}
 {{- with site.Params.folio -}}
@@ -13,7 +31,42 @@
   {{- end -}}
 {{- end -}}
 {{- if $remote -}}
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap">
+  {{- /* Inter ships as a single variable file covering the whole 100-900
+         axis, so 400/500/600 cost one download, not three. */ -}}
+  {{- $inter := resources.Get "fonts/inter-latin-var.woff2" | fingerprint -}}
+  {{- $serif := resources.Get "fonts/instrument-serif-latin.woff2" | fingerprint -}}
+  {{- $serifItalic := resources.Get "fonts/instrument-serif-latin-italic.woff2" | fingerprint -}}
+  {{- /* All three faces paint above the fold on every page: Inter for body,
+         the serif for the headline, the italic for the wordmark. Fonts are
+         always fetched in CORS mode, so crossorigin is required even
+         same-origin or the preload is wasted and the file fetched twice. */ -}}
+  <link rel="preload" as="font" type="font/woff2" href="{{ $inter.RelPermalink }}" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="{{ $serif.RelPermalink }}" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="{{ $serifItalic.RelPermalink }}" crossorigin>
+  <style>
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 100 900;
+      font-display: swap;
+      src: url({{ $inter.RelPermalink }}) format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Instrument Serif';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url({{ $serif.RelPermalink }}) format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Instrument Serif';
+      font-style: italic;
+      font-weight: 400;
+      font-display: swap;
+      src: url({{ $serifItalic.RelPermalink }}) format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+  </style>
 {{- end -}}
