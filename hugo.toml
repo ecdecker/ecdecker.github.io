@@ -57,17 +57,23 @@ enableRobotsTXT = true
   # source, so WebP is the floor. That excludes only pre-2020 browsers and
   # avoids building the ~1.6 MB PNG variants a third source would need.
   #
-  # quality: raised from a provisional 45 after measuring SSIM against a
-  # lossless reference (tools/measure-image-quality.py). At q45 the
-  # photographic images scored 0.896-0.942 but a fine-grained texture fell
-  # to 0.654 — visibly degraded. q50 holds the photographic cases at
-  # 0.919-0.954.
+  # quality is now only a FALLBACK, for images with no measurement on
+  # record. The real value comes per image from data/imagequality.json,
+  # written by `tools/measure-image-quality.py --write-data` and read by
+  # partials/image.html: each image gets the cheapest q that still holds
+  # SSIM >= 0.92 against a lossless reference.
   #
-  # This single value is still a compromise. Reaching SSIM 0.92 needs
-  # anywhere from q25 to q70 depending on content, so one global setting
-  # either wastes bytes on easy images or wrecks hard ones. Pass `quality`
-  # per call to partials/image.html for known-difficult plates; run the
-  # tool above to find the right number.
+  # That indirection is worth its weight. Reaching the same floor takes
+  # q25 on a soft gradient and q70 on a fine-grained texture, so any single
+  # value either wastes bytes on the easy images or leaves the hard ones
+  # visibly broken. Measured on the field-notes article, per-image
+  # targeting ships 382,268 B where a global q70 — the cheapest global
+  # setting that clears the floor everywhere — ships 759,996 B.
+  #
+  # 50 is kept as the fallback for the same reason it was chosen before: it
+  # holds the photographic cases at SSIM 0.919-0.954 (q45 dropped a texture
+  # to 0.654). Re-run the tool after adding images; an explicit `quality`
+  # passed to partials/image.html still overrides everything.
   [params.images]
     quality = 50
     widths = [320, 480, 640, 800, 1200]

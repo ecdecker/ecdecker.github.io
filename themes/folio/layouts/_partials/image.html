@@ -45,36 +45,68 @@
 {{- with $resolved }}
   {{- $img := . -}}
 
-  {{- /* Per-image quality. One global q is a bad trade: holding a fixed
-         perceptual floor (SSIM 0.92) takes q25 on a soft gradient and q70
-         on a fine texture, so a single value either wastes bytes on the
-         easy images or wrecks the hard ones. Measured per image by
-         tools/measure-image-quality.py --write-data; on this corpus that
+  {{- /* Per-image quality, from data/imagequality.json.
+
+         One global q is a bad trade: holding a fixed perceptual floor
+         (SSIM 0.92) takes q25 on a soft gradient and q70 on a fine
+         texture, so a single value either wastes bytes on the easy images
+         or wrecks the hard ones. Measured per image by
+         tools/measure-image-quality.py --write-data, which on this corpus
          is 1.70x fewer bytes than the cheapest global q clearing the same
-         floor.
+         floor — a bigger win than the AVIF-vs-WebP choice itself.
 
-         The key is the source path relative to assets/ or content/. A
-         global asset's .Name is already "/images/plate.png"; a page-bundle
-         sibling's .Name is the bare "plate.png", so it needs the owning
-         page's directory. Both were verified against Hugo 0.164 — do not
-         swap in .RelPermalink, which carries the language prefix and any
-         slug, neither of which the source-path key has.
+         Keys are source paths relative to assets/ or content/. Getting
+         from a resource back to that path differs by origin, and both
+         branches below were verified empirically on Hugo 0.164:
 
-         An explicit quality param still wins, and anything unmeasured
-         falls back to the global default. */ -}}
+         * A global asset's .Name is already "/images/plate.png". Direct
+           lookup.
+
+         * A page-bundle sibling's .Name is the bare "plate.png", so it
+           needs the owning page's directory — and the resource cannot be
+           asked for it. The obvious candidates are all wrong: .Key and
+           .RelPermalink follow the page's slug, not its source path, and
+           the global `page` is the page being *rendered*, which inside a
+           render hook is the list page whenever content is reached
+           through .Summary first. That last one is worse than wrong, it
+           is nondeterministic: whichever context renders the content
+           first wins the cache, so the same source could build at two
+           different q. Instead the pages are walked once — where .File is
+           the page's own file and therefore trustworthy — to index every
+           bundled image by published path, which is resource-intrinsic.
+
+         An explicit quality param still wins over all of this, and
+         anything unmeasured falls back to the global default. */ -}}
   {{- if not $.quality }}
-    {{- $key := "" -}}
-    {{- if hasPrefix $img.Name "/" -}}
-      {{- $key = $img.Name -}}
-    {{- else -}}
-      {{- with page.File }}{{ $key = path.Join .Dir $img.Name }}{{ end -}}
-    {{- end -}}
-    {{- $key = strings.TrimPrefix "/" $key -}}
     {{- $table := dict -}}
     {{- /* hugo.Data, not site.Data: the latter is deprecated in 0.156+ and
            builds must stay warning-free. */ -}}
     {{- with hugo.Data.imagequality }}{{ with .images }}{{ $table = . }}{{ end }}{{ end -}}
-    {{- with and $key (index $table $key) }}
+    {{- $entry := "" -}}
+    {{- if hasPrefix $img.Name "/" -}}
+      {{- $entry = index $table (strings.TrimPrefix "/" $img.Name) -}}
+    {{- else -}}
+      {{- $byPath := site.Store.Get "folioImageQuality" -}}
+      {{- if not $byPath -}}
+        {{- $sc := newScratch -}}
+        {{- range $p := site.Pages -}}
+          {{- with $p.File -}}
+            {{- $dir := .Dir -}}
+            {{- range $r := $p.Resources.ByType "image" -}}
+              {{- with index $table (strings.TrimPrefix "/" (path.Join $dir $r.Name)) -}}
+                {{- $sc.SetInMap "m" $r.RelPermalink . -}}
+              {{- end -}}
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+        {{- /* Published complete, never half-built: a reader either finds
+               nothing here and builds its own copy, or finds all of it. */ -}}
+        {{- $byPath = $sc.Get "m" | default dict -}}
+        {{- site.Store.Set "folioImageQuality" $byPath -}}
+      {{- end -}}
+      {{- $entry = index $byPath $img.RelPermalink -}}
+    {{- end -}}
+    {{- with $entry }}
       {{- if reflect.IsMap . -}}
         {{- with .quality }}{{ $quality = int . }}{{ end -}}
       {{- else -}}

@@ -162,8 +162,17 @@ class Lab(object):
                                          "variants": lines})
         with open(os.path.join(self.dir, "layouts/home.html"), "w") as fh:
             fh.write("".join(blocks))
-        subprocess.run(["hugo", "--logLevel", "error", "--quiet"],
-                       cwd=self.dir, check=True)
+        # Not --quiet: on failure the reason is the only thing that matters,
+        # and it is usually an image Hugo cannot encode at all (grayscale
+        # PNGs fail AVIF's encodeGray) -- meaning the real site cannot build
+        # it either. Output is captured, so nothing leaks on success.
+        run = subprocess.run(["hugo", "--logLevel", "error"],
+                             cwd=self.dir, capture_output=True, text=True)
+        if run.returncode:
+            sys.exit("hugo failed while encoding %s:\n%s"
+                     % (", ".join(sorted(requests)),
+                        "\n".join(x.strip() for x in (run.stdout, run.stderr)
+                                  if x and x.strip())))
         with open(os.path.join(self.dir, "public/index.html"), "rb") as fh:
             manifest = fh.read().decode()
 
