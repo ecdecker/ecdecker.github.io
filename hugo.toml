@@ -39,16 +39,23 @@ enableRobotsTXT = true
 [params]
   description = 'A quieter way to put things on paper.'
 
-  # Image delivery. The audience is bandwidth-constrained, so these are tuned
-  # for transfer size over fidelity. AVIF is emitted first with a WebP
-  # fallback; measured on the pack images, AVIF wins below roughly q55 and
-  # loses above it — see /image-quality/ for the crops behind that number.
+  # Image delivery. AVIF first with a WebP fallback; no original-format
+  # source, so WebP is the floor. That excludes only pre-2020 browsers and
+  # avoids building the ~1.6 MB PNG variants a third source would need.
   #
-  # No original-format (PNG/JPEG) source is generated. WebP is the floor,
-  # which excludes only pre-2020 browsers and avoids shipping the ~1.6 MB
-  # PNG variants that would otherwise be built for every width.
+  # quality: raised from a provisional 45 after measuring SSIM against a
+  # lossless reference (tools/measure-image-quality.py). At q45 the
+  # photographic images scored 0.896-0.942 but a fine-grained texture fell
+  # to 0.654 — visibly degraded. q50 holds the photographic cases at
+  # 0.919-0.954.
+  #
+  # This single value is still a compromise. Reaching SSIM 0.92 needs
+  # anywhere from q25 to q70 depending on content, so one global setting
+  # either wastes bytes on easy images or wrecks hard ones. Pass `quality`
+  # per call to partials/image.html for known-difficult plates; run the
+  # tool above to find the right number.
   [params.images]
-    quality = 45
+    quality = 50
     widths = [320, 480, 640, 800, 1200]
   [params.folio]
     volume = 'Volume 01 · 2026'
