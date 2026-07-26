@@ -38,6 +38,18 @@ enableRobotsTXT = true
 
 [params]
   description = 'A quieter way to put things on paper.'
+
+  # Image delivery. The audience is bandwidth-constrained, so these are tuned
+  # for transfer size over fidelity. AVIF is emitted first with a WebP
+  # fallback; measured on the pack images, AVIF wins below roughly q55 and
+  # loses above it — see /image-quality/ for the crops behind that number.
+  #
+  # No original-format (PNG/JPEG) source is generated. WebP is the floor,
+  # which excludes only pre-2020 browsers and avoids shipping the ~1.6 MB
+  # PNG variants that would otherwise be built for every width.
+  [params.images]
+    quality = 45
+    widths = [320, 480, 640, 800, 1200]
   [params.folio]
     volume = 'Volume 01 · 2026'
     headline = 'A quieter way<br>to put things on <em>paper</em>.'

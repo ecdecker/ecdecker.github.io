@@ -38,9 +38,14 @@
           </div>
 
           {{- with $f.heroImage }}
-          {{- with resources.Get . }}
           <div class="hero-media" aria-hidden="true">
-            <img src="{{ .RelPermalink }}" alt="" width="{{ .Width }}" height="{{ .Height }}">
+            {{/* The one above-the-fold image: eager, high priority. Roughly
+                 half the card above 880px, full width below. */}}
+            {{ partial "image.html" (dict
+              "src" .
+              "alt" ""
+              "eager" true
+              "sizes" "(min-width: 880px) 50vw, 100vw") }}
             {{ with $f.heroImageCaption }}
             <span class="hero-media-tag">
               <svg aria-hidden="true"><use href="#folio-spark"/></svg>
@@ -48,7 +53,6 @@
             </span>
             {{ end }}
           </div>
-          {{- end }}
           {{- end }}
         </div>
       </article>

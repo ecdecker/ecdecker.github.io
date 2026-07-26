@@ -1,0 +1,46 @@
+{{- /*
+  Markdown image render hook.
+
+  Lets authors write plain markdown — ![Alt text](plate.png "Optional caption")
+  — and get AVIF/WebP responsive output with no shortcode syntax in the
+  content file. Images stay ordinary markdown, which matters for a corpus
+  that is mostly images with prose between them.
+
+  Resolution order: page-bundle sibling first, then assets/. Research posts
+  are page bundles with their images alongside the text, so the sibling
+  lookup is the common case.
+
+  DESIGN.md forbids captions overlaid on images, so a markdown title
+  becomes a figcaption beneath the frame instead.
+*/ -}}
+
+{{- $dest := .Destination -}}
+{{- $res := "" -}}
+
+{{- /* Page-bundle sibling */ -}}
+{{- with .Page.Resources.GetMatch $dest }}{{ $res = . }}{{ end -}}
+{{- /* Global assets/ */ -}}
+{{- if not $res }}{{ with resources.Get (strings.TrimPrefix "/" $dest) }}{{ $res = . }}{{ end }}{{ end -}}
+
+{{- if $res -}}
+  {{- /* .post-body is capped at 64ch, so above that breakpoint the slot is
+         fixed and there is no reason to fetch a wider variant. */ -}}
+  {{- $sizes := "(min-width: 880px) 640px, 100vw" -}}
+  <figure>
+    <div class="media-frame">
+      {{ partial "image.html" (dict
+        "resource" $res
+        "alt" .Text
+        "sizes" $sizes) }}
+    </div>
+    {{- with .Title }}<figcaption>{{ . }}</figcaption>{{ end }}
+  </figure>
+{{- else -}}
+  {{- /* Remote or unresolvable — emit a plain tag rather than dropping it. */ -}}
+  <figure>
+    <div class="media-frame">
+      <img src="{{ $dest }}" alt="{{ .Text }}" loading="lazy" decoding="async">
+    </div>
+    {{- with .Title }}<figcaption>{{ . }}</figcaption>{{ end }}
+  </figure>
+{{- end -}}

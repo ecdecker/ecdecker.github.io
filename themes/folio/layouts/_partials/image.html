@@ -1,0 +1,103 @@
+{{- /*
+  Optimized responsive image.
+
+  Emits AVIF with a WebP fallback and no original-format source. The
+  original-format <source> that this pattern usually carries adds no
+  capability — a browser that skips the modern sources matches the <img>
+  fallback, which is already that format — while costing the most bytes of
+  anything on the page.
+
+  Params:
+    resource (resource) an already-resolved image, e.g. a page-bundle
+                        sibling. Takes precedence over src.
+    src     (string)  path under assets/, with or without leading /
+    alt     (string, required) empty string for decorative images
+    sizes   (string) media-condition sizes attribute. Defaults to 100vw,
+                     which over-fetches — always pass a real value.
+    class   (string) classes for the <img>
+    widths  (slice)  candidate widths; capped to the source width
+    quality (int)    encoder quality
+    eager   (bool)   true for the one above-the-fold image
+    fit     (string) "resize" (default) or "fill"
+    ratio   (string) target aspect ratio for fit=fill, e.g. "16:9"
+
+  Example:
+    {{ partial "image.html" (dict
+         "src" "images/plate.png" "alt" "Field site"
+         "sizes" "(min-width: 880px) 640px, 100vw") }}
+*/ -}}
+
+{{- $cfg := site.Params.images | default dict -}}
+{{- $src := strings.TrimPrefix "/" .src -}}
+{{- $alt := .alt | default "" -}}
+{{- $class := .class | default "" -}}
+{{- $sizes := .sizes | default ($cfg.sizes | default "100vw") -}}
+{{- $quality := .quality | default ($cfg.quality | default 45) -}}
+{{- $fit := .fit | default "resize" -}}
+{{- $ratio := .ratio | default "" -}}
+{{- $eager := .eager | default false -}}
+{{- $widths := .widths | default ($cfg.widths | default (slice 320 480 640 800 1200)) -}}
+
+{{- $resolved := .resource -}}
+{{- if not $resolved }}{{ $resolved = resources.Get $src }}{{ end -}}
+
+{{- with $resolved }}
+  {{- $img := . -}}
+
+  {{- /* Never upscale: a width above the source invents pixels and costs
+         real bytes. Always keep at least one candidate. */ -}}
+  {{- $usable := slice -}}
+  {{- range $widths }}
+    {{- if le . $img.Width }}{{ $usable = $usable | append . }}{{ end }}
+  {{- end }}
+  {{- if not $usable }}{{ $usable = slice $img.Width }}{{ end }}
+
+  {{- /* fit=fill needs a ratio; without one it silently crops to nothing
+         useful, so fall back to a plain resize and say so. */ -}}
+  {{- if and (eq $fit "fill") (not $ratio) }}
+    {{- warnf "image.html: fit=fill needs a ratio for %s — resizing instead." $src }}
+    {{- $fit = "resize" }}
+  {{- end }}
+
+  {{- $rw := 0 }}{{- $rh := 0 }}
+  {{- if eq $fit "fill" }}
+    {{- $parts := split $ratio ":" -}}
+    {{- $rw = index $parts 0 | int -}}
+    {{- $rh = index $parts 1 | int -}}
+  {{- end }}
+
+  {{- $avif := slice }}{{- $webp := slice }}{{- $largest := "" -}}
+  {{- range $w := $usable }}
+    {{- $spec := "" -}}
+    {{- if eq $fit "fill" -}}
+      {{- $spec = printf "%dx%d Center" $w (div (mul $w $rh) $rw) -}}
+    {{- else -}}
+      {{- $spec = printf "%dx" $w -}}
+    {{- end -}}
+    {{- $a := "" }}{{- $p := "" -}}
+    {{- if eq $fit "fill" -}}
+      {{- $a = $img.Fill (printf "%s avif q%d" $spec $quality) -}}
+      {{- $p = $img.Fill (printf "%s webp q%d" $spec $quality) -}}
+    {{- else -}}
+      {{- $a = $img.Resize (printf "%s avif q%d" $spec $quality) -}}
+      {{- $p = $img.Resize (printf "%s webp q%d" $spec $quality) -}}
+    {{- end -}}
+    {{- $avif = $avif | append (printf "%s %dw" $a.RelPermalink $w) -}}
+    {{- $webp = $webp | append (printf "%s %dw" $p.RelPermalink $w) -}}
+    {{- $largest = $p -}}
+  {{- end }}
+
+  <picture>
+    <source type="image/avif" srcset="{{ delimit $avif ", " }}" sizes="{{ $sizes }}">
+    <img src="{{ $largest.RelPermalink }}"
+         srcset="{{ delimit $webp ", " }}"
+         sizes="{{ $sizes }}"
+         alt="{{ $alt }}"
+         {{- with $class }} class="{{ . }}"{{ end }}
+         width="{{ $largest.Width }}" height="{{ $largest.Height }}"
+         decoding="async"
+         {{ if $eager }}loading="eager" fetchpriority="high"{{ else }}loading="lazy"{{ end }}>
+  </picture>
+{{- else }}
+  {{- warnf "image.html: no asset at %q — image omitted." $src }}
+{{- end }}
