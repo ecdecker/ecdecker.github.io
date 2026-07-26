@@ -21,6 +21,11 @@
   language needing latin-ext, Greek or Cyrillic would need its subset
   added here.
 
+  The two Instrument Serif faces are re-cut by tools/subset-fonts.py,
+  which strips TrueType hinting and keeps every glyph — 31% smaller with
+  identical coverage, advance widths and vertical metrics. See that
+  script for why the character set is not cut instead.
+
   Set params.folio.remoteFonts = false to opt out entirely and fall back
   to the local stacks declared in tokens.css.
 */ -}}

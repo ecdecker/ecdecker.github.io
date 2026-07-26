@@ -43,6 +43,7 @@
 
 {{- with $resolved }}
   {{- $img := . -}}
+  {{- warnf "PROBE name=%q key=%q relperm=%q resourcetype=%q title=%q src=%q" $img.Name $img.Key $img.RelPermalink $img.ResourceType $img.Title $src -}}
 
   {{- /* Never upscale: a width above the source invents pixels and costs
          real bytes. Always keep at least one candidate. */ -}}
