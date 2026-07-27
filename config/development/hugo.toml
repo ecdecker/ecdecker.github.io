@@ -1,0 +1,42 @@
+# Development-only configuration.
+#
+# Hugo defaults to environment=production for `hugo` and environment=development
+# for `hugo server`, so everything here applies while developing and is absent
+# from any deployed build.
+#
+# The one job of this file is to mount exercises/ into the content tree. Those
+# pages drive every component and every capability edge case — deliberately
+# awkward images, every link scheme, all three languages — and they must never
+# reach the public site. The audience reads on metered mobile data; a kitchen
+# sink page is the last thing that should be deployable.
+#
+# A mount is used rather than `draft: true` or `build.list: never`:
+#
+#   - draft is a lifecycle state meaning "unfinished writing". These fixtures
+#     are finished and permanently unpublishable. It also needs `hugo server -D`,
+#     which then mixes genuinely unfinished posts into the same view, and any
+#     `hugo -D` in a deploy path would publish the fixtures.
+#
+#   - build.list: never still RENDERS into production. content/image-quality.md
+#     used exactly that and /image-quality/ was reachable on the live site — the
+#     leak this file exists to prevent.
+#
+# With the mount, production never sees the directory at all: no route, no build
+# time, no image variants, zero bytes.
+#
+# Note that this lives in config/development/ rather than a full config/_default/
+# restructure. Moving the root hugo.toml would break
+# `hugo server --config hugo.toml,hugo.system.toml`, which tools/capture-load-states.mjs
+# relies on to capture the all-system typography variant.
+
+[module]
+
+# Declaring any content mount replaces Hugo's default, so the ordinary content
+# directory has to be named explicitly alongside the addition.
+[[module.mounts]]
+  source = "content"
+  target = "content"
+
+[[module.mounts]]
+  source = "exercises"
+  target = "content/exercises"
