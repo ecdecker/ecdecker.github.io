@@ -12,8 +12,10 @@ layout changes:
 - paint, largest-contentful-paint, resource, DOM-ready, and load events
 
 It also creates `html-only.png` by deliberately withholding every dependent
-asset. This captures the unstyled DOM state even when Chromium keeps that state
-behind a blank render-blocking paint instead of sending it to the compositor.
+asset. This records exactly what the root HTML response can render on its own.
+With external CSS it exposes the unstyled DOM state that Chromium may otherwise
+keep behind a blank render-blocking paint; with inline CSS it verifies that the
+document-only state is already styled.
 
 Chromium's transport-level network emulation throttles the response stream,
 including progressive HTML delivery, while DevTools events record every request

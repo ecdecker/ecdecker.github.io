@@ -1,9 +1,10 @@
 /* =====================================================================
    Folio — theme entry stylesheet
 
-   Bundled by Hugo's css.Build (embedded esbuild), which resolves these
-   @import statements at build time into a single fingerprinted asset.
-   No npm dependency is involved.
+   Bundled and minified by Hugo's css.Build (embedded esbuild), which
+   resolves these @import statements at build time. The compiled result is
+   inlined into <head> so first paint cannot precede the stylesheet. No npm
+   dependency is involved.
 
    Order is load-bearing: tokens must precede everything that consumes
    them, and utilities come last so they can win.
