@@ -37,17 +37,9 @@ ignores it outright, and the smallest use of this font in the system is
 1.25rem / 20px (the wordmark and h3). It is a display face; it is never
 set at body size.
 
-Inter is left alone. Its charset carries all body text and every
-language, and it is a variable font where one file already serves
-400/500/600. Stripping its hinting saves only ~1.5 KB, and dropping its
-opt-in OpenType features (dnom, frac, numr, pnum, tnum) would save ~6 KB
-but forecloses font-variant-numeric later.
-
-Note for whoever revisits this: base.css requests
-font-feature-settings: "ss01", "cv11", but Google's Inter subset ships
-neither stylistic set, so both are currently inert. Sourcing Inter from
-the upstream rsms/inter release would make them real -- and would change
-letterforms, so it is a design decision, not a build one.
+The former Inter variable file is left untouched as a source artifact, but
+the Hugo theme no longer serves it. Body and interface copy now use the
+native system UI sans stack, removing 48,256 bytes from the cold font path.
 
 Usage
 -----

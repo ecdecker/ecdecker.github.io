@@ -92,11 +92,11 @@ enableRobotsTXT = true
     subtitle = 'Folio is a small, monochrome system for editorial product work. Bone paper, hairline borders, one serif marquee — and nothing else asking for attention.'
     features = [
       'One warm neutral. One ink. No accent colors.',
-      'Instrument Serif for marquee, Inter for everything else.',
+      'Instrument Serif for marquee, system UI for everything else.',
       '1px hairlines carry every separation.',
       'A single four-point spark, used sparingly.',
     ]
-    hint = 'Set in two families, no exceptions.'
+    hint = 'One downloaded family, one system stack.'
     heroImage = 'images/folio-sketchbooks-stem.png'
     heroImageCaption = 'Plate I — Reading shelf'
     tagline = 'A quiet, paper-thin design system. Made on a desk by a window, not in a war room.'
@@ -113,7 +113,7 @@ enableRobotsTXT = true
     [[params.folio.principles]]
       icon = 'feather'
       title = 'Set in serif.'
-      body = 'Headlines live in Instrument Serif from 32 to 96 pixels. Body in Inter 400/500. Two families, no exceptions.'
+      body = 'Headlines live in Instrument Serif from 32 to 96 pixels. Body uses the native system UI sans at 400/500.'
       meta = 'Type'
     [[params.folio.principles]]
       icon = 'minus'

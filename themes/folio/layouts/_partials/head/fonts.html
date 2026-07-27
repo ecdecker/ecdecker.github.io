@@ -1,88 +1,67 @@
 {{- /*
-  Instrument Serif (display) + Inter (body) — the only two families the
-  system permits.
+  Instrument Serif is the only downloaded family. Body and interface copy
+  use the platform UI sans stack from tokens.css, so the largest former
+  dependency (the 48 KB Inter variable font) no longer delays or changes
+  first paint.
 
-  Self-hosted rather than fetched from Google. Same bytes, but it removes
-  two third-party origins (fonts.googleapis.com, fonts.gstatic.com) and
-  with them two DNS + TCP + TLS handshakes, and it breaks the serialized
-  dependency where the browser had to fetch and parse Google's CSS before
-  it could even discover the font URLs. The old "shared cache" argument
-  for Google Fonts no longer applies: browsers have partitioned the HTTP
-  cache per-origin since ~2020, so a visitor gains nothing from having
-  downloaded Inter on some other site.
+  The serif remains optional. A cold, constrained connection therefore gets
+  a deliberately designed fallback for the whole navigation rather than a
+  late reflow:
 
-  The @font-face rules are inlined rather than left in main.css so the
-  URLs are discoverable in the first response, and each file is
-  fingerprinted so it can be served immutable.
+    1. Prefer locally installed high-contrast display faces.
+    2. Fall back to a Times-compatible face re-scaled to match Instrument's
+       unusually narrow advances.
+    3. Override that face's vertical metrics to Instrument's 990/310/0
+       ascent/descent/line-gap proportions.
 
-  Only the `latin` subsets are shipped. That range covers U+0000-00FF
-  plus Œœ, smart punctuation and €, which is the whole of English and
-  French — including œuvre and every accent in the fr translation. A
-  language needing latin-ext, Greek or Cyrillic would need its subset
-  added here.
+  Measurements across the actual Folio headings put Times-compatible
+  advances at roughly 119% of Instrument's. size-adjust: 84% brings their
+  line lengths back into alignment. The ascent/descent percentages account
+  for that scale (99% / .84 and 31% / .84), preserving Instrument's line box.
 
-  The two Instrument Serif faces are re-cut by tools/subset-fonts.py,
-  which strips TrueType hinting and keeps every glyph — 31% smaller with
-  identical coverage, advance widths and vertical metrics. See that
-  script for why the character set is not cut instead.
-
-  The two font-display values differ on purpose.
-
-  Inter is `swap`: it sets every word of body text, so the text must be
-  readable immediately and must not be abandoned to a fallback.
-
-  The serif is `optional`, which is a real design concession and should
-  be understood before anyone changes it back. `optional` gives the
-  browser a ~100ms block period and no swap period: if the file is not
-  ready in time, the fallback stack in tokens.css (Cormorant Garamond →
-  Times New Roman) is used for the lifetime of that page load, and on a
-  slow connection the browser may abandon the download entirely. In
-  practice a first-time visitor sees the headline, the wordmark and pull
-  quotes set in the fallback serif, and gets Instrument Serif from the
-  second page view onward, once it is cached.
-
-  What that buys: a first visit can cost 0 bytes of serif instead of
-  29,768, and layout shift is zero either way — the font is applied
-  before first paint or not at all, so nothing reflows mid-read.
-
-  What it costs: DESIGN.md asks for one serif marquee, and on a first
-  visit that marquee is not Instrument Serif. To revert, set both serif
-  faces back to `swap` and re-add their preload links above.
-
-  Set params.folio.remoteFonts = false to opt out entirely and fall back
-  to the local stacks declared in tokens.css.
+  Set params.folio.remoteFonts = false to opt out of Instrument while keeping
+  the matched serif fallback. Set params.folio.systemTypography = true to use
+  the all-system comparison stack and skip every downloadable font.
 */ -}}
 {{- $remote := true -}}
+{{- $systemTypography := false -}}
 {{- with site.Params.folio -}}
   {{- if isset . "remotefonts" -}}
     {{- $remote = .remoteFonts -}}
   {{- end -}}
+  {{- if isset . "systemtypography" -}}
+    {{- $systemTypography = .systemTypography -}}
+  {{- end -}}
 {{- end -}}
-{{- if $remote -}}
-  {{- /* Inter ships as a single variable file covering the whole 100-900
-         axis, so 400/500/600 cost one download, not three. */ -}}
-  {{- $inter := resources.Get "fonts/inter-latin-var.woff2" | fingerprint -}}
+{{- if and $remote (not $systemTypography) -}}
   {{- $serif := resources.Get "fonts/instrument-serif-latin.woff2" | fingerprint -}}
   {{- $serifItalic := resources.Get "fonts/instrument-serif-latin-italic.woff2" | fingerprint -}}
-  {{- /* Only Inter is preloaded. It carries every word of body text, so it
-         is worth fetching eagerly; fonts are always fetched in CORS mode,
-         so crossorigin is required even same-origin or the preload is
-         wasted and the file fetched twice.
-
-         The two serif faces are deliberately NOT preloaded. rel=preload is
-         a mandatory fetch directive: preloading them would commit the
-         browser to 29,768 bytes before font-display: optional ever gets a
-         say, which would keep the no-layout-shift benefit but throw away
-         the bandwidth saving that is the whole point of `optional`. */ -}}
-  <link rel="preload" as="font" type="font/woff2" href="{{ $inter.RelPermalink }}" crossorigin>
   <style>
     @font-face {
-      font-family: 'Inter';
+      font-family: 'Instrument Serif Fallback';
       font-style: normal;
-      font-weight: 100 900;
-      font-display: swap;
-      src: url({{ $inter.RelPermalink }}) format('woff2');
-      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      font-weight: 400;
+      src:
+        local('Times New Roman'),
+        local('TimesNewRomanPSMT'),
+        local('Liberation Serif');
+      size-adjust: 84%;
+      ascent-override: 117.86%;
+      descent-override: 36.90%;
+      line-gap-override: 0%;
+    }
+    @font-face {
+      font-family: 'Instrument Serif Fallback';
+      font-style: italic;
+      font-weight: 400;
+      src:
+        local('Times New Roman Italic'),
+        local('TimesNewRomanPS-ItalicMT'),
+        local('Liberation Serif Italic');
+      size-adjust: 84%;
+      ascent-override: 117.86%;
+      descent-override: 36.90%;
+      line-gap-override: 0%;
     }
     @font-face {
       font-family: 'Instrument Serif';

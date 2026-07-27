@@ -1,0 +1,4 @@
+# Layer this over hugo.toml to compare the no-download typography treatment:
+#   hugo server --config hugo.toml,hugo.system.toml
+[params.folio]
+  systemTypography = true

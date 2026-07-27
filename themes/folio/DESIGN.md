@@ -34,19 +34,19 @@ typography:
     lineHeight: 1.15
     letterSpacing: "-0.02em"
   body-md:
-    fontFamily: "Inter"
+    fontFamily: "system-ui"
     fontWeight: 400
     fontSize: "16px"
     lineHeight: 1.55
     letterSpacing: "0"
   body-sm:
-    fontFamily: "Inter"
+    fontFamily: "system-ui"
     fontWeight: 400
     fontSize: "14px"
     lineHeight: 1.55
     letterSpacing: "0"
   label-sm:
-    fontFamily: "Inter"
+    fontFamily: "system-ui"
     fontWeight: 500
     fontSize: "12px"
     lineHeight: 1.4
@@ -200,10 +200,10 @@ Contrast targets: Ink on Bone reaches AA Large at all display sizes and AA Norma
 
 ## Typography
 
-Two families, no exceptions.
+One downloaded family and one native system stack.
 
 - **Instrument Serif** carries every headline from `headline-md` (32px) through `display` (96px). It is also used in its italic cut for the brand wordmark and standalone marquee statements. Headlines are tight: -0.02em tracking, 1.05–1.15 line-height.
-- **Inter** carries body copy, UI labels, button labels, input text, captions, and all meta. Weights are limited to 400/500/600. The `label-sm` token at 12px with 0.14em tracking and uppercase is the only place small-caps tracking appears, and it is reserved for genuine meta — never as an eyebrow above a heading.
+- The **system UI sans stack** carries body copy, UI labels, button labels, input text, captions, and all meta. Weights are limited to 400/500/600. The `label-sm` token at 12px with 0.14em tracking and uppercase is the only place small-caps tracking appears, and it is reserved for genuine meta — never as an eyebrow above a heading.
 
 Lead every section with the heading itself. There is no kicker, no chip, no "Features" label sitting above the headline. If a section needs introduction, the first sentence after the heading provides it.
 
@@ -250,7 +250,7 @@ It is never recolored, never animated, never used as a repeating pattern, and ne
 
 ## Components
 
-**Button — primary.** Pill, Ink fill, Snow text, 12px×20px padding, Inter 500 at 14px. On hover the button lifts 1px on the y-axis. No color shift. No glow. Focus shows the 2px Ink outline with 2px offset.
+**Button — primary.** Pill, Ink fill, Snow text, 12px×20px padding, system UI sans 500 at 14px. On hover the button lifts 1px on the y-axis. No color shift. No glow. Focus shows the 2px Ink outline with 2px offset.
 
 **Button — secondary.** Pill, Snow fill, Ink text, 1px Mist border, identical padding and label. On hover the fill swaps to Whisper (`tertiary`). No color shift on the border or label.
 
@@ -260,7 +260,7 @@ It is never recolored, never animated, never used as a repeating pattern, and ne
 
 **Checkbox.** 16px square, 4px radius, 1px Mist border, Snow fill. Checked state fills with Ink and shows a Snow check stroke (Lucide `check`, 10px). Focus uses the 2px Ink outline on the visible box.
 
-**Tabs.** Text-only labels in Inter 500 at 14px. Container has a 1px Mist bottom hairline. Active tab is Ink with a 1px Ink underline that overlaps the container hairline. Inactive tabs are Stone with no underline. No pills, no background fills, no animated indicators.
+**Tabs.** Text-only labels in system UI sans 500 at 14px. Container has a 1px Mist bottom hairline. Active tab is Ink with a 1px Ink underline that overlaps the container hairline. Inactive tabs are Stone with no underline. No pills, no background fills, no animated indicators.
 
 **Feature list.** Vertical list of 14px Stone lines with a 5px round Ink bullet (or the four-point spark glyph for marquee placements). Tight 8px gap between items.
 
@@ -290,7 +290,7 @@ It is never recolored, never animated, never used as a repeating pattern, and ne
 - Don't add accent colors, gradients, glows, or glassmorphism.
 - Don't introduce drop shadows beyond the single optional `elevation.paper` whisper.
 - Don't tint hover states with color — use a 1px lift on buttons or Whisper infill on secondaries.
-- Don't mix more than two type families. Instrument Serif + Inter only.
+- Don't mix more than two type voices. Instrument Serif + the native system UI sans only.
 - Don't decorate with the spark, repeat it as a pattern, or recolor it.
 - Don't use double borders, 2px borders, or inset rings — the hairline is the voice.
 - Don't center every section. Editorial left alignment is the default.

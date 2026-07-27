@@ -3,3 +3,5 @@
 /public/
 /resources/_gen/
 .hugo_build.lock
+/artifacts/load-states/
+/node_modules/

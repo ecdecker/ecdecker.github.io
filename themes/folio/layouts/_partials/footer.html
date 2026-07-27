@@ -19,7 +19,13 @@
     </div>
 
     <div class="copyright">
-      <span>&copy; {{ now.Year }} {{ site.Title }} &mdash; {{ T "setIn" }}</span>
+      {{- $systemTypography := false -}}
+      {{- with site.Params.folio -}}
+        {{- if isset . "systemtypography" -}}
+          {{- $systemTypography = .systemTypography -}}
+        {{- end -}}
+      {{- end -}}
+      <span>&copy; {{ now.Year }} {{ site.Title }} &mdash; {{ if $systemTypography }}{{ T "setInSystem" }}{{ else }}{{ T "setIn" }}{{ end }}</span>
       <span>{{ T "colophon" }}</span>
     </div>
   </div>

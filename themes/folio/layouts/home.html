@@ -48,7 +48,7 @@
               "sizes" "(min-width: 880px) 50vw, 100vw") }}
             {{ with $f.heroImageCaption }}
             <span class="hero-media-tag">
-              <svg aria-hidden="true"><use href="#folio-spark"/></svg>
+              <svg width="12" height="12" aria-hidden="true"><use href="#folio-spark"/></svg>
               {{ . }}
             </span>
             {{ end }}
@@ -81,7 +81,7 @@
         {{- range $i, $p := . }}
         <article class="feature-item">
           <span class="feature-item-icon" aria-hidden="true">
-            <svg><use href="#i-{{ $p.icon | default "minus" }}"/></svg>
+            <svg width="16" height="16"><use href="#i-{{ $p.icon | default "minus" }}"/></svg>
           </span>
           <h3>{{ $p.title }}</h3>
           <p>{{ $p.body }}</p>

@@ -1,5 +1,11 @@
 <!DOCTYPE html>
-<html lang="{{ site.Language.Lang }}" dir="{{ or site.Language.Direction `ltr` }}">
+{{- $systemTypography := false -}}
+{{- with site.Params.folio -}}
+  {{- if isset . "systemtypography" -}}
+    {{- $systemTypography = .systemTypography -}}
+  {{- end -}}
+{{- end -}}
+<html lang="{{ site.Language.Lang }}" dir="{{ or site.Language.Direction `ltr` }}"{{ if $systemTypography }} class="type-system"{{ end }}>
 <head>
   {{ partial "head.html" . }}
 </head>

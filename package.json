@@ -1,0 +1,11 @@
+{
+  "name": "folio-load-state-lab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "capture:load": "node tools/capture-load-states.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.0"
+  }
+}
