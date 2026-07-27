@@ -6,7 +6,11 @@
   renders real crops at 1:1 so the quality floor can be set by eye, with the
   byte cost of each choice shown alongside.
 
-  Kept out of listings and RSS via _build.list = never in the front matter.
+  Lives in exercises/, which is mounted into the content tree only when
+  environment is development. It used to sit in content/ with build.list = never,
+  which kept it out of listings but still RENDERED it into production — the page
+  was publicly reachable at /image-quality/ the whole time. Being unmounted in
+  production means it is now absent rather than merely unlisted.
 */ -}}
 {{ define "main" }}
   {{- $qualities := slice 30 35 40 45 50 60 70 -}}
