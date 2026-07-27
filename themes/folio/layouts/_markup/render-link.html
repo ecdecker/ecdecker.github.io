@@ -36,19 +36,36 @@
 {{- /* A destination is a candidate for resource resolution only if it is a
        bare relative path: no scheme (https:, mailto:, tel:), no
        protocol-relative host, no bare fragment. */ -}}
-{{- $scheme := findRE `^[a-zA-Z][a-zA-Z0-9+.\-]*:` $dest 1 -}}
+{{- $scheme := "" -}}
+{{- with findRE `^[a-zA-Z][a-zA-Z0-9+.\-]*:` $dest 1 }}{{ $scheme = lower (index . 0) }}{{ end -}}
 {{- $local := and
       $dest
       (not $scheme)
       (not (hasPrefix $dest "//"))
       (not (hasPrefix $dest "#")) -}}
 
-{{- $res := "" -}}
+{{- /* A ?query or #fragment suffix is not part of the resource's name, so it
+       has to come off before the lookup or GetMatch never matches — the file
+       then goes unpublished (publishResources = false) and the link 404s. The
+       suffix is carried and reattached to the resolved permalink, so
+       [spec](methodology.pdf#page=3) keeps its page anchor and
+       [data](survey.csv?v=2) keeps its cache-buster. */ -}}
+{{- $path := $dest -}}
+{{- $suffix := "" -}}
 {{- if $local -}}
+  {{- with findRESubmatch `^([^?#]*)([?#].*)?$` $dest 1 -}}
+    {{- $g := index . 0 -}}
+    {{- $path = index $g 1 -}}
+    {{- $suffix = index $g 2 -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $res := "" -}}
+{{- if and $local $path -}}
   {{- /* Page-bundle sibling */ -}}
-  {{- with $page.Resources.GetMatch $dest }}{{ $res = . }}{{ end -}}
+  {{- with $page.Resources.GetMatch $path }}{{ $res = . }}{{ end -}}
   {{- /* Global assets/ */ -}}
-  {{- if not $res }}{{ with resources.Get (strings.TrimPrefix "/" $dest) }}{{ $res = . }}{{ end }}{{ end -}}
+  {{- if not $res }}{{ with resources.Get (strings.TrimPrefix "/" $path) }}{{ $res = . }}{{ end }}{{ end -}}
 {{- end -}}
 
 {{- /* A branch bundle's .Resources can include pages, which are links to
@@ -60,9 +77,11 @@
 
 {{- if $file -}}
   {{- /* The call that both fixes the URL and publishes the file. */ -}}
-  {{- $href = $res.RelPermalink -}}
+  {{- $href = printf "%s%s" $res.RelPermalink $suffix -}}
 
-  {{- $kind := upper (strings.TrimPrefix "." (path.Ext $href)) -}}
+  {{- /* Extension comes off the permalink, not $href: a "?v=2" suffix would
+         otherwise be read as part of the extension. */ -}}
+  {{- $kind := upper (strings.TrimPrefix "." (path.Ext $res.RelPermalink)) -}}
 
   {{- /* Byte count. Hugo 0.164 does not expose .Size on resource.Resource —
          the concrete type behind a bundle resource is *resources.resourceAdapter
@@ -89,8 +108,19 @@
 {{- /* href is left to html/template's contextual URL filter rather than being
        forced through safeURL. Relative paths, https:, mailto: and #anchors all
        pass it unchanged; javascript: does not, which is the behaviour this
-       project wants given the no-JavaScript invariant. */ -}}
-<a href="{{ $href }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text }}</a>
+       project wants given the no-JavaScript invariant.
+
+       That filter's allowlist is only http, https and mailto, so it rewrote
+       [call](tel:+261201234567) to href="#ZgotmplZ" — a dead link. A phone
+       number is the plausible contact route for a fieldwork contributor with
+       no reliable mail, so tel: and its sibling sms: are re-admitted here by
+       name. Marking only these two safeURL keeps the bypass as narrow as the
+       defect: http/https/mailto stay on the normal path so they keep their URL
+       normalization, and every other scheme — javascript:, data:, vbscript: —
+       still hits the filter and is still neutered. */ -}}
+{{- $hrefAttr := $href -}}
+{{- if in (slice "tel:" "sms:") $scheme }}{{ $hrefAttr = $href | safeURL }}{{ end -}}
+<a href="{{ $hrefAttr }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text }}</a>
 {{- with $meta }} <span class="body-sm">{{ . }}</span>{{ end -}}
 
 {{- /*
