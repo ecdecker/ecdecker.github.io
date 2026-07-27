@@ -7,3 +7,9 @@ noPosts = "Mbola tsy misy fanamarihana navoaka."
 setIn = "voasoratra amin'ny Instrument Serif sy Inter."
 colophon = "Taratasy taolana · Ranomainty · Pitik'afo iray."
 showPlate = "Asehoy ny sary"
+
+# Mombamomba ny rakitra, oh. "(CSV, 2,4 Mo)" — jereo layouts/_markup/render-link.html
+fileMeta = "({{ .kind }}, {{ .size }})"
+unitBytes = "o"
+unitKilobytes = "Ko"
+unitMegabytes = "Mo"

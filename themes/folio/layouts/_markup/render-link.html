@@ -1,0 +1,114 @@
+{{- /*
+  Markdown link render hook.
+
+  Exists for one reason: hugo.toml sets build.publishResources = false via a
+  site cascade, so a page-bundle resource is written to public/ only when
+  something calls .RelPermalink on it. That is what stopped the multi-megabyte
+  bundle originals from shipping (16 MB -> 2.8 MB), but it also silently broke
+
+      [Download the dataset](survey-2026.csv)
+
+  because nothing ever asked for that file's permalink. The link resolved to a
+  path Hugo never published, so it 404'd. This hook resolves the destination
+  against the bundle and calls .RelPermalink, which fixes the URL and publishes
+  the file in the same move.
+
+  Resolution order matches render-image.html: page-bundle sibling first, then
+  the shared assets/ directory. Research posts are page bundles carrying their
+  own data files, so the sibling lookup is the common case.
+
+  Everything that is not a bundle resource — internal page links, anchors,
+  external URLs, mailto: — passes through as the default renderer would emit
+  it. No rel, no target, no class, no icon. See the notes at the bottom.
+
+  Metered-data annotation
+  -----------------------
+  A reader in Madagascar on a prepaid data bundle is deciding whether a link is
+  worth the megabytes. Hugo knows the size, so the hook appends the format and
+  weight after the link: "Download the dataset (CSV, 4 KB)". It sits outside
+  the <a>, in .body-sm (Stone, already the design system's helper-copy token),
+  so the link text stays the action and the size reads as meta. No new CSS.
+*/ -}}
+
+{{- $dest := .Destination -}}
+{{- $page := .Page -}}
+
+{{- /* A destination is a candidate for resource resolution only if it is a
+       bare relative path: no scheme (https:, mailto:, tel:), no
+       protocol-relative host, no bare fragment. */ -}}
+{{- $scheme := findRE `^[a-zA-Z][a-zA-Z0-9+.\-]*:` $dest 1 -}}
+{{- $local := and
+      $dest
+      (not $scheme)
+      (not (hasPrefix $dest "//"))
+      (not (hasPrefix $dest "#")) -}}
+
+{{- $res := "" -}}
+{{- if $local -}}
+  {{- /* Page-bundle sibling */ -}}
+  {{- with $page.Resources.GetMatch $dest }}{{ $res = . }}{{ end -}}
+  {{- /* Global assets/ */ -}}
+  {{- if not $res }}{{ with resources.Get (strings.TrimPrefix "/" $dest) }}{{ $res = . }}{{ end }}{{ end -}}
+{{- end -}}
+
+{{- /* A branch bundle's .Resources can include pages, which are links to
+       render, not files to download. Only file resources get this treatment. */ -}}
+{{- $file := and $res (ne $res.ResourceType "page") -}}
+
+{{- $href := $dest -}}
+{{- $meta := "" -}}
+
+{{- if $file -}}
+  {{- /* The call that both fixes the URL and publishes the file. */ -}}
+  {{- $href = $res.RelPermalink -}}
+
+  {{- $kind := upper (strings.TrimPrefix "." (path.Ext $href)) -}}
+
+  {{- /* Byte count. Hugo 0.164 does not expose .Size on resource.Resource —
+         the concrete type behind a bundle resource is *resources.resourceAdapter
+         and reaching for .Size is a build error — so the length of .Content is
+         the available measurement. It is exact for text and binary alike
+         (verified against ls -l on a CSV and a PDF). The cost is that every
+         linked file is read once at build time; that is bounded, one-off, and
+         cheap next to the value of telling a reader on a prepaid bundle what a
+         download will cost them. */ -}}
+  {{- $bytes := len $res.Content -}}
+  {{- $size := "" -}}
+  {{- if lt $bytes 1024 -}}
+    {{- $size = printf "%s %s" (lang.FormatNumber 0 $bytes) (T "unitBytes") -}}
+  {{- else if lt $bytes 1048576 -}}
+    {{- $size = printf "%s %s" (lang.FormatNumber 1 (div (float $bytes) 1024.0)) (T "unitKilobytes") -}}
+  {{- else -}}
+    {{- $size = printf "%s %s" (lang.FormatNumber 1 (div (float $bytes) 1048576.0)) (T "unitMegabytes") -}}
+  {{- end -}}
+  {{- if $kind -}}
+    {{- $meta = T "fileMeta" (dict "kind" $kind "size" $size) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* href is left to html/template's contextual URL filter rather than being
+       forced through safeURL. Relative paths, https:, mailto: and #anchors all
+       pass it unchanged; javascript: does not, which is the behaviour this
+       project wants given the no-JavaScript invariant. */ -}}
+<a href="{{ $href }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text }}</a>
+{{- with $meta }} <span class="body-sm">{{ . }}</span>{{ end -}}
+
+{{- /*
+  Two things deliberately NOT done here.
+
+  rel="noopener" on external links. noopener only has an effect on links that
+  open a new browsing context, and this hook does not set target="_blank" —
+  the design system is quiet and that would be an unrequested behaviour change.
+  With no new context there is no window.opener to sever, so the attribute
+  would be pure payload on every external link in the corpus.
+
+  A visual mark on external links. DESIGN.md reserves icons for genuine
+  interaction affordance and forbids decoration; there is no existing class for
+  an external indicator, and inlining an SVG per link costs bytes on a site
+  whose entire premise is not spending them. Left unmarked on purpose.
+
+  download attribute on resolved files. It would force a save instead of
+  letting the browser display a PDF inline. That is a behaviour change with no
+  bandwidth benefit, so the format and size annotation carries the warning
+  instead and the user agent keeps the decision.
+*/ -}}

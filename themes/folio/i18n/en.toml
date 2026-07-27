@@ -7,3 +7,9 @@ noPosts = "No notes have been published yet."
 setIn = "set in Instrument Serif & Inter."
 colophon = "Bone paper · Ink · One spark."
 showPlate = "Show plate"
+
+# File download meta, e.g. "(CSV, 2.4 MB)" — see layouts/_markup/render-link.html
+fileMeta = "({{ .kind }}, {{ .size }})"
+unitBytes = "B"
+unitKilobytes = "KB"
+unitMegabytes = "MB"

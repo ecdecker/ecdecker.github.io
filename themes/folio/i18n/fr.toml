@@ -7,3 +7,9 @@ noPosts = "Aucune note n'a encore été publiée."
 setIn = "composé en Instrument Serif & Inter."
 colophon = "Papier os · Encre · Une étincelle."
 showPlate = "Afficher la planche"
+
+# Meta de fichier, ex. "(CSV, 2,4 Mo)" — voir layouts/_markup/render-link.html
+fileMeta = "({{ .kind }}, {{ .size }})"
+unitBytes = "o"
+unitKilobytes = "Ko"
+unitMegabytes = "Mo"
