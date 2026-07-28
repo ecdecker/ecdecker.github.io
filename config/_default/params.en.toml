@@ -1,45 +1,12 @@
+# Site-wide chrome for this language. Hero and principles copy lives in
+# content/_index.md front matter instead — it is page copy, and belongs beside
+# the page. What stays here renders on every page, where a post's .Params are
+# not the home page's.
+
 description = 'A quieter way to put things on paper.'
 
 [folio]
-  volume = 'Volume 01 · 2026'
-  headline = 'A quieter way<br>to put things on <em>paper</em>.'
-  subtitle = 'Folio is a small, monochrome system for editorial product work. Bone paper, hairline borders, one serif marquee — and nothing else asking for attention.'
-  features = [
-    'One warm neutral. One ink. No accent colors.',
-    'Instrument Serif for marquee, system UI for everything else.',
-    '1px hairlines carry every separation.',
-    'A single four-point spark, used sparingly.',
-  ]
-  hint = 'One downloaded family, one system stack.'
-  heroImageCaption = 'Plate I — Reading shelf'
   tagline = 'A quiet, paper-thin design system. Made on a desk by a window, not in a war room.'
-  principlesTitle = 'Three quiet rules.'
-  principlesIntro = 'Folio is small on purpose. The whole system runs on a handful of decisions that never get spent on decoration.'
-
-  [folio.primaryAction]
-    name = 'Read the notes'
-    url = '/posts/'
-  [folio.secondaryAction]
-    name = 'View the tags'
-    url = '/tags/'
-
-  # Arrays are replaced wholesale by Hugo, never merged element-wise, so each
-  # language repeats these in full — `icon` and `url` included.
-  [[folio.principles]]
-    icon = 'feather'
-    title = 'Set in serif.'
-    body = 'Headlines live in Instrument Serif from 32 to 96 pixels. Body uses the native system UI sans at 400/500.'
-    meta = 'Type'
-  [[folio.principles]]
-    icon = 'minus'
-    title = 'Built on hairlines.'
-    body = 'Every divider, card edge, input outline, and table line is a single Mist pixel. Depth is contrast, not shadow.'
-    meta = 'Structure'
-  [[folio.principles]]
-    icon = 'layers'
-    title = 'One ink only.'
-    body = 'Action is the only thing allowed to be ink-black. There is no accent color and no tinted hover state.'
-    meta = 'Color'
 
   [[folio.footerColumns]]
     title = 'Folio'

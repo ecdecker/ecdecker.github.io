@@ -1,5 +1,16 @@
 {{ define "main" }}
-  {{- $f := site.Params.folio | default dict }}
+  {{- /*
+    Homepage copy comes from content/_index.<lang>.md front matter, falling
+    back to site params for the keys that stay shared (heroImage) or that
+    render site-wide (tagline, footerColumns). Later maps win in `merge`, so
+    the page overrides the site.
+
+    .Params lowercases front-matter keys, but it is a maps.Params — its
+    lookups are case-insensitive, and merge preserves the type. So
+    $f.heroImageCaption below still resolves against a `heroImageCaption:`
+    written in the front matter.
+  */}}
+  {{- $f := merge (site.Params.folio | default dict) .Params }}
 
   {{/* Hero — the canonical split card: text left, single image right. */}}
   <section class="hero">
