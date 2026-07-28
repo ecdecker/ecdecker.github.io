@@ -14,3 +14,6 @@ fileMeta = "({{ .kind }}, {{ .size }})"
 unitBytes = "o"
 unitKilobytes = "Ko"
 unitMegabytes = "Mo"
+
+# Lien vers la pleine résolution, sur demande — voir layouts/_markup/render-image.html
+viewFullRes = "Voir en pleine résolution"

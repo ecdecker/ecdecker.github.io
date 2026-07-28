@@ -181,6 +181,16 @@
   font-size: var(--text-body-sm);
 }
 
+/* Opt-in full-resolution link under a plate. Muted and unadorned: it is an
+   affordance for the reader who wants to look closely, not a call to action,
+   and on a metered connection it should not invite an accidental click. The
+   weight beside it is the actual byte count of the file it points at. */
+.post-body .plate-full {
+  margin-top: var(--space-2xs);
+  color: var(--color-text-muted);
+  font-size: var(--text-body-sm);
+}
+
 .post-body pre {
   overflow-x: auto;
   padding: var(--space-md);
