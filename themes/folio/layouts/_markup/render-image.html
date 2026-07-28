@@ -126,9 +126,16 @@
         "sizes" $sizes
         "eager" $first) }}
     {{- else }}
-      {{- /* Remote or unresolvable — emit a plain tag rather than dropping it. */ -}}
+      {{- /* Remote or unresolvable — emit a plain tag rather than dropping it.
+
+             fetchpriority matches the resolved path in _partials/image.html.
+             It matters more here, not less: this is the branch for an image
+             on someone else's host, at an unknown size, over a connection
+             this site cannot measure or shrink. Nothing in the corpus takes
+             this branch today, so it costs nothing now and is correct the
+             first time a post carries a remote URL. */ -}}
       <img src="{{ $dest }}" alt="{{ .Text }}" decoding="async"
-           {{ if $first }}loading="eager" fetchpriority="high"{{ else }}loading="lazy"{{ end }}>
+           {{ if $first }}loading="eager" fetchpriority="high"{{ else }}loading="lazy" fetchpriority="low"{{ end }}>
     {{- end }}
   </div>
   {{- with .Title }}<figcaption>{{ . }}</figcaption>{{ end }}
