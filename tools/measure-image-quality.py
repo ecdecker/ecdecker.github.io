@@ -62,8 +62,39 @@ Limits
 * The search assumes SSIM is monotonic in q. That holds in practice but is
   not guaranteed by either encoder; a full sweep (report mode) is the
   cross-check.
-* Quality is chosen at one delivery width and then applied to every width
-  in the ladder.
+* Quality is chosen at one delivery width (--width, default 800) and then
+  applied to every width in the ladder. This was measured rather than
+  assumed: the cheapest q holding SSIM >= 0.92 was searched at each of
+  320/480/640/800/1200 for all four sources, and per-width q was compared
+  against the single 800px q the site ships.
+
+      image                    320  480  640  800 1200   shipped
+      editorial-workspace      q50  q50  q50  q50  q50   q50
+      folio-sketchbooks-stem   q50  q55  q55  q55  q55   q55
+      paper-curves             q25  q25  q25  q25  q30   q25
+      parchment-texture        q50  q75  q75  q70  q70   q70
+
+  17 of the 20 (image, width) pairs already ship the right q. Three fall
+  just under the floor -- paper-curves at 1200 (0.9153), parchment at 480
+  (0.9172) and at 640 (0.9150) -- and two are over-provisioned at 320,
+  where parchment could drop q70->q50 (-2207 B) and folio q55->q50
+  (-1799 B).
+
+  Per-width q was NOT adopted, because on the metric that matters it
+  loses: correcting the three under-floor pairs costs more than the two
+  over-provisioned ones save, so the full ladder goes 665507 -> 671859 B,
+  +1.0% BIGGER. It would also multiply the data file by five and the
+  measurement runtime by about the same, for that loss.
+
+  A cheaper "fixed offset per step down" rule does not fit either: the
+  direction is not even consistent across the corpus. paper-curves and
+  folio need MORE q as the width grows, parchment needs more at 480-640
+  then less at 800-1200, and editorial-workspace is flat. Any single
+  offset would be wrong for most of the corpus.
+
+  So the single-width choice stands, and the residual is a known ~0.005
+  SSIM shortfall on three variants of two images -- against a floor that
+  is itself a proxy (see the first bullet).
 * Matched-quality pairing in report mode picks the cheapest WebP whose
   SSIM is >= the AVIF's. When it overshoots, AVIF's reported saving is
   flattered, so the matched-SSIM ratios are upper bounds on its advantage.
@@ -102,16 +133,38 @@ SITE_CONFIG = "baseURL='http://e.org/'\ntitle='m'\n"
 # Per image: cap the delivery width at the source width (the site never
 # upscales, so neither may the measurement), resize once, then emit a
 # lossless PNG reference plus the requested variants off that same resize.
+#
+# $ab is the base the AVIF variants encode from. It is normally just $d, but
+# a 16-bit grayscale source reaches Hugo's AVIF encoder as image.Gray16 and
+# fails there ("encodeGray: Failed to add image to encoder"), taking the
+# whole render with it. layouts/_partials/image.html handles that by
+# re-encoding through a WebP q100 intermediate to shed the grayscale colour
+# model, so the measurement has to do the same or it would report a q for an
+# encode the site never performs. The probe is one extra encode per image,
+# which is noise next to the SSIM search.
+#
+# The probe checks for an empty payload as well as an error, because a failed
+# AVIF transform leaves a zero-byte entry in Hugo's image cache and the next
+# try() reads it back as a success. This lab deliberately keeps that cache
+# across rounds, so without the emptiness check the probe passes on round 2
+# and the whole run dies on the real encode.
 IMAGE_BLOCK = """\
 {{- with resources.Get "images/%(flat)s" -}}
 {{- $W := %(width)d -}}{{- if lt .Width $W }}{{ $W = .Width }}{{ end -}}
 {{- $d := .Resize (printf "%%dx" $W) -}}
 {{- $ref := $d.Resize (printf "%%dx png" $W) -}}
+{{- $ab := $d -}}
+{{- $probe := try ($d.Resize (printf "%%dx avif q50" $W)) -}}
+{{- if $probe.Err -}}
+{{- $ab = $d.Resize (printf "%%dx webp q100" $W) -}}
+{{- else if not (len $probe.Value.Content) -}}
+{{- $ab = $d.Resize (printf "%%dx webp q100" $W) -}}
+{{- end -}}
 REF|%(flat)s|{{ $ref.RelPermalink }}|{{ len $ref.Content }}|
 %(variants)s{{- end -}}
 """
 VARIANT_LINE = """\
-{{- $v := $d.Resize (printf "%%dx %(fmt)s q%(q)d" $W) -}}
+{{- $v := %(base)s.Resize (printf "%%dx %(fmt)s q%(q)d" $W) -}}
 %(tag)s|%(flat)s|%(q)d|{{ $v.RelPermalink }}|{{ len $v.Content }}|
 """
 
@@ -156,16 +209,21 @@ class Lab(object):
         for flat in sorted(requests):
             lines = "".join(
                 VARIANT_LINE % {"fmt": fmt, "q": q, "flat": flat,
-                                "tag": fmt.upper()}
+                                "tag": fmt.upper(),
+                                # AVIF encodes off the de-grayscaled base;
+                                # WebP has no such problem and uses $d.
+                                "base": "$ab" if fmt == "avif" else "$d"}
                 for fmt, q in sorted(set(requests[flat])))
             blocks.append(IMAGE_BLOCK % {"flat": flat, "width": self.width,
                                          "variants": lines})
         with open(os.path.join(self.dir, "layouts/home.html"), "w") as fh:
             fh.write("".join(blocks))
-        # Not --quiet: on failure the reason is the only thing that matters,
-        # and it is usually an image Hugo cannot encode at all (grayscale
-        # PNGs fail AVIF's encodeGray) -- meaning the real site cannot build
-        # it either. Output is captured, so nothing leaks on success.
+        # Not --quiet: on failure the reason is the only thing that matters.
+        # Grayscale sources used to land here -- they are now handled by the
+        # $ab round-trip above, matching what image.html ships -- so a
+        # failure now means something genuinely unencodable, which the real
+        # site would hit too. Output is captured, so nothing leaks on
+        # success.
         run = subprocess.run(["hugo", "--logLevel", "error"],
                              cwd=self.dir, capture_output=True, text=True)
         if run.returncode:
