@@ -60,17 +60,50 @@
   {{- end -}}
 {{- end -}}
 
+{{- /* The lookup is a glob matched against resource names, so a destination
+       spelled differently from the name on disk misses — and a miss is not
+       cosmetic here: publishResources = false means the file is then never
+       written at all and the link 404s, which is the exact failure this hook
+       exists to prevent. Two ordinary markdown spellings missed:
+
+           [data](./survey-2026.csv)     a leading ./ is not part of the name
+           [notes](field%20notes.csv)    an escaped name is not the name
+
+       urls.Parse decodes the escapes, but it is fatal on a malformed one
+       ("%zz"), which would fail the whole build over a typo in one link. try
+       contains that: on a parse error the raw path is kept and the lookup
+       misses exactly as it does today. */ -}}
+{{- $lookup := $path -}}
+{{- if $local -}}
+  {{- with try (urls.Parse $lookup) -}}
+    {{- with .Value }}{{ $lookup = .Path }}{{ end -}}
+  {{- end -}}
+  {{- $lookup = strings.TrimPrefix "./" $lookup -}}
+  {{- if eq $lookup "." }}{{ $lookup = "" }}{{ end -}}
+{{- end -}}
+
 {{- $res := "" -}}
-{{- if and $local $path -}}
+{{- if and $local $lookup -}}
   {{- /* Page-bundle sibling */ -}}
-  {{- with $page.Resources.GetMatch $path }}{{ $res = . }}{{ end -}}
+  {{- with $page.Resources.GetMatch $lookup }}{{ $res = . }}{{ end -}}
   {{- /* Global assets/ */ -}}
-  {{- if not $res }}{{ with resources.Get (strings.TrimPrefix "/" $path) }}{{ $res = . }}{{ end }}{{ end -}}
+  {{- if not $res }}{{ with resources.Get (strings.TrimPrefix "/" $lookup) }}{{ $res = . }}{{ end }}{{ end -}}
 {{- end -}}
 
 {{- /* A branch bundle's .Resources can include pages, which are links to
-       render, not files to download. Only file resources get this treatment. */ -}}
-{{- $file := and $res (ne $res.ResourceType "page") -}}
+       render, not files to download. Only file resources get this treatment.
+
+       A directory comes back from resources.Get as a resource too, and it is
+       not merely useless — asking one for .Content or .RelPermalink is a hard
+       build failure ("is a directory" / "this operation is not supported"), so
+       [gallery](images/) took the entire site down because assets/images
+       exists. A directory carries no extension on its .Name, which is the one
+       property that can be read off it without erroring, so that is the
+       discriminator. */ -}}
+{{- $file := and
+      $res
+      (ne $res.ResourceType "page")
+      (ne (path.Ext $res.Name) "") -}}
 
 {{- $href := $dest -}}
 {{- $meta := "" -}}

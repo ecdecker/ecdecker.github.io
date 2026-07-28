@@ -27,7 +27,27 @@ A destination is still a bundle file when it carries a suffix. Asking for
 [the dataset, second revision](survey-2026.csv?v=2) keeps the cache-buster,
 while both still resolve against the bundle and publish the file. The suffix is
 split off before the lookup and reattached to the resolved URL; without that the
-lookup misses, the file is never published, and the link 404s.
+lookup misses, the file is never published, and the link 404s. A destination may
+carry both at once — [the dataset, revised, at row 5](survey-2026.csv?v=2#row=5)
+splits at the first `?` or `#` and reattaches everything after it verbatim.
+
+## How the destination is spelled
+
+The lookup is a glob matched against the resource names, so a destination
+spelled differently from the name on disk misses — and a miss here is not
+cosmetic, because a file nothing resolves is a file nothing publishes. Two
+perfectly ordinary spellings used to miss. A leading `./`, as in
+[the fieldwork log](./fieldwork-log.csv), is not part of any resource's name;
+neither are percent escapes, so [l'enquête](enqu%C3%AAte.csv) has to be decoded
+back to the accented filename before it can match. Each of those two files is
+linked from nowhere else on the site, so their presence in the build is the
+proof that both spellings resolve. A malformed escape such as `%zz` cannot be
+decoded at all; it is left alone and misses, rather than failing the build.
+
+A destination naming a directory is not a download. [This bundle](./) and
+[the shared image directory](/images/) both name one, and the hook leaves both
+untouched — worth stating because asking a directory for its contents or its
+permalink is a hard build failure, not a quiet miss.
 
 ## Everything else is left alone
 
@@ -41,7 +61,10 @@ is emitted unchanged with no target and no icon, and
 
 Contact schemes survive too: [the field line](tel:+261201234567) and
 [the same number by message](sms:+261201234567) stay dialable rather than being
-rewritten to a dead `#ZgotmplZ` href. Schemes that are not on that list — most
-of all `javascript:` — are still stripped by Go's URL filter, which is what
-keeps the no-JavaScript invariant enforced by the template engine and not by
-convention.
+rewritten to a dead `#ZgotmplZ` href. A scheme is matched case-insensitively, so
+[the field line again](TEL:+261201234567) survives being shouted, and
+[a mixed-case mailbox](MailTo:notes@example.org) is still a mailbox. Schemes that
+are not on that list — most of all `javascript:`, in any casing, along with
+`data:`, `vbscript:` and `file:` — are still stripped by Go's URL filter, which
+is what keeps the no-JavaScript invariant enforced by the template engine and not
+by convention.
