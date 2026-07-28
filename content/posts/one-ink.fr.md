@@ -2,7 +2,7 @@
 title: "Une seule encre, aucun accent"
 description: "La palette est une famille de neutres chauds, plus une couleur d'action. Il n'y a pas de troisième chose."
 date: 2026-07-24
-tags: ["couleur"]
+tags: ["color"]
 ---
 
 Le fond est Bone — la seule couleur de page de tout le système. Les surfaces sont
