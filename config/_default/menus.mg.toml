@@ -1,0 +1,9 @@
+[[main]]
+  name = "Fandraisana"
+  pageRef = '/'
+  weight = 10
+
+[[main]]
+  name = "Fanamarihana"
+  pageRef = '/posts'
+  weight = 20

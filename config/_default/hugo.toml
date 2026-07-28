@@ -1,0 +1,15 @@
+baseURL = 'https://example.org/'
+title = 'Folio'
+theme = 'folio'
+defaultContentLanguage = 'en'
+defaultContentLanguageInSubdir = false
+enableRobotsTXT = true
+
+# Page-bundle originals are not published. Hugo copies every bundle resource
+# into public/ by default, so the multi-megabyte source PNGs shipped alongside
+# their own optimized derivatives. With this off, a resource is published only
+# when something calls .RelPermalink on it — which the processed variants do
+# and the untouched originals do not.
+[[cascade]]
+  [cascade.build]
+    publishResources = false

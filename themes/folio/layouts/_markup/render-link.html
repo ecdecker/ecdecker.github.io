@@ -1,7 +1,7 @@
 {{- /*
   Markdown link render hook.
 
-  Exists for one reason: hugo.toml sets build.publishResources = false via a
+  Exists for one reason: config/_default/hugo.toml sets publishResources = false via a
   site cascade, so a page-bundle resource is written to public/ only when
   something calls .RelPermalink on it. That is what stopped the multi-megabyte
   bundle originals from shipping (16 MB -> 2.8 MB), but it also silently broke

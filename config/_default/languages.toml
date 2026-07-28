@@ -1,0 +1,23 @@
+# Language metadata only. Menus live in menus.<lang>.toml and translatable
+# strings in params.<lang>.toml, one file per translator.
+#
+# Note that config/_default/languages.<lang>.toml is NOT a thing — Hugo
+# ignores such a file silently. Per-language config splits out by topic
+# (menus, params), not by language at this level.
+[en]
+  locale = 'en-US'
+  label = 'English'
+  title = 'Folio'
+  weight = 1
+
+[mg]
+  locale = 'mg-MG'
+  label = 'Malagasy'
+  title = 'Folio'
+  weight = 2
+
+[fr]
+  locale = 'fr-FR'
+  label = 'Français'
+  title = 'Folio'
+  weight = 3

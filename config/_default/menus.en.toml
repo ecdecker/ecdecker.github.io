@@ -1,0 +1,9 @@
+[[main]]
+  name = 'Index'
+  pageRef = '/'
+  weight = 10
+
+[[main]]
+  name = 'Notes'
+  pageRef = '/posts'
+  weight = 20
