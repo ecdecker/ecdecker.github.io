@@ -298,7 +298,12 @@
    Lists — feature bullets using the four-point spark
    --------------------------------------------------------------------- */
 
-.feature-list {
+/* .hero-copy ul rides along because the hero's bullets are now an ordinary
+   Markdown list rather than a hand-written <ul class="feature-list">. Nothing
+   an author types carries a class, so the class list names both the explicit
+   component and the one place it is implied. */
+.feature-list,
+.hero-copy ul {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -307,7 +312,8 @@
   gap: 0.5rem;
 }
 
-.feature-list li {
+.feature-list li,
+.hero-copy ul li {
   display: flex;
   align-items: baseline;
   gap: 0.625rem;
@@ -315,7 +321,8 @@
   color: var(--color-text-muted);
 }
 
-.feature-list li::before {
+.feature-list li::before,
+.hero-copy ul li::before {
   content: "";
   width: 5px;
   height: 5px;

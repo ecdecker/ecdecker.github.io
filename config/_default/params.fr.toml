@@ -1,21 +1,7 @@
-# Site-wide chrome for this language. Hero and principles copy lives in
-# content/_index.fr.md front matter instead.
+# Site-wide chrome for this language. Homepage copy lives as Markdown in
+# content/_index.fr.md, and footer links in menus.fr.toml.
 
 description = "Une façon plus discrète de coucher les choses sur le papier."
 
 [folio]
   tagline = "Un système de design discret, fin comme du papier. Conçu à un bureau près d'une fenêtre, pas dans une salle de crise."
-
-  [[folio.footerColumns]]
-    title = "Folio"
-    [[folio.footerColumns.links]]
-      name = "Accueil"
-      url = "/fr/"
-    [[folio.footerColumns.links]]
-      name = "Notes"
-      url = "/fr/posts/"
-  [[folio.footerColumns]]
-    title = "Système"
-    [[folio.footerColumns.links]]
-      name = "Étiquettes"
-      url = "/fr/tags/"

@@ -9,22 +9,42 @@ the homepage came to render 70% English under a French URL.
 
 What is checked
 ---------------
-Key *parity* against the default language, in the three places a
+Key *parity* against the default language, in the four places a
 translatable string can live:
 
     themes/folio/i18n/<lang>.toml       template strings
     config/_default/params.<lang>.toml  site-wide chrome
-    content/_index.<lang>.md            homepage copy (front matter)
-    config/_default/menus.<lang>.toml   navigation labels
+    config/_default/menus.<lang>.toml   navigation and link labels
+    content/_index.<lang>.md            homepage: front-matter labels,
+                                        and the copy blocks in the body
 
 Nested maps and arrays are flattened to paths, so a language that drops
-`meta` from one entry of `principles` is caught:
+one key from one entry is caught by name rather than passing because the
+lengths matched:
 
-    folio.principles[1].meta
+    folio.footerColumns[1].links[0].name
 
 That is the exact failure mode Hugo's config merge creates. Arrays are
 replaced wholesale rather than merged element-wise, so an array entry
 written with only some of its keys loses the rest silently.
+
+Homepage copy blocks
+--------------------
+Homepage prose is Markdown now, not front matter, so there are no keys to
+flatten. What is compared instead is the set of *canonical block keys* the
+body declares -- the names on the `copy` and `principle` shortcodes:
+
+    copy.hero
+    copy.principles
+    principle.serif
+    principle.serif.meta
+
+A language that renders three principles where the default has four is
+reported as `principle.ink` missing, which is the same guarantee the
+flattened front matter gave and the same failure it was written for. The
+order of the principle blocks is compared too: the grid numbers its cells
+01/02/03 by position, so a language that lists them in a different order
+is not a translation of the same page.
 
 What is NOT checked
 -------------------
@@ -50,6 +70,7 @@ including future deprecation notices.
 
 import argparse
 import os
+import re
 import sys
 import tomllib
 
@@ -109,6 +130,71 @@ def read_front_matter(path):
     if end == -1:
         return {}
     return yaml.safe_load(text[3:end]) or {}
+
+
+# Copy blocks in a homepage body: {{< copy "hero" >}} and
+# {{< principle key="serif" meta="Type" >}}.
+BLOCK_RE = re.compile(r"\{\{<\s*(copy|principle)\s+([^>]*?)\s*>\}\}")
+NAMED_RE = re.compile(r'(\w+)="([^"]*)"')
+POSITIONAL_RE = re.compile(r'^"([^"]*)"')
+
+
+def read_copy_blocks(path):
+    """Return ({path: value}, [principle keys in document order]).
+
+    The dict is already flat -- flatten() on a flat map of scalars gives
+    back exactly these paths -- so it drops straight into compare().
+    """
+    if not os.path.exists(path):
+        return None
+    with open(path, encoding="utf-8") as fh:
+        text = fh.read()
+
+    paths, order = {}, []
+    for name, args in BLOCK_RE.findall(text):
+        named = dict(NAMED_RE.findall(args))
+        if name == "copy":
+            # One positional argument: the block key.
+            found = POSITIONAL_RE.match(args)
+            key = found.group(1) if found else named.get("key", "")
+            if key:
+                paths[f"copy.{key}"] = ""
+            continue
+
+        key = named.get("key", "")
+        if not key:
+            continue
+        paths[f"principle.{key}"] = ""
+        order.append(key)
+        # Recorded separately so a block that is present but lost its label
+        # is reported as principle.<key>.meta rather than passing.
+        if "meta" in named:
+            paths[f"principle.{key}.meta"] = named["meta"]
+
+    return paths, order
+
+
+def compare_order(label, reference, default_lang, others, problems):
+    """Report a language whose blocks run in a different order.
+
+    Position is meaning here: the principles grid numbers its cells by
+    index, so reordering them silently renumbers a translation's cells
+    against every other language's.
+    """
+    print(f"\n== {label} ==")
+    print(f"  {default_lang:<4} {' -> '.join(reference) or '(none)'}")
+    for lang, order in others:
+        if order is None:
+            continue  # absence already reported by the parity check
+        if order == reference:
+            print(f"  {lang:<4} OK")
+            continue
+        print(f"  {lang:<4} {' -> '.join(order) or '(none)'}")
+        # Only a genuine reordering is worth a failure; a language missing a
+        # block entirely is the parity check's finding, not this one's.
+        if sorted(order) == sorted(reference):
+            print(f"         REORDERED")
+            problems.append(f"{label}: {lang} orders blocks differently")
 
 
 # --------------------------------------------------------------------------
@@ -196,6 +282,28 @@ def main():
         read_front_matter(f"{HOME_CONTENT}/_index.md") or {},
         default,
         [(l, read_front_matter(f"{HOME_CONTENT}/_index.{l}.md")) for l in others],
+        problems,
+    )
+
+    # Homepage prose: block keys, not flattened front matter. See the module
+    # docstring -- the copy itself is Markdown, so the thing with parity is
+    # the set of canonical block names the body declares.
+    ref_blocks = read_copy_blocks(f"{HOME_CONTENT}/_index.md") or ({}, [])
+    other_blocks = [
+        (l, read_copy_blocks(f"{HOME_CONTENT}/_index.{l}.md")) for l in others
+    ]
+    compare(
+        "homepage copy blocks",
+        ref_blocks[0],
+        default,
+        [(l, b[0] if b else None) for l, b in other_blocks],
+        problems,
+    )
+    compare_order(
+        "homepage block order",
+        ref_blocks[1],
+        default,
+        [(l, b[1] if b else None) for l, b in other_blocks],
         problems,
     )
 

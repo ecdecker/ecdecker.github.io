@@ -1,3 +1,9 @@
+# Anaran'ny fitetezana amin'ity fiteny ity. Jereo menus.en.toml ho an'ny
+# antony: ny rohy dia anarana sy toerana, ary ny anarana ihany no adika.
+#
+# Tady fototra ("...") manerana: tsy afaka mitondra apostrofa mihitsy ny tady
+# tsotra amin'ny TOML.
+
 [[main]]
   name = "Fandraisana"
   pageRef = '/'
@@ -7,3 +13,47 @@
   name = "Fanamarihana"
   pageRef = '/posts'
   weight = 20
+
+[[home]]
+  name = "Vakio ny fanamarihana"
+  pageRef = '/posts'
+  weight = 10
+
+[[home]]
+  name = "Jereo ny marika"
+  pageRef = '/tags'
+  weight = 20
+
+[[footer]]
+  identifier = 'folio'
+  name = "Folio"
+  weight = 10
+
+[[footer]]
+  parent = 'folio'
+  name = "Fandraisana"
+  pageRef = '/'
+  weight = 11
+
+[[footer]]
+  parent = 'folio'
+  name = "Fanamarihana"
+  pageRef = '/posts'
+  weight = 12
+
+[[footer]]
+  identifier = 'system'
+  name = "Rafitra"
+  weight = 20
+
+[[footer]]
+  parent = 'system'
+  name = "Marika"
+  pageRef = '/tags'
+  weight = 21
+
+[[footer]]
+  parent = 'system'
+  name = "Socially Engineered"
+  url = '/socially-engineered/'
+  weight = 22

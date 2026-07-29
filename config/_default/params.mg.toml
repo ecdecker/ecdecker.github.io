@@ -1,24 +1,11 @@
-# Site-wide chrome for this language. Hero and principles copy lives in
-# content/_index.mg.md front matter instead.
+# Site-wide chrome for this language. Homepage copy lives as Markdown in
+# content/_index.mg.md, and footer links in menus.mg.toml.
 #
 # Basic ("...") strings throughout: TOML literal strings cannot contain an
-# apostrophe at all, and there is no escape for one inside them.
+# apostrophe at all, and there is no escape for one inside them. Malagasy prose
+# is full of them, which is one reason the copy is better off in Markdown.
 
 description = "Fomba mangina kokoa hametrahana zavatra an-taratasy."
 
 [folio]
   tagline = "Rafitra famolavolana mangina, manify toy ny taratasy. Namboarina teo ambony latabatra akaikin'ny varavarankely, fa tsy tao an-trano fivoriana."
-
-  [[folio.footerColumns]]
-    title = "Folio"
-    [[folio.footerColumns.links]]
-      name = "Fandraisana"
-      url = "/mg/"
-    [[folio.footerColumns.links]]
-      name = "Fanamarihana"
-      url = "/mg/posts/"
-  [[folio.footerColumns]]
-    title = "Rafitra"
-    [[folio.footerColumns.links]]
-      name = "Marika"
-      url = "/mg/tags/"

@@ -35,3 +35,12 @@
 [folio]
   # Not translatable: an image path, identical in every language.
   heroImage = 'images/folio-sketchbooks-stem.png'
+
+  # Not translatable: which icon each homepage principle draws, keyed by the
+  # canonical block key its {{< principle "..." >}} shortcode carries. Written
+  # once here rather than repeated in three content files, where an icon name
+  # is three chances to mistype it and no chance to translate it.
+  [folio.principleIcons]
+    serif = 'feather'
+    hairlines = 'minus'
+    ink = 'layers'

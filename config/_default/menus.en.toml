@@ -1,3 +1,11 @@
+# Navigation labels for this language.
+#
+# Links are menu entries rather than copy because a link is a name plus a
+# destination, and only the name is translatable. `pageRef` lets Hugo resolve
+# the destination in the current language, which is what removed the hardcoded
+# '/fr/posts/' and '/mg/posts/' these files used to repeat -- a translator
+# supplies the words and nothing else.
+
 [[main]]
   name = 'Index'
   pageRef = '/'
@@ -7,3 +15,54 @@
   name = 'Notes'
   pageRef = '/posts'
   weight = 20
+
+# Homepage call-to-action buttons. The first entry by weight renders as the
+# primary button (with the arrow), the rest as secondary.
+[[home]]
+  name = 'Read the notes'
+  pageRef = '/posts'
+  weight = 10
+
+[[home]]
+  name = 'View the tags'
+  pageRef = '/tags'
+  weight = 20
+
+# Footer columns. A parent entry is the column heading and carries no
+# destination of its own; its children are the links.
+[[footer]]
+  identifier = 'folio'
+  name = 'Folio'
+  weight = 10
+
+[[footer]]
+  parent = 'folio'
+  name = 'Index'
+  pageRef = '/'
+  weight = 11
+
+[[footer]]
+  parent = 'folio'
+  name = 'Notes'
+  pageRef = '/posts'
+  weight = 12
+
+[[footer]]
+  identifier = 'system'
+  name = 'System'
+  weight = 20
+
+[[footer]]
+  parent = 'system'
+  name = 'Tags'
+  pageRef = '/tags'
+  weight = 21
+
+# Written in English only and linked from every language on purpose, so this
+# one takes a literal url rather than a pageRef -- pageRef resolves to nothing
+# in a language the page does not exist in.
+[[footer]]
+  parent = 'system'
+  name = 'Socially Engineered'
+  url = '/socially-engineered/'
+  weight = 22

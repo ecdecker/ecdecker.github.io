@@ -142,24 +142,28 @@
   color: var(--color-text-muted);
 }
 
-.hero-headline {
+/* The hero is one Markdown block rendered into .hero-copy, so its parts are
+   addressed as elements rather than as classes an author would have to write:
+   the h1 is the headline, the paragraph the standfirst, the list the feature
+   bullets. See content/_index.md. */
+.hero-copy h1 {
   font-size: clamp(2.5rem, 4.4vw + 0.4rem, 4.25rem);
   line-height: 1.05;
   letter-spacing: -0.025em;
 }
 
-.hero-headline em {
+.hero-copy h1 em {
   font-style: italic;
   color: var(--color-text);
 }
 
-.hero-sub {
+.hero-copy p {
   max-width: 36ch;
   margin-top: 1.25rem;
   color: var(--color-text-muted);
 }
 
-.hero-features {
+.hero-copy ul {
   margin-top: 1.5rem;
 }
 

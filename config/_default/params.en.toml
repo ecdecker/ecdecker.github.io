@@ -1,23 +1,11 @@
-# Site-wide chrome for this language. Hero and principles copy lives in
-# content/_index.md front matter instead — it is page copy, and belongs beside
-# the page. What stays here renders on every page, where a post's .Params are
-# not the home page's.
+# Site-wide chrome for this language: strings that render on every page and
+# are not tied to any one page's copy.
+#
+# Homepage copy is not here. Prose lives as Markdown in content/_index.md,
+# short labels in that file's front matter, and links in menus.en.toml. What
+# is left is the two strings below.
 
 description = 'A quieter way to put things on paper.'
 
 [folio]
   tagline = 'A quiet, paper-thin design system. Made on a desk by a window, not in a war room.'
-
-  [[folio.footerColumns]]
-    title = 'Folio'
-    [[folio.footerColumns.links]]
-      name = 'Index'
-      url = '/'
-    [[folio.footerColumns.links]]
-      name = 'Notes'
-      url = '/posts/'
-  [[folio.footerColumns]]
-    title = 'System'
-    [[folio.footerColumns.links]]
-      name = 'Tags'
-      url = '/tags/'

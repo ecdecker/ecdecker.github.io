@@ -1,16 +1,27 @@
 {{ define "main" }}
   {{- /*
-    Homepage copy comes from content/_index.<lang>.md front matter, falling
-    back to site params for the keys that stay shared (heroImage) or that
-    render site-wide (tagline, footerColumns). Later maps win in `merge`, so
-    the page overrides the site.
+    Homepage copy is authored as Markdown in content/_index.<lang>.md, in
+    `copy` and `principle` shortcodes that store their rendered bodies under
+    canonical keys rather than emitting anything in place. This template pulls
+    those keys out and puts each block where the design wants it.
 
-    .Params lowercases front-matter keys, but it is a maps.Params — its
-    lookups are case-insensitive, and merge preserves the type. So
-    $f.heroImageCaption below still resolves against a `heroImageCaption:`
-    written in the front matter.
+    That split is the point. Prose -- anything with emphasis, a list, a link,
+    or a sentence in it -- lives in Markdown where it can be written like
+    prose. Short labels with no internal markup (volume, heroImageCaption,
+    hint) stay in front matter, and site-wide chrome stays in
+    params.<lang>.toml. Links are menu entries, so a translation supplies the
+    name and Hugo resolves the language-correct URL from pageRef.
+
+    Evaluation order matters: shortcodes run when .Content is rendered, so
+    .Content has to be forced before .Store is read. Reading the store first
+    yields an empty map and a blank homepage, with no error -- exactly the
+    silent-success failure mode this file's history is a long argument against.
   */}}
-  {{- $f := merge (site.Params.folio | default dict) .Params }}
+  {{- $_ := .Content }}
+  {{- $copy := .Store.Get "copy" | default dict }}
+  {{- $principles := .Store.Get "principles" }}
+  {{- $f := .Params }}
+  {{- $site := site.Params.folio | default dict }}
 
   {{/* Hero — the canonical split card: text left, single image right. */}}
   <section class="hero">
@@ -23,32 +34,31 @@
               {{ with $f.volume }}<span class="hero-meta">{{ . }}</span>{{ end }}
             </div>
 
-            <div>
-              <h1 class="hero-headline">{{ with $f.headline }}{{ . | safeHTML }}{{ else }}{{ site.Title }}{{ end }}</h1>
-              {{ with $f.subtitle }}<p class="hero-sub">{{ . }}</p>{{ end }}
-
-              {{- with $f.features }}
-              <ul class="feature-list hero-features">
-                {{- range . }}<li>{{ . }}</li>{{- end }}
-              </ul>
-              {{- end }}
-            </div>
+            {{- /* Markdown's own structure is the structure: the h1 is the
+                   headline, the first paragraph the standfirst, the list the
+                   feature bullets. layout.css targets those elements within
+                   .hero-copy, so there are no classes for an author to
+                   remember or a translator to drop. */}}
+            <div class="hero-copy">{{ index $copy "hero" }}</div>
 
             <div class="hero-cta">
-              {{ with $f.primaryAction }}
-              <a class="btn btn--primary" href="{{ .url }}">
-                {{ .name }}
+              {{- range $i, $e := site.Menus.home }}
+              {{- /* Whitespace is trimmed hard around the label: .btn is an
+                     inline-flex row and a stray leading space becomes a text
+                     node that offsets the centred content. The gap between
+                     label and arrow is the flex `gap`, not markup. */ -}}
+              <a class="btn btn--{{ if eq $i 0 }}primary{{ else }}secondary{{ end }}" href="{{ $e.URL }}">
+                {{- $e.Name -}}
+                {{- if eq $i 0 -}}
                 <svg width="14" height="14" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+                {{- end -}}
               </a>
-              {{ end }}
-              {{ with $f.secondaryAction }}
-              <a class="btn btn--secondary" href="{{ .url }}">{{ .name }}</a>
-              {{ end }}
+              {{- end }}
               {{ with $f.hint }}<span class="hint">{{ . }}</span>{{ end }}
             </div>
           </div>
 
-          {{- with $f.heroImage }}
+          {{- with $site.heroImage }}
           <div class="hero-media" aria-hidden="true">
             {{/* The one above-the-fold image: eager, high priority. Roughly
                  half the card above 880px, full width below. */}}
@@ -70,32 +80,39 @@
     </div>
   </section>
 
-  {{/* Any body copy authored in content/_index.md */}}
-  {{- with .Content }}
+  {{- /* Prose written in the body outside any block still renders, so the
+         homepage stays an ordinary Markdown file you can just write in. The
+         guard tests the plainified text rather than .Content itself: with
+         every block stored rather than emitted, .Content is now whitespace on
+         a page that has no free prose, and `with` would treat that as
+         content and emit an empty section. */}}
+  {{- $body := .Content }}
+  {{- if $body | plainify | strings.TrimSpace }}
   <section class="section-block">
     <div class="container">
-      <div class="section-head">{{ . }}</div>
+      <div class="section-head">{{ $body }}</div>
     </div>
   </section>
   {{- end }}
 
   {{/* Feature grid — hairline-separated cells, no gaps. */}}
-  {{- with $f.principles }}
+  {{- with $principles }}
   <section class="section-block" id="principles">
     <div class="container">
-      <div class="section-head">
-        <h2>{{ $f.principlesTitle | default (T "principles") }}</h2>
-        {{ with $f.principlesIntro }}<p>{{ . }}</p>{{ end }}
-      </div>
+      {{- /* The section head is one Markdown block: h2 plus intro paragraph.
+             The old `default (T "principles")` fallback is gone with it -- a
+             missing block is now a check-i18n.py failure rather than a silent
+             English heading under a French URL. */}}
+      <div class="section-head">{{ index $copy "principles" }}</div>
 
       <div class="feature-grid">
+        {{- $icons := $site.principleIcons | default dict }}
         {{- range $i, $p := . }}
         <article class="feature-item">
           <span class="feature-item-icon" aria-hidden="true">
-            <svg width="16" height="16"><use href="#i-{{ $p.icon | default "minus" }}"/></svg>
+            <svg width="16" height="16"><use href="#i-{{ index $icons $p.key | default "minus" }}"/></svg>
           </span>
-          <h3>{{ $p.title }}</h3>
-          <p>{{ $p.body }}</p>
+          {{ $p.body }}
           <div class="feature-item-meta">
             <span>{{ printf "%02d" (add $i 1) }}</span>
             <span>{{ $p.meta }}</span>

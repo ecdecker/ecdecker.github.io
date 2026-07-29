@@ -1,0 +1,41 @@
+{{- /*
+  A named block of homepage copy, authored as ordinary Markdown:
+
+      {{< copy "hero" >}}
+      A quieter way\
+      to put things on *paper*.
+      =========================
+      {{< /copy >}}
+
+  Renders nothing where it is written. It stores its rendered body under a
+  canonical key, and layouts/home.html pulls that key out and drops it into
+  the slot the design gives it. The translator's file is therefore a flat list
+  of named prose blocks with no structural markup, and the page's layout stays
+  a concern of the theme rather than something three translations can each get
+  subtly wrong.
+
+  The key is canonical across languages -- the same idea as linking translated
+  tag pages by term key. content/_index.fr.md says `copy "hero"` too, which is
+  what lets tools/check-i18n.py name a language that dropped a block.
+
+  .Inner goes through .Page.RenderString rather than `markdownify` so it is
+  rendered as the page, in the page's language, through this site's render
+  hooks -- the link hook in particular, which resolves and publishes bundle
+  resources. `display: block` keeps paragraph wrapping; the inline default
+  would strip the enclosing <p> from a single-paragraph block.
+
+  Note for anyone editing this comment: an escaped shortcode example cannot go
+  in here. Its closing delimiter would end the Go template comment early, and
+  the error names a parse failure rather than the line that caused it.
+*/ -}}
+{{- $key := .Get 0 -}}
+{{- if not $key -}}
+  {{- errorf `copy shortcode in %s needs a block key, as in: copy "hero"` .Page.Path -}}
+{{- end -}}
+{{- /* Auto heading IDs come off. Goldmark gives every heading an anchor, which
+       is right for an article's sections and meaningless here -- these are
+       page furniture, not somewhere to link to. The hero's is actively wrong:
+       the headline is a two-line setext heading, so the slug is built from the
+       second line and reads id="to-put-things-on-paper". */ -}}
+{{- $html := .Inner | .Page.RenderString (dict "display" "block") -}}
+{{- .Page.Store.SetInMap "copy" $key (replaceRE `(<h[1-6])\s+id="[^"]*"` "$1" $html | safeHTML) -}}

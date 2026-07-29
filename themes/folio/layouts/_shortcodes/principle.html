@@ -1,0 +1,42 @@
+{{- /*
+  One cell of the principles grid, authored as ordinary Markdown:
+
+      {{< principle key="serif" meta="Type" >}}
+      ### Set in serif.
+
+      Headlines live in Instrument Serif from 32 to 96 pixels.
+      {{< /principle >}}
+
+  Like the `copy` shortcode this renders nothing in place; it appends to an
+  ordered list that layouts/home.html lays out. Order comes from the order the
+  shortcodes appear in the Markdown, which is the order an author already has
+  in front of them -- there is no `weight` to keep in sync across three files.
+
+  Both parameters are named because Hugo refuses to mix named and positional
+  ones in a single shortcode call, and `meta` has to be named to be optional.
+
+  Two things deliberately do NOT live here:
+
+    icon        Not translatable. An icon name is the same in every language,
+                so repeating it in three files is three chances to mistype it
+                and no chance to translate it. It hangs off the canonical key
+                in params.toml's [folio.principleIcons] instead.
+
+    the number  The 01/02/03 in the corner is positional, so the template
+                derives it from the index rather than asking anyone to keep it
+                in step with the order of the blocks.
+
+  `meta` does stay here: "Type" / "Typographie" / "Endri-tsoratra" is a word
+  that gets translated, so it belongs in the translator's file.
+*/ -}}
+{{- $key := .Get "key" -}}
+{{- if not $key -}}
+  {{- errorf `principle shortcode in %s needs a key, as in: principle key="serif"` .Page.Path -}}
+{{- end -}}
+{{- /* Auto heading IDs come off for the same reason as in copy.html: a grid
+       cell's h3 is not a section anchor. */ -}}
+{{- $html := .Inner | .Page.RenderString (dict "display" "block") -}}
+{{- .Page.Store.Add "principles" (slice (dict
+      "key"  $key
+      "meta" (.Get "meta")
+      "body" (replaceRE `(<h[1-6])\s+id="[^"]*"` "$1" $html | safeHTML))) -}}

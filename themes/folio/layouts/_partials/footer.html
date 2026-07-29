@@ -6,12 +6,17 @@
         {{ with site.Params.folio.tagline }}<p class="foot-brand-line">{{ . }}</p>{{ end }}
       </div>
 
-      {{- range site.Params.folio.footerColumns }}
+      {{- /* Footer columns come from the `footer` menu in menus.<lang>.toml: a
+             top-level entry is the column heading, its children the links.
+             They were nested tables in params.<lang>.toml, which meant every
+             language repeated its own '/fr/tags/' — a URL is not a
+             translation, and pageRef resolves it per language instead. */}}
+      {{- range site.Menus.footer }}
       <div class="foot-col">
-        <h2>{{ .title }}</h2>
+        <h2>{{ .Name }}</h2>
         <ul>
-          {{- range .links }}
-          <li><a href="{{ .url }}">{{ .name }}</a></li>
+          {{- range .Children }}
+          <li><a href="{{ .URL }}">{{ .Name }}</a></li>
           {{- end }}
         </ul>
       </div>
