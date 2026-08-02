@@ -7,6 +7,8 @@ setIn = "voasoratra amin'ny Instrument Serif sy sans an'ny rafitra."
 setInSystem = "voasoratra amin'ny serif sy sans an'ny rafitra."
 colophon = "Taratasy taolana · Ranomainty · Pitik'afo iray."
 showPlate = "Asehoy ny sary"
+sources = "Loharano"
+noTerms = "Tsy mbola misy voambolana navoaka."
 
 # Mombamomba ny rakitra, oh. "(CSV, 2,4 Mo)" — jereo layouts/_markup/render-link.html
 fileMeta = "({{ .kind }}, {{ .size }})"

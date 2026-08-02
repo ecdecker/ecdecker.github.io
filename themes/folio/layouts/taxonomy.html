@@ -1,7 +1,25 @@
 {{ define "main" }}
-  <h1>{{ .Title }}</h1>
-  {{ .Content }}
-  {{ range .Pages }}
-    <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
-  {{ end }}
+  <section class="section-block">
+    <div class="container">
+      <div class="section-head">
+        <h1>{{ .Title }}</h1>
+        {{ with .Content }}{{ . }}{{ end }}
+      </div>
+
+      {{- with .Data.Terms.Alphabetical }}
+      <ol class="taxonomy-list">
+        {{- range . }}
+        <li>
+          <a class="taxonomy-link" href="{{ .Page.RelPermalink }}">
+            <span class="taxonomy-name">{{ .Page.LinkTitle }}</span>
+            <span class="taxonomy-count" aria-hidden="true">{{ printf "%02d" .Count }}</span>
+          </a>
+        </li>
+        {{- end }}
+      </ol>
+      {{- else }}
+      <p class="taxonomy-empty">{{ T "noTerms" }}</p>
+      {{- end }}
+    </div>
+  </section>
 {{ end }}

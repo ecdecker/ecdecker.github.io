@@ -7,11 +7,14 @@
   <li>
     <article class="post-list-item">
       <div class="post-list-meta">
+        {{- if not .Date.IsZero }}
         <time class="label-sm" datetime="{{ .Date | time.Format "2006-01-02" }}">{{ .Date | time.Format ":date_long" }}</time>
+        {{- end }}
       </div>
       <div>
         <h2 class="headline-md"><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
-        {{ with .Description | default .Summary }}<p>{{ . }}</p>{{ end }}
+        {{- $summary := .Description | default (.Summary | plainify) -}}
+        {{ with $summary }}<p>{{ . }}</p>{{ end }}
       </div>
     </article>
   </li>

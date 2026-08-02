@@ -49,9 +49,7 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: rgba(239, 236, 228, 0.82);
-  backdrop-filter: saturate(140%) blur(8px);
-  -webkit-backdrop-filter: saturate(140%) blur(8px);
+  background-color: var(--color-bg);
   border-bottom: var(--border-hairline);
 }
 
@@ -102,7 +100,41 @@
 }
 
 @media (max-width: 720px) {
-  .page-nav { display: none; }
+  .page-header-inner {
+    flex-wrap: wrap;
+    row-gap: var(--space-xs);
+    padding-block: 0.9rem;
+  }
+
+  /* Keep primary navigation available without adding a script-only menu.
+     The language tabs and wordmark share the first row; the two quiet site
+     links get a compact row of their own. */
+  .page-nav {
+    order: 3;
+    width: 100%;
+  }
+
+  .page-nav ul {
+    gap: var(--space-md);
+  }
+
+  .page-nav a {
+    font-size: var(--text-body-sm);
+  }
+
+  .header-actions .tabs {
+    gap: var(--space-sm);
+  }
+}
+
+@media (max-width: 360px) {
+  .header-actions .tabs {
+    gap: var(--space-xs);
+  }
+
+  .header-actions .tab {
+    font-size: var(--text-label-sm);
+  }
 }
 
 /* ---------- Hero ---------- */
@@ -205,9 +237,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.4rem 0.75rem 0.4rem 0.55rem;
-  background-color: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background-color: var(--color-surface);
   border: var(--border-hairline);
   border-radius: var(--radius-full);
   font-size: 0.75rem;

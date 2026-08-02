@@ -7,10 +7,16 @@
       Headlines live in Instrument Serif from 32 to 96 pixels.
       {{< /principle >}}
 
-  Like the `copy` shortcode this renders nothing in place; it appends to an
-  ordered list that layouts/home.html lays out. Order comes from the order the
-  shortcodes appear in the Markdown, which is the order an author already has
-  in front of them -- there is no `weight` to keep in sync across three files.
+  Like the `copy` shortcode this renders nothing in place; it stores the cell
+  by its canonical key for layouts/home.html to place. The layout reads order
+  from the shortcode calls in .RawContent, which is the order an author already
+  has in front of them -- there is no `weight` to keep in sync across three
+  files.
+
+  A keyed map is important during `hugo server`: Page.Store survives a live
+  rebuild, so appending here duplicates all three cells after every edit. A
+  SetInMap is idempotent and lets a long-running authoring session render the
+  same result as a clean production build.
 
   Both parameters are named because Hugo refuses to mix named and positional
   ones in a single shortcode call, and `meta` has to be named to be optional.
@@ -36,7 +42,7 @@
 {{- /* Auto heading IDs come off for the same reason as in copy.html: a grid
        cell's h3 is not a section anchor. */ -}}
 {{- $html := .Inner | .Page.RenderString (dict "display" "block") -}}
-{{- .Page.Store.Add "principles" (slice (dict
+{{- .Page.Store.SetInMap "principles" $key (dict
       "key"  $key
       "meta" (.Get "meta")
-      "body" (replaceRE `(<h[1-6])\s+id="[^"]*"` "$1" $html | safeHTML))) -}}
+      "body" (replaceRE `(<h[1-6])\s+id="[^"]*"` "$1" $html | safeHTML)) -}}

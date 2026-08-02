@@ -7,6 +7,8 @@ setIn = "composé en Instrument Serif et sans système."
 setInSystem = "composé en serif et sans natifs du système."
 colophon = "Papier os · Encre · Une étincelle."
 showPlate = "Afficher la planche"
+sources = "Sources"
+noTerms = "Aucun terme n’a encore été publié."
 
 # Meta de fichier, ex. "(CSV, 2,4 Mo)" — voir layouts/_markup/render-link.html
 fileMeta = "({{ .kind }}, {{ .size }})"

@@ -11,13 +11,25 @@
           <h1>{{ .Title }}</h1>
           {{ with .Description }}<p>{{ . }}</p>{{ end }}
           <div class="row justify-between">
+            {{- if not .Date.IsZero }}
             <time class="label-sm" datetime="{{ .Date | time.Format "2006-01-02" }}">{{ .Date | time.Format ":date_long" }}</time>
+            {{- end }}
             {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
           </div>
         </header>
 
         <div class="post-body">
-          {{ .Content }}
+          {{/*
+            Goldmark turns native Markdown footnotes into a doc-endnotes
+            region, but deliberately leaves its heading to the surrounding
+            theme. Add that heading here so authors only need descriptive
+            footnote keys such as [^ostrom].
+          */}}
+          {{- $content := .Content -}}
+          {{- $sourcesTitle := T "sources" -}}
+          {{- $endnotesStart := printf `<div class="footnotes" role="doc-endnotes" aria-labelledby="sources-title"><hr><h2 class="footnotes-title" id="sources-title">%s</h2>` $sourcesTitle -}}
+          {{- $content = replaceRE `<div class="footnotes" role="doc-endnotes">\s*<hr>` $endnotesStart $content -}}
+          {{ $content | safeHTML }}
         </div>
 
         {{/* The selector lives in the site header, so it is not repeated

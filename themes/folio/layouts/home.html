@@ -19,7 +19,16 @@
   */}}
   {{- $_ := .Content }}
   {{- $copy := .Store.Get "copy" | default dict }}
-  {{- $principles := .Store.Get "principles" }}
+  {{- $principles := .Store.Get "principles" | default dict }}
+  {{- /* Principle bodies live in an idempotent map so live rebuilds cannot
+         duplicate them. Recover their authored order from the shortcode calls
+         themselves; order is presentation here because the cells are numbered
+         by position. tools/check-i18n.py validates this same source order in
+         every language. */}}
+  {{- $principleKeys := slice }}
+  {{- range findRESubmatch `\{\{<\s*principle\s+[^>]*key="([^"]+)"[^>]*>\}\}` .RawContent }}
+    {{- $principleKeys = $principleKeys | append (index . 1) }}
+  {{- end }}
   {{- $f := .Params }}
   {{- $site := site.Params.folio | default dict }}
 
@@ -96,7 +105,7 @@
   {{- end }}
 
   {{/* Feature grid — hairline-separated cells, no gaps. */}}
-  {{- with $principles }}
+  {{- with $principleKeys }}
   <section class="section-block" id="principles">
     <div class="container">
       {{- /* The section head is one Markdown block: h2 plus intro paragraph.
@@ -107,7 +116,9 @@
 
       <div class="feature-grid">
         {{- $icons := $site.principleIcons | default dict }}
-        {{- range $i, $p := . }}
+        {{- range $i, $key := . }}
+        {{- with index $principles $key }}
+        {{- $p := . }}
         <article class="feature-item">
           <span class="feature-item-icon" aria-hidden="true">
             <svg width="16" height="16"><use href="#i-{{ index $icons $p.key | default "minus" }}"/></svg>
@@ -118,6 +129,7 @@
             <span>{{ $p.meta }}</span>
           </div>
         </article>
+        {{- end }}
         {{- end }}
       </div>
     </div>

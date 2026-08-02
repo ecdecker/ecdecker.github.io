@@ -196,7 +196,7 @@ Text uses `on-surface` (`#13120f`, Ink) for headlines, primary copy, brand mark,
 
 There is no accent color. There is no gradient. There is no tinted hover state. If a future component needs to assert importance, it should do so by becoming more typographic, not more colorful. The system reserves a single `error` token (`#8a2a1f`) for destructive states only, and even there it is used as a text color, not a surface fill.
 
-Contrast targets: Ink on Bone reaches AA Large at all display sizes and AA Normal at body sizes. Stone on Bone reaches AA Large only and must never be used for paragraph-length essential content — keep Stone for meta, captions, helper text, and the second-line subtitles under headlines.
+Contrast targets: Ink on Bone reaches AAA at body sizes. Stone on Bone is 4.59:1 and reaches AA Normal; keep it for body copy, meta, captions, helper text, and the second-line subtitles under headlines. Snow remains the preferred long-form reading surface, where Stone reaches 5.42:1.
 
 ## Typography
 

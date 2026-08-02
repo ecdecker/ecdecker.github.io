@@ -9,10 +9,10 @@
 /* ---------- Skip link ---------- */
 
 .skip-link {
-  position: absolute;
+  position: fixed;
   left: var(--space-sm);
   top: var(--space-sm);
-  z-index: 10;
+  z-index: 20;
   transform: translateY(-200%);
   transition: transform var(--dur-base) var(--ease-quiet);
 }
@@ -42,11 +42,11 @@
 }
 
 .post-list-item h2 a {
-  border-bottom: 0;
+  border-bottom-color: transparent;
 }
 
-.post-list-item:hover h2 {
-  font-style: italic;
+.post-list-item h2 a:hover {
+  border-bottom-color: var(--color-text);
 }
 
 .post-list-item p {
@@ -181,6 +181,36 @@
   font-size: var(--text-body-sm);
 }
 
+.post-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-block: var(--space-lg);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+}
+
+.post-body th,
+.post-body td {
+  padding: var(--space-xs);
+  border-bottom: var(--border-hairline);
+  text-align: left;
+  vertical-align: top;
+}
+
+.post-body th {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.post-body th:not(:first-child),
+.post-body td:not(:first-child) {
+  text-align: right;
+}
+
+.post-body td {
+  overflow-wrap: anywhere;
+}
+
 .post-body pre {
   overflow-x: auto;
   padding: var(--space-md);
@@ -203,6 +233,69 @@
   color: var(--color-text);
 }
 
+/* ---------- Sources / native Markdown footnotes ---------- */
+
+.post-body sup[id^="fnref"] {
+  font-size: 0.75em;
+  line-height: 0;
+}
+
+.post-body .footnote-ref {
+  padding-inline: 0.08em;
+  border-bottom: 0;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.post-body .footnotes {
+  margin-top: var(--space-xl);
+  overflow-wrap: anywhere;
+  color: var(--color-text-muted);
+  font-size: var(--text-body-sm);
+}
+
+.post-body .footnotes > hr {
+  margin: 0 0 var(--space-lg);
+}
+
+.post-body .footnotes-title {
+  font-size: var(--text-headline-md);
+}
+
+.post-body .footnotes ol {
+  margin: var(--space-md) 0 0;
+  padding-left: 1.5rem;
+}
+
+.post-body .footnotes li {
+  padding-left: var(--space-3xs);
+}
+
+.post-body .footnotes li + li {
+  margin-top: var(--space-sm);
+}
+
+.post-body .footnotes li::marker {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.post-body .footnotes p {
+  color: var(--color-text-muted);
+  font-size: inherit;
+}
+
+.post-body .footnote-backref {
+  margin-left: var(--space-3xs);
+  border-bottom: 0;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.post-body .footnote-backref + .footnote-backref {
+  margin-left: var(--space-3xs);
+}
+
 /* ---------- Taxonomy terms ---------- */
 
 .terms {
@@ -210,4 +303,52 @@
   align-items: center;
   gap: var(--space-2xs);
   flex-wrap: wrap;
+}
+
+.taxonomy-list {
+  max-width: 56rem;
+  margin: 0;
+  padding: 0;
+  border-top: var(--border-hairline);
+  list-style: none;
+}
+
+.taxonomy-list li {
+  border-bottom: var(--border-hairline);
+}
+
+.taxonomy-link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-block: var(--space-md);
+  border-bottom: 0;
+}
+
+.taxonomy-link:hover .taxonomy-name {
+  border-bottom-color: var(--color-text);
+}
+
+.taxonomy-name {
+  border-bottom: 1px solid transparent;
+  font-family: var(--font-display);
+  font-size: var(--text-headline-md);
+  line-height: var(--leading-headline);
+  letter-spacing: var(--tracking-tight);
+  transition: border-color var(--dur-base) var(--ease-quiet);
+}
+
+.taxonomy-count {
+  flex: none;
+  color: var(--color-text-muted);
+  font-size: var(--text-label-sm);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-wide);
+}
+
+.taxonomy-empty {
+  max-width: 56rem;
+  padding-block: var(--space-md);
+  border-block: var(--border-hairline);
 }

@@ -38,15 +38,15 @@
   "fonts": [
     {
       "name": "Instrument Serif",
-      "provider": "Google Fonts",
+      "provider": "Self-hosted",
       "usage": "Display and editorial headlines — high contrast serif used at large sizes for marquee statements.",
-      "cssImport": "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
+      "cssImport": ""
     },
     {
-      "name": "Inter",
-      "provider": "Google Fonts",
-      "usage": "Body copy, UI labels, buttons, inputs, and all small text. Modern grotesque tuned for legibility.",
-      "cssImport": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      "name": "System UI",
+      "provider": "Reader's device",
+      "usage": "Body copy, UI labels, buttons, inputs, and all small text. Native UI faces avoid another font request and feel at home on the reader's platform.",
+      "cssImport": ""
     }
   ],
   "iconPack": {
