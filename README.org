@@ -1,0 +1,461 @@
+#+TITLE: Authoring posts for Folio
+#+SUBTITLE: Everything you need is a Markdown file. Nothing else.
+#+OPTIONS: toc:2 num:nil
+
+This is the author's guide. It covers one job: *writing a new post.* If you
+follow it you will never open a template, a stylesheet, or a config file.
+
+The rule the whole site is built around: *you write Markdown, the theme does
+the rest.* Images, downloads, footnotes, responsive formats, file-size
+annotations and lazy loading are all driven by ordinary Markdown syntax.
+There is no shortcode you need for a post, and no HTML you are allowed to
+write.
+
+* Quick start
+
+1. Pick a slug, e.g. =metered-reading=.
+2. Create the file — by hand is the normal way, because the front matter you
+   actually want is three lines (see [[#front-matter][Front matter]]):
+   #+begin_src sh
+   # prose-only post
+   $EDITOR content/posts/metered-reading.md
+
+   # page bundle — a post carrying its own images or downloads
+   mkdir -p content/posts/metered-reading
+   $EDITOR content/posts/metered-reading/index.md
+   #+end_src
+   =hugo new posts/metered-reading.md= also works and scaffolds from
+   [[file:archetypes/default.md][archetypes/default.md]], but it emits TOML front matter with =draft = true=,
+   which you will rewrite as YAML anyway. =hugo new= does not help with a
+   bundle; make the directory yourself.
+3. Write the body in Markdown.
+4. Preview:
+   #+begin_src sh
+   hugo server -D          # -D includes drafts; http://localhost:1313/
+   #+end_src
+5. Remove =draft: true= when it is ready.
+
+* Where the file goes
+
+Two shapes, and the choice is decided by one question: *does this post carry
+its own files?*
+
+| Shape           | Path                                  | Use it when                                                                                 |
+|-----------------+---------------------------------------+---------------------------------------------------------------------------------------------|
+| Single file     | =content/posts/<slug>.md=             | Prose only, or images reused from =assets/images/=                                          |
+| Page bundle     | =content/posts/<slug>/index.md=       | The post has its own images, datasets or PDFs. Put them next to =index.md= as sibling files |
+
+A page bundle looks like this, and is the normal shape for anything with
+plates or downloads:
+
+#+begin_example
+content/posts/metered-reading/
+├── index.md
+├── workspace.png
+├── survey-2026.csv
+└── methodology.pdf
+#+end_example
+
+Working examples to copy from: [[file:content/posts/field-notes/index.md][field-notes]] (images) and
+[[file:content/posts/linking-to-files/index.md][linking-to-files]] (downloads). A prose-only post: [[file:content/posts/hairlines.md][hairlines.md]].
+
+* Front matter
+:PROPERTIES:
+:CUSTOM_ID: front-matter
+:END:
+
+YAML between =---= fences, as in every existing post. (The archetype emits
+TOML =+++=; both work — match the neighbours and use YAML.) Add =draft: true=
+while you are still writing; a post without the key is live the moment it is
+built.
+
+#+begin_src yaml
+---
+title: "Reading on a metered connection"
+description: "What a page costs a reader who pays by the megabyte, and how to spend less."
+date: 2026-08-04
+tags: ["method", "color"]
+---
+#+end_src
+
+| Key           | Required | What it does                                                                                                            |
+|---------------+----------+-------------------------------------------------------------------------------------------------------------------------|
+| =title=       | yes      | The =<h1>=. Do *not* repeat it as a =#= heading in the body — [[file:themes/folio/layouts/page.html][page.html]] renders it              |
+| =description= | strongly | Standfirst under the title, the =<meta name="description">=, *and* the summary in post lists ([[file:themes/folio/layouts/_partials/post-list.html][post-list.html]]) |
+| =date=        | yes      | Shown in the header and in lists; sorts every index. =YYYY-MM-DD=                                                       |
+| =draft=       | no       | =true= keeps it out of the build unless you pass =-D= / =--buildDrafts=                                                 |
+| =tags=        | no       | Renders as pills under the header ([[file:themes/folio/layouts/_partials/terms.html][terms.html]]) and builds =/tags/<term>/= automatically         |
+| =categories=  | no       | A working taxonomy — it builds =/categories/<term>/= pages — but is *not* shown on the post. Prefer =tags=              |
+| =aliases=     | no       | Old URLs that should redirect here. A YAML list of paths                                                                |
+| =slug=        | no       | Override the URL segment when it should differ from the filename or bundle directory                                    |
+| =images=      | no       | Per-post plate loading — see [[#on-demand][On-demand plates]]                                                                     |
+
+Do not invent other keys: nothing else is read by the templates.
+
+#+begin_src yaml
+aliases:
+  - /old-slug/
+  - /2026/07/older-slug/
+slug: "what-a-plate-weighs"
+#+end_src
+
+Two notes on those:
+
+- On a *page bundle*, =slug= renames the published URL only. The directory
+  name stays what it is, sibling files still resolve by filename, and their
+  published URLs follow the new slug. Nothing in the body needs to change.
+- =images= here is a *map*, and it is the one key that collides with a Hugo
+  convention: elsewhere in the Hugo world =images:= is a list of OpenGraph
+  image paths. This theme does not read that form. Writing
+  =images: ["plate.png"]= is silently inert; the only sub-key that does
+  anything is =onDemand=.
+
+Tags need no setup. Writing =tags: ["method"]= creates =/tags/method/=. A term
+page only needs a file of its own if you want to rename or re-slug it in
+another language — see [[file:content/tags/color/_index.fr.md][content/tags/color/_index.fr.md]].
+
+* The body: what Markdown gets you
+
+Everything below is plain CommonMark + GFM, rendered by Goldmark. Everything
+you *need* is in this section's prose; the "handled by" column is a pointer
+for the curious, not required reading.
+
+| Feature              | You write                              | Handled by                                                    |
+|----------------------+----------------------------------------+-----------------------------------------------------------------|
+| Section headings     | =## Heading= (start at =##=)           | [[file:themes/folio/layouts/page.html][page.html]] — auto anchor IDs, see [[#headings][Headings]]                |
+| Emphasis             | =*italic*=, =**bold**=, =~~strike~~=   | [[file:themes/folio/assets/css/base.css][base.css]]                                            |
+| Inline code          | =`like this`=                          | [[file:themes/folio/assets/css/publication.css][publication.css]]                                     |
+| Code blocks          | Fenced, see [[#code][Code blocks]]         | Chroma (Hugo built-in) + [[file:themes/folio/assets/css/publication.css][publication.css]]                  |
+| Blockquote           | =/> quoted line/= (leading =>=)        | [[file:themes/folio/assets/css/publication.css][publication.css]] — set in the display serif           |
+| Lists                | =-= bullets, =1.= ordered              | [[file:themes/folio/assets/css/base.css][base.css]]                                            |
+| Task lists           | =- [ ]= / =- [x]=                      | Goldmark GFM                                                    |
+| Tables               | GFM pipe tables, see [[#tables][Tables]]    | [[file:themes/folio/assets/css/publication.css][publication.css]] — col 1 left, all others right       |
+| Definition lists     | =Term= / =: definition=                | Goldmark                                                        |
+| Hard line break      | Trailing =\= or two trailing spaces    | Goldmark — both emit =<br>=; needs a line after it              |
+| Images / plates      | =![alt](file.png "caption")=           | [[file:themes/folio/layouts/_markup/render-image.html][render-image.html]] → [[file:themes/folio/layouts/_partials/image.html][image.html]]                        |
+| Links                | =[text](url)=                          | [[file:themes/folio/layouts/_markup/render-link.html][render-link.html]]                                    |
+| File downloads       | =[text](survey.csv)=                   | [[file:themes/folio/layouts/_markup/render-link.html][render-link.html]] — appends =(CSV, 4.0 KB)=          |
+| Footnotes / citations| =[^key]= + =[^key]: source=            | [[file:themes/folio/layouts/page.html][page.html]] — collected under a *Sources* heading       |
+| Autolinks            | A bare =https://…= URL                 | Goldmark GFM                                                    |
+
+** Headings and anchors
+:PROPERTIES:
+:CUSTOM_ID: headings
+:END:
+
+Start at =##=. =#= is reserved for the title, which [[file:themes/folio/layouts/page.html][page.html]] renders from
+front matter.
+
+Every heading in the body gets an anchor ID automatically, so you can link to
+a section from anywhere. The rule is GitHub's: lowercase, *delete* punctuation
+outright, then turn each remaining space into a hyphen. Deleting rather than
+substituting is the part that surprises people — a dropped word leaves the
+spaces on both sides of it, so you get a double hyphen.
+
+| Heading                          | Anchor                           |
+|----------------------------------+------------------------------------|
+| =## The rule=                    | =#the-rule=                      |
+| =## Terms, since they are terse= | =#terms-since-they-are-terse=    |
+| =## Cost & weight — in 2026=     | =#cost--weight--in-2026=         |
+| =## 3 plates (and a footnote)=   | =#3-plates-and-a-footnote=       |
+| =## Trailing punctuation!=       | =#trailing-punctuation=          |
+
+When in doubt, build and read the ID out of the HTML rather than guessing.
+
+** Images
+:PROPERTIES:
+:CUSTOM_ID: images
+:END:
+
+Write a normal Markdown image. That is the whole interface.
+
+#+begin_src markdown
+![A workspace, overhead](workspace.png "Plate I — the working surface")
+#+end_src
+
+- *Alt text* is the first bracket. Write real alt text; use =![]()= only for a
+  purely decorative plate.
+- *The quoted title becomes the caption*, rendered beneath the frame as a
+  =<figcaption>=. Captions are never overlaid on the image.
+- *Where the file is looked up*: page-bundle sibling first, then
+  =assets/images/=. So =workspace.png= finds the sibling in your bundle, and
+  =images/paper-curves.png= finds the shared asset.
+- *What you get for free*: an AVIF source with a WebP fallback, a
+  320/480/640/800/1200 width ladder capped to the source width, correct
+  =width=/=height=, and lazy loading on everything except the first image
+  (which is loaded eagerly because it is the likely LCP element).
+
+Never write an =<img>= tag or a =<figure>=. Raw HTML is stripped from the
+output (see [[#not-supported][Not supported]]).
+
+*Source files.* PNG and JPEG are the formats in use; author at *1200px wide or
+more*, since the ladder is capped to the source width and a 640px source
+silently yields a two-rung ladder instead of five. Do not pre-optimize or
+pre-resize — ship the largest clean original you have and let the pipeline
+derive the rest.
+
+*Do not use SVG for a plate.* An =![alt](diagram.svg)= does not degrade
+gracefully — it *fails the build* with =resource "diagram.svg" of media type
+"image/svg+xml" does not support this method=, because the width ladder cannot
+be derived from a vector. Export diagrams to PNG.
+
+*After you add new images*, regenerate the per-image quality table so each
+plate is encoded at the cheapest quality that still holds SSIM ≥ 0.92:
+
+#+begin_src sh
+python3 tools/measure-image-quality.py --write-data
+#+end_src
+
+It scans =assets/= and =content/= on its own and rewrites
+[[file:data/imagequality.json][data/imagequality.json]]. It needs =hugo= and ImageMagick (=convert=, =compare=) on
+PATH. Skipping it is not fatal — an unmeasured image falls back to the global
+=quality = 50= in [[file:config/_default/params.toml][config/_default/params.toml]] — but it costs bytes.
+
+*** On-demand plates
+:PROPERTIES:
+:CUSTOM_ID: on-demand
+:END:
+
+For an image-heavy post aimed at readers on metered data, every plate after
+the first can be collapsed behind a click, so nothing below the fold is
+transferred at all:
+
+#+begin_src yaml
+images:
+  onDemand: true
+#+end_src
+
+This is still JavaScript-free: each deferred plate is wrapped in a native
+=<details>=/=<summary>=. A closed =<details>= is =display: none=, and every
+major browser declines to fetch an image inside one — which is why this is the
+only reliable way to guarantee a below-the-fold plate costs nothing until it is
+asked for. The first image is never deferred.
+
+One authoring consequence: *the caption becomes the disclosure label.* The
+=<summary>= text is your quoted title, falling back to the alt text, falling
+back to "Show plate". So on an on-demand post write captions that read as
+something you would click — "Plate II — raking light" is fine, a full sentence
+is not.
+
+Off by default; the trade is one click per plate.
+
+** Links and downloads
+
+Ordinary Markdown links, in every case:
+
+#+begin_src markdown
+[an internal page](/posts/one-ink/)
+[a sibling post](../field-notes/)
+[a section on this page](#the-rule)
+[an external source](https://gohugo.io/)
+[a mailbox](mailto:notes@example.org)
+[the field line](tel:+261201234567)
+#+end_src
+
+A link whose destination is a *file in your page bundle* is special, and this
+is the only way to publish that file at all:
+
+#+begin_src markdown
+[Download the dataset](survey-2026.csv)
+[Read the methodology](methodology.pdf)
+[the methodology, page 3](methodology.pdf#page=3)
+#+end_src
+
+[[file:themes/folio/layouts/_markup/render-link.html][render-link.html]] resolves the file, publishes it, and appends its format and
+weight after the link text — "Download the dataset (CSV, 4.0 KB)" — so a
+reader paying by the megabyte can decide before tapping. The unit scales with
+the file: =209 B=, =4.0 KB=, =1.8 MB=. Query strings and fragments are
+preserved. Do not hand-write a =/posts/slug/file.csv= path: a file nothing
+links to is never published and the URL will 404.
+
+** Footnotes and citations
+:PROPERTIES:
+:CUSTOM_ID: footnotes
+:END:
+
+Native Markdown footnotes are the citation mechanism. Use descriptive keys;
+readers only ever see sequential numbers.
+
+#+begin_src markdown
+Community-managed systems can outperform centralized control.[^ostrom]
+The same source can be cited again.[^ostrom]
+
+[^ostrom]: Elinor Ostrom, *Governing the Commons* (1990), pp. 88–102.
+[^itu]: ITU, [Affordability of ICT services](https://www.itu.int/), 2025.
+#+end_src
+
+Definitions can go anywhere in the file; convention here is to put them at the
+bottom, or directly under the paragraph that cites them. They are collected
+into an endnotes block under a *Sources* heading, added by [[file:themes/folio/layouts/page.html][page.html]] and
+translated via [[file:themes/folio/i18n/en.toml][i18n/en.toml]]. A definition may contain links and emphasis.
+
+Worked example: [[file:content/posts/endnotes-test.md][content/posts/endnotes-test.md]].
+
+** Code blocks
+:PROPERTIES:
+:CUSTOM_ID: code
+:END:
+
+Fenced blocks, with or without a language:
+
+#+begin_example
+```python
+def f(x):
+    return x + 1
+```
+#+end_example
+
+A language tag turns on Chroma syntax highlighting, which ships its own inline
+colours (a dark scheme). A fence with *no* language keeps the paper-toned
+=pre= block from [[file:themes/folio/assets/css/publication.css][publication.css]], which is what the rest of the design looks
+like. For short shell or config snippets, prefer the untagged fence.
+
+Long lines scroll horizontally inside the block; they never widen the column.
+
+** Definition lists
+
+Goldmark's definition-list extension is enabled. The term goes on its own
+line, each definition on a following line starting with =:=. No blank line
+between term and definition; a blank line between entries is optional.
+Definitions take inline markup.
+
+#+begin_src markdown
+Bone
+: The only page colour in the system.
+
+Hairline
+: A single **Mist** pixel. See [one ink](/posts/one-ink/).
+: A second definition for the same term is allowed.
+#+end_src
+
+** Tables
+:PROPERTIES:
+:CUSTOM_ID: tables
+:END:
+
+GFM pipe tables. The stylesheet assumes the first column is a label and the
+rest are figures: *column one is left-aligned and every other column is
+right-aligned*, regardless of the alignment row you write.
+
+#+begin_src markdown
+| Connection | Cost | Share |
+| ---------- | ---- | ----- |
+| 3G         | 1.20 | 61%   |
+#+end_src
+
+* Not supported — on purpose
+:PROPERTIES:
+:CUSTOM_ID: not-supported
+:END:
+
+| Thing                   | What happens                                                                     |
+|-------------------------+------------------------------------------------------------------------------------|
+| Raw HTML in Markdown    | Silently dropped, replaced by =<!-- raw HTML omitted -->=. Use Markdown instead     |
+| JavaScript              | The site ships none, by design. There is no way to add any from a content file      |
+| Custom CSS per post     | Not available. If a post needs a treatment the system lacks, that is a theme change  |
+| =<img>=, =<figure>=     | See raw HTML. Use =![alt](file.png "caption")=                                       |
+| Shortcodes in a post    | There are exactly two, both homepage-only — see below                               |
+
+* Shortcodes
+
+For completeness. *Neither is used in a post*; both exist only so the
+homepage's copy can be written as Markdown rather than as config strings. You
+will only touch them if you are editing =content/_index.md=.
+
+| Shortcode     | Where it is valid                | What it does                                                                          | File                                       |
+|---------------+----------------------------------+-----------------------------------------------------------------------------------------+--------------------------------------------|
+| ={{< copy "key" >}}…{{< /copy >}}= | =content/_index.<lang>.md= only | Stores a named block of homepage prose under a canonical key; renders nothing in place. Keys in use: =hero=, =principles= | [[file:themes/folio/layouts/_shortcodes/copy.html][copy.html]] |
+| ={{< principle key="…" meta="…" >}}…{{< /principle >}}= | =content/_index.<lang>.md= only | One cell of the homepage principles grid. Numbering and icon come from position and [[file:config/_default/params.toml][params.toml]], not from you | [[file:themes/folio/layouts/_shortcodes/principle.html][principle.html]] |
+
+If you add or remove a block key in one language, do it in all three, then run
+=python3 tools/check-i18n.py=.
+
+* Translations
+
+Optional for posts. To translate one, add a sibling file with the language
+code before the extension:
+
+#+begin_example
+content/posts/one-ink.md      # English
+content/posts/one-ink.fr.md   # French
+#+end_example
+
+Languages are =en= (default, no subdirectory), =mg=, =fr= — see
+[[file:config/_default/languages.toml][config/_default/languages.toml]]. Front matter and body are both translated;
+=date= and =tags= should match. Hugo links the versions automatically and the
+header's language selector picks them up.
+
+Site chrome (menus, taglines, the homepage) has a completeness check that
+posts do not: =python3 tools/check-i18n.py=.
+
+* Preview and check
+
+#+begin_src sh
+hugo server -D                    # drafts included, live reload, :1313
+hugo --buildDrafts                # one-off build into public/
+hugo --printPathWarnings          # duplicate target paths, conflicting slugs
+python3 tools/check-i18n.py       # only if you touched the homepage or config
+#+end_src
+
+A plain =hugo= is quiet by design: it exits non-zero and prints an =ERROR= line
+for anything that actually broke — a missing bundle file, an SVG plate, a
+malformed shortcode. That, plus =--printPathWarnings=, is the whole check. An
+existing =WARN … /image-quality.html is unused= from =--printUnusedTemplates=
+is pre-existing and unrelated to your post.
+
+Before publishing:
+
+- [ ] =draft: true= removed
+- [ ] =description= reads well on its own — it is the list summary and the meta description
+- [ ] Every image has real alt text
+- [ ] Every *non-image* bundle file (CSV, PDF) is linked from the prose — an unlinked one is never published. Plates referenced with =![…]()= are already covered
+- [ ] =tools/measure-image-quality.py --write-data= run if you added images, *and the resulting =data/imagequality.json= committed alongside the post*
+- [ ] =hugo= exits 0 with no =ERROR= lines, and the post renders at =/posts/<slug>/=
+
+* Full example
+
+A page bundle at =content/posts/metered-reading/index.md=, with
+=workspace.png= and =survey-2026.csv= as siblings, exercising every feature:
+
+#+begin_src markdown
+---
+title: "Reading on a metered connection"
+description: "What a page costs a reader who pays by the megabyte."
+date: 2026-08-04
+tags: ["method"]
+---
+
+A page asks its reader for bandwidth before it asks for attention.[^itu]
+This note measures that ask, and what **shrinking it** actually costs.
+
+## What a plate costs
+
+![A workspace, overhead](workspace.png "Plate I — the working surface")
+
+Prose continues between plates. The image above was written as plain
+Markdown; the format negotiation and width ladder are the theme's problem.
+
+> The hairline is the system's voice; thickening it is incorrect.
+
+## The numbers
+
+| Connection | Median page | Share of readers |
+| ---------- | ----------- | ---------------- |
+| 3G         | 4.2 s       | 61%              |
+| 4G         | 1.1 s       | 39%              |
+
+Regenerate the table after adding images:
+
+```sh
+python3 tools/measure-image-quality.py --write-data
+```
+
+- [x] Measured on a throttled profile
+- [ ] Re-measured after the font subset
+
+[Download the dataset](survey-2026.csv) — 120 responses, one row each.
+See also [one ink, no accents](/posts/one-ink/) and the
+[Hugo render hook docs](https://gohugo.io/render-hooks/links/).
+
+[^itu]: ITU, *Affordability of ICT services* (2025).
+#+end_src

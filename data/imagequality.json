@@ -37,6 +37,18 @@
       "hash": "7201c5b349c1f689c3fa5b5325ab5d12ad3c965018088a2597cdde9fc2733439",
       "quality": 50,
       "ssim": 0.93315
+    },
+    "posts/plate-weights/plate-ladder.png": {
+      "bytes": 1450,
+      "hash": "76c6156258806b47c7c5335301d60d311d10cc0c93c9503a49211e8ed69ba78a",
+      "quality": 25,
+      "ssim": 0.99612
+    },
+    "posts/plate-weights/quality-curve.png": {
+      "bytes": 3179,
+      "hash": "e5508d76bb7861e931e7e8530da3b3d3df96212c9d1b395aa84dbf0007295ae6",
+      "quality": 25,
+      "ssim": 0.99433
     }
   },
   "qualities": [

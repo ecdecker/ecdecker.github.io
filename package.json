@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "capture:load": "node tools/capture-load-states.mjs"
+    "capture:load": "node tools/capture-load-states.mjs",
+    "sync": "bash tools/sync-cloudflare.sh"
   },
   "devDependencies": {
     "playwright": "1.62.0"
