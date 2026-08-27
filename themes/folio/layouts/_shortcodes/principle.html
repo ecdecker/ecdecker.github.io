@@ -13,7 +13,7 @@
   has in front of them -- there is no `weight` to keep in sync across three
   files.
 
-  A keyed map is important during `hugo server`: Page.Store survives a live
+  A keyed map is important during the local preview: Page.Store survives a live
   rebuild, so appending here duplicates all three cells after every edit. A
   SetInMap is idempotent and lets a long-running authoring session render the
   same result as a clean production build.

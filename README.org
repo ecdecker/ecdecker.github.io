@@ -1,461 +1,366 @@
-#+TITLE: Authoring posts for Folio
-#+SUBTITLE: Everything you need is a Markdown file. Nothing else.
+#+TITLE: Managing Emily's website
+#+SUBTITLE: A practical guide to writing, updating, and publishing the site
 #+OPTIONS: toc:2 num:nil
 
-This is the author's guide. It covers one job: *writing a new post.* If you
-follow it you will never open a template, a stylesheet, or a config file.
+You can manage the day-to-day content of this website from GitHub. You do not
+need to edit the design or understand how the site is built.
 
-The rule the whole site is built around: *you write Markdown, the theme does
-the rest.* Images, downloads, footnotes, responsive formats, file-size
-annotations and lazy loading are all driven by ordinary Markdown syntax.
-There is no shortcode you need for a post, and no HTML you are allowed to
-write.
+The important folders are:
 
-* Quick start
+- =content/posts/= — articles
+- =content/_index.md= — the English home page
+- =content/_index.fr.md= — the French home page
+- =content/_index.mg.md= — the Malagasy home page
 
-1. Pick a slug, e.g. =metered-reading=.
-2. Create the file — by hand is the normal way, because the front matter you
-   actually want is three lines (see [[#front-matter][Front matter]]):
-   #+begin_src sh
-   # prose-only post
-   $EDITOR content/posts/metered-reading.md
+Avoid changing =themes/=, =layouts/=, =config/=, =tools/=, =data/=,
+=resources/=, or =public/=. Those folders run the site rather than hold its
+everyday content.
 
-   # page bundle — a post carrying its own images or downloads
-   mkdir -p content/posts/metered-reading
-   $EDITOR content/posts/metered-reading/index.md
+* How publishing works
+
+Each saved change in GitHub is called a /commit/. A commit to the =main=
+branch automatically rebuilds and publishes the website. This normally takes
+a few minutes.
+
+To see whether publishing succeeded, open the repository's *Actions* tab in
+GitHub. A green check means the site published successfully. A red cross means
+the change needs attention; see [[#common-problems][Common problems]].
+
+GitHub keeps the history of every commit, so an earlier version can be
+recovered if necessary.
+
+* Edit an existing article
+
+1. In GitHub, open =content/posts/=.
+2. Open the article's =.md= file. Some articles are folders; for those, open
+   the folder and then open =index.md=.
+3. Select the pencil icon, *Edit this file*.
+4. Make the change. Leave the information between the two =---= lines at the
+   top intact unless you intend to change it.
+5. Select *Commit changes*.
+6. Enter a short description, such as “Correct opening paragraph.”
+7. Commit directly to =main= if GitHub offers that choice.
+8. Wait for the publishing action to finish, then check the live page.
+
+* Create a new article
+
+Use a folder for every new article. This keeps its writing, images, and
+downloads together.
+
+** 1. Choose its name
+
+Choose a short name made of lowercase words separated by hyphens. This name
+becomes part of the page's web address.
+
+Good: =garden-field-notes=
+
+Avoid: =Garden Field Notes=, =garden_field_notes=, or a name containing a
+date. Do not rename the folder after the article has been published, because
+that would change its web address.
+
+** 2. Create the article file
+
+1. In GitHub, select *Add file*, then *Create new file*.
+2. In the filename box, enter:
+
+   #+begin_example
+   content/posts/garden-field-notes/index.md
+   #+end_example
+
+   Replace =garden-field-notes= with your chosen name.
+3. Paste this starting point:
+
+   #+begin_src markdown
+   ---
+   title: "Garden field notes"
+   description: "A one- or two-sentence summary of the article."
+   date: 2026-08-27
+   draft: true
+   tags: ["field notes"]
+   ---
+
+   Write the opening paragraph here.
+
+   ## First section
+
+   Continue the article here.
    #+end_src
-   =hugo new posts/metered-reading.md= also works and scaffolds from
-   [[file:archetypes/default.md][archetypes/default.md]], but it emits TOML front matter with =draft = true=,
-   which you will rewrite as YAML anyway. =hugo new= does not help with a
-   bundle; make the directory yourself.
-3. Write the body in Markdown.
-4. Preview:
-   #+begin_src sh
-   hugo server -D          # -D includes drafts; http://localhost:1313/
+
+4. Change the title, summary, date, tags, and article text.
+5. Commit the new file.
+
+The =draft: true= line keeps the article off the public site while you prepare
+it. Remove that line when you are ready to publish.
+
+** 3. Understand the information at the top
+
+The lines between =---= and =---= control how the article appears:
+
+| Line          | What to enter                                                     |
+|---------------+-------------------------------------------------------------------|
+| =title=       | The article title                                                   |
+| =description= | A short summary used on article lists and by search engines         |
+| =date=        | The publication date in =YYYY-MM-DD= form                            |
+| =draft=       | =true= while unpublished; remove the entire line to publish          |
+| =tags=        | Optional subjects, such as =tags: ["field notes", "research"]=      |
+
+Keep the quotation marks around titles and descriptions. Do not add a =#=
+heading for the title in the article itself; the site adds the title for you.
+Start sections with =##=.
+
+* Add images
+
+Commit the original image directly to the article's folder. Do not resize or
+compress it first; the site automatically creates smaller AVIF and WebP files
+for different screen sizes when it publishes.
+
+Use a clean JPEG or PNG that is at least 1,200 pixels wide when possible. Do
+not use SVG files for article images. Give files simple lowercase names with
+hyphens, such as =garden-tools.jpg=.
+
+** Upload an image in GitHub
+
+1. Open the article's folder, for example
+   =content/posts/garden-field-notes/=.
+2. Select *Add file*, then *Upload files*.
+3. Choose the original JPEG or PNG.
+4. Commit the upload.
+5. Edit =index.md= and place the image where it should appear:
+
+   #+begin_src markdown
+   ![A wooden table holding three garden tools](garden-tools.jpg "Tools used during the survey")
    #+end_src
-5. Remove =draft: true= when it is ready.
 
-* Where the file goes
+The words inside =[]= describe the image for people who cannot see it. Write
+a useful, specific description. The quoted text is the visible caption and is
+optional.
 
-Two shapes, and the choice is decided by one question: *does this post carry
-its own files?*
+Filenames are case-sensitive. =garden-tools.jpg= and =Garden-Tools.JPG= are
+different names, so the name in the article must match the uploaded file
+exactly.
 
-| Shape           | Path                                  | Use it when                                                                                 |
-|-----------------+---------------------------------------+---------------------------------------------------------------------------------------------|
-| Single file     | =content/posts/<slug>.md=             | Prose only, or images reused from =assets/images/=                                          |
-| Page bundle     | =content/posts/<slug>/index.md=       | The post has its own images, datasets or PDFs. Put them next to =index.md= as sibling files |
+Images used by several pages may instead be stored in =assets/images/=, but
+keeping an article's images in its own folder is the simplest approach.
 
-A page bundle looks like this, and is the normal shape for anything with
-plates or downloads:
+* Add a PDF, spreadsheet, or other download
 
-#+begin_example
-content/posts/metered-reading/
-├── index.md
-├── workspace.png
-├── survey-2026.csv
-└── methodology.pdf
-#+end_example
+1. Upload the file to the same folder as the article.
+2. Link to the exact filename from =index.md=:
 
-Working examples to copy from: [[file:content/posts/field-notes/index.md][field-notes]] (images) and
-[[file:content/posts/linking-to-files/index.md][linking-to-files]] (downloads). A prose-only post: [[file:content/posts/hairlines.md][hairlines.md]].
+   #+begin_src markdown
+   [Download the survey results](survey-results.csv)
+   [Read the full report](field-report.pdf)
+   #+end_src
 
-* Front matter
-:PROPERTIES:
-:CUSTOM_ID: front-matter
-:END:
+A file must be linked from the article or it will not appear on the published
+site. The site automatically shows the file type and size beside the link.
 
-YAML between =---= fences, as in every existing post. (The archetype emits
-TOML =+++=; both work — match the neighbours and use YAML.) Add =draft: true=
-while you are still writing; a post without the key is live the moment it is
-built.
+* Write and format text
 
-#+begin_src yaml
----
-title: "Reading on a metered connection"
-description: "What a page costs a reader who pays by the megabyte, and how to spend less."
-date: 2026-08-04
-tags: ["method", "color"]
----
-#+end_src
-
-| Key           | Required | What it does                                                                                                            |
-|---------------+----------+-------------------------------------------------------------------------------------------------------------------------|
-| =title=       | yes      | The =<h1>=. Do *not* repeat it as a =#= heading in the body — [[file:themes/folio/layouts/page.html][page.html]] renders it              |
-| =description= | strongly | Standfirst under the title, the =<meta name="description">=, *and* the summary in post lists ([[file:themes/folio/layouts/_partials/post-list.html][post-list.html]]) |
-| =date=        | yes      | Shown in the header and in lists; sorts every index. =YYYY-MM-DD=                                                       |
-| =draft=       | no       | =true= keeps it out of the build unless you pass =-D= / =--buildDrafts=                                                 |
-| =tags=        | no       | Renders as pills under the header ([[file:themes/folio/layouts/_partials/terms.html][terms.html]]) and builds =/tags/<term>/= automatically         |
-| =categories=  | no       | A working taxonomy — it builds =/categories/<term>/= pages — but is *not* shown on the post. Prefer =tags=              |
-| =aliases=     | no       | Old URLs that should redirect here. A YAML list of paths                                                                |
-| =slug=        | no       | Override the URL segment when it should differ from the filename or bundle directory                                    |
-| =images=      | no       | Per-post plate loading — see [[#on-demand][On-demand plates]]                                                                     |
-
-Do not invent other keys: nothing else is read by the templates.
-
-#+begin_src yaml
-aliases:
-  - /old-slug/
-  - /2026/07/older-slug/
-slug: "what-a-plate-weighs"
-#+end_src
-
-Two notes on those:
-
-- On a *page bundle*, =slug= renames the published URL only. The directory
-  name stays what it is, sibling files still resolve by filename, and their
-  published URLs follow the new slug. Nothing in the body needs to change.
-- =images= here is a *map*, and it is the one key that collides with a Hugo
-  convention: elsewhere in the Hugo world =images:= is a list of OpenGraph
-  image paths. This theme does not read that form. Writing
-  =images: ["plate.png"]= is silently inert; the only sub-key that does
-  anything is =onDemand=.
-
-Tags need no setup. Writing =tags: ["method"]= creates =/tags/method/=. A term
-page only needs a file of its own if you want to rename or re-slug it in
-another language — see [[file:content/tags/color/_index.fr.md][content/tags/color/_index.fr.md]].
-
-* The body: what Markdown gets you
-
-Everything below is plain CommonMark + GFM, rendered by Goldmark. Everything
-you *need* is in this section's prose; the "handled by" column is a pointer
-for the curious, not required reading.
-
-| Feature              | You write                              | Handled by                                                    |
-|----------------------+----------------------------------------+-----------------------------------------------------------------|
-| Section headings     | =## Heading= (start at =##=)           | [[file:themes/folio/layouts/page.html][page.html]] — auto anchor IDs, see [[#headings][Headings]]                |
-| Emphasis             | =*italic*=, =**bold**=, =~~strike~~=   | [[file:themes/folio/assets/css/base.css][base.css]]                                            |
-| Inline code          | =`like this`=                          | [[file:themes/folio/assets/css/publication.css][publication.css]]                                     |
-| Code blocks          | Fenced, see [[#code][Code blocks]]         | Chroma (Hugo built-in) + [[file:themes/folio/assets/css/publication.css][publication.css]]                  |
-| Blockquote           | =/> quoted line/= (leading =>=)        | [[file:themes/folio/assets/css/publication.css][publication.css]] — set in the display serif           |
-| Lists                | =-= bullets, =1.= ordered              | [[file:themes/folio/assets/css/base.css][base.css]]                                            |
-| Task lists           | =- [ ]= / =- [x]=                      | Goldmark GFM                                                    |
-| Tables               | GFM pipe tables, see [[#tables][Tables]]    | [[file:themes/folio/assets/css/publication.css][publication.css]] — col 1 left, all others right       |
-| Definition lists     | =Term= / =: definition=                | Goldmark                                                        |
-| Hard line break      | Trailing =\= or two trailing spaces    | Goldmark — both emit =<br>=; needs a line after it              |
-| Images / plates      | =![alt](file.png "caption")=           | [[file:themes/folio/layouts/_markup/render-image.html][render-image.html]] → [[file:themes/folio/layouts/_partials/image.html][image.html]]                        |
-| Links                | =[text](url)=                          | [[file:themes/folio/layouts/_markup/render-link.html][render-link.html]]                                    |
-| File downloads       | =[text](survey.csv)=                   | [[file:themes/folio/layouts/_markup/render-link.html][render-link.html]] — appends =(CSV, 4.0 KB)=          |
-| Footnotes / citations| =[^key]= + =[^key]: source=            | [[file:themes/folio/layouts/page.html][page.html]] — collected under a *Sources* heading       |
-| Autolinks            | A bare =https://…= URL                 | Goldmark GFM                                                    |
-
-** Headings and anchors
-:PROPERTIES:
-:CUSTOM_ID: headings
-:END:
-
-Start at =##=. =#= is reserved for the title, which [[file:themes/folio/layouts/page.html][page.html]] renders from
-front matter.
-
-Every heading in the body gets an anchor ID automatically, so you can link to
-a section from anywhere. The rule is GitHub's: lowercase, *delete* punctuation
-outright, then turn each remaining space into a hyphen. Deleting rather than
-substituting is the part that surprises people — a dropped word leaves the
-spaces on both sides of it, so you get a double hyphen.
-
-| Heading                          | Anchor                           |
-|----------------------------------+------------------------------------|
-| =## The rule=                    | =#the-rule=                      |
-| =## Terms, since they are terse= | =#terms-since-they-are-terse=    |
-| =## Cost & weight — in 2026=     | =#cost--weight--in-2026=         |
-| =## 3 plates (and a footnote)=   | =#3-plates-and-a-footnote=       |
-| =## Trailing punctuation!=       | =#trailing-punctuation=          |
-
-When in doubt, build and read the ID out of the HTML rather than guessing.
-
-** Images
-:PROPERTIES:
-:CUSTOM_ID: images
-:END:
-
-Write a normal Markdown image. That is the whole interface.
+Use these common patterns in an article:
 
 #+begin_src markdown
-![A workspace, overhead](workspace.png "Plate I — the working surface")
+## Section heading
+
+Write paragraphs with a blank line between them.
+
+**Bold text** and *italic text*
+
+- A bullet point
+- Another bullet point
+
+1. A numbered item
+2. Another numbered item
+
+[Link text](https://example.com/)
+
+> A quotation
 #+end_src
 
-- *Alt text* is the first bracket. Write real alt text; use =![]()= only for a
-  purely decorative plate.
-- *The quoted title becomes the caption*, rendered beneath the frame as a
-  =<figcaption>=. Captions are never overlaid on the image.
-- *Where the file is looked up*: page-bundle sibling first, then
-  =assets/images/=. So =workspace.png= finds the sibling in your bundle, and
-  =images/paper-curves.png= finds the shared asset.
-- *What you get for free*: an AVIF source with a WebP fallback, a
-  320/480/640/800/1200 width ladder capped to the source width, correct
-  =width=/=height=, and lazy loading on everything except the first image
-  (which is loaded eagerly because it is the likely LCP element).
+For a source or note, place a marker in the text and its full details at the
+bottom of the file:
 
-Never write an =<img>= tag or a =<figure>=. Raw HTML is stripped from the
-output (see [[#not-supported][Not supported]]).
+#+begin_src markdown
+This statement needs a source.[^survey]
 
-*Source files.* PNG and JPEG are the formats in use; author at *1200px wide or
-more*, since the ladder is capped to the source width and a 640px source
-silently yields a two-rung ladder instead of five. Do not pre-optimize or
-pre-resize — ship the largest clean original you have and let the pipeline
-derive the rest.
+[^survey]: Community survey, May 2026.
+#+end_src
 
-*Do not use SVG for a plate.* An =![alt](diagram.svg)= does not degrade
-gracefully — it *fails the build* with =resource "diagram.svg" of media type
-"image/svg+xml" does not support this method=, because the width ladder cannot
-be derived from a vector. Export diagrams to PNG.
+The site collects these notes under a *Sources* heading automatically.
 
-*After you add new images*, regenerate the per-image quality table so each
-plate is encoded at the cheapest quality that still holds SSIM ≥ 0.92:
+Do not paste HTML, JavaScript, or styling code into an article. Use the
+patterns above so the page remains consistent and readable.
+
+* Publish an article
+
+Before publishing, check that:
+
+- the title, summary, and date are correct;
+- headings begin with =##=;
+- every image has an accurate description inside =[]=;
+- image and download filenames match their links exactly;
+- every PDF, spreadsheet, or other download is linked from the article; and
+- the article is ready to be public.
+
+Then edit =index.md=, remove this line, and commit the change:
+
+#+begin_src yaml
+draft: true
+#+end_src
+
+The website will publish automatically. Check the *Actions* tab for a green
+check, then open the live article.
+
+* Correct, hide, or remove an article
+
+To correct an article, edit its =index.md= file and commit the change. The
+published page will update automatically.
+
+To hide an article without deleting it, add this line between the =---= lines
+at the top and commit:
+
+#+begin_src yaml
+draft: true
+#+end_src
+
+Hiding is safer than deleting because the writing and its files remain in the
+repository. Permanently deleting or renaming a published article can break old
+links. Only do that when you are sure it is necessary.
+
+* Translate an article
+
+English is the default language. French uses =fr= and Malagasy uses =mg=.
+Translations are optional; an English article can be published on its own.
+
+For an article stored at:
+
+#+begin_example
+content/posts/garden-field-notes/index.md
+#+end_example
+
+place translations in the same folder:
+
+#+begin_example
+content/posts/garden-field-notes/index.fr.md
+content/posts/garden-field-notes/index.mg.md
+#+end_example
+
+Copy the original file, translate its =title=, =description=, and article
+text, and keep its =date= and =tags= consistent. The site will connect the
+language versions automatically. All versions in the folder can use the same
+images and downloads.
+
+* Edit the home page
+
+The three home-page files are:
+
+- English: =content/_index.md=
+- French: =content/_index.fr.md=
+- Malagasy: =content/_index.mg.md=
+
+Edit only the visible wording. Keep lines containing ={{< ... >}}= exactly as
+they are; those markers arrange the home page. If you change the meaning of
+home-page text, make the equivalent change in all three languages.
+
+* How the site stays fast
+
+The publishing system turns the source material you commit into a lightweight
+site automatically:
+
+- Each image is resized for phones, tablets, and larger screens. Browsers
+  receive the smallest useful AVIF or WebP version instead of the large source
+  file.
+- Image compression is chosen to preserve visible detail without spending
+  unnecessary data. The original PNG or JPEG is kept in GitHub for future
+  editing but is not published to readers.
+- The first image is loaded promptly. Later images wait until the reader nears
+  them, and image-heavy articles can keep extra images closed until requested.
+- The complete page styling travels with the page, so readable content does
+  not wait for a separate stylesheet.
+- Body text uses fonts already on the reader's device. The decorative heading
+  font is small and optional, so a slow connection never blocks the article.
+- Downloads show their file type and size before a reader chooses to fetch
+  them.
+- The published site contains no advertising, analytics, tracking, or
+  JavaScript and is made of simple static files that are quick to load and
+  straightforward to archive.
+
+You only need to provide clean source files and accurate links. These
+optimizations are part of the normal publishing process.
+
+* Preview on your computer (optional)
+
+GitHub publishes each non-draft commit automatically, so working entirely in
+GitHub is fine. A local preview is useful when you want to see a draft exactly
+as it will appear before publishing it.
+
+Install the current long-term-support version of Node.js. Then open a terminal
+in this repository and run this once:
 
 #+begin_src sh
-python3 tools/measure-image-quality.py --write-data
+npm install
 #+end_src
 
-It scans =assets/= and =content/= on its own and rewrites
-[[file:data/imagequality.json][data/imagequality.json]]. It needs =hugo= and ImageMagick (=convert=, =compare=) on
-PATH. Skipping it is not fatal — an unmeasured image falls back to the global
-=quality = 50= in [[file:config/_default/params.toml][config/_default/params.toml]] — but it costs bytes.
-
-*** On-demand plates
-:PROPERTIES:
-:CUSTOM_ID: on-demand
-:END:
-
-For an image-heavy post aimed at readers on metered data, every plate after
-the first can be collapsed behind a click, so nothing below the fold is
-transferred at all:
-
-#+begin_src yaml
-images:
-  onDemand: true
-#+end_src
-
-This is still JavaScript-free: each deferred plate is wrapped in a native
-=<details>=/=<summary>=. A closed =<details>= is =display: none=, and every
-major browser declines to fetch an image inside one — which is why this is the
-only reliable way to guarantee a below-the-fold plate costs nothing until it is
-asked for. The first image is never deferred.
-
-One authoring consequence: *the caption becomes the disclosure label.* The
-=<summary>= text is your quoted title, falling back to the alt text, falling
-back to "Show plate". So on an on-demand post write captions that read as
-something you would click — "Plate II — raking light" is fine, a full sentence
-is not.
-
-Off by default; the trade is one click per plate.
-
-** Links and downloads
-
-Ordinary Markdown links, in every case:
-
-#+begin_src markdown
-[an internal page](/posts/one-ink/)
-[a sibling post](../field-notes/)
-[a section on this page](#the-rule)
-[an external source](https://gohugo.io/)
-[a mailbox](mailto:notes@example.org)
-[the field line](tel:+261201234567)
-#+end_src
-
-A link whose destination is a *file in your page bundle* is special, and this
-is the only way to publish that file at all:
-
-#+begin_src markdown
-[Download the dataset](survey-2026.csv)
-[Read the methodology](methodology.pdf)
-[the methodology, page 3](methodology.pdf#page=3)
-#+end_src
-
-[[file:themes/folio/layouts/_markup/render-link.html][render-link.html]] resolves the file, publishes it, and appends its format and
-weight after the link text — "Download the dataset (CSV, 4.0 KB)" — so a
-reader paying by the megabyte can decide before tapping. The unit scales with
-the file: =209 B=, =4.0 KB=, =1.8 MB=. Query strings and fragments are
-preserved. Do not hand-write a =/posts/slug/file.csv= path: a file nothing
-links to is never published and the URL will 404.
-
-** Footnotes and citations
-:PROPERTIES:
-:CUSTOM_ID: footnotes
-:END:
-
-Native Markdown footnotes are the citation mechanism. Use descriptive keys;
-readers only ever see sequential numbers.
-
-#+begin_src markdown
-Community-managed systems can outperform centralized control.[^ostrom]
-The same source can be cited again.[^ostrom]
-
-[^ostrom]: Elinor Ostrom, *Governing the Commons* (1990), pp. 88–102.
-[^itu]: ITU, [Affordability of ICT services](https://www.itu.int/), 2025.
-#+end_src
-
-Definitions can go anywhere in the file; convention here is to put them at the
-bottom, or directly under the paragraph that cites them. They are collected
-into an endnotes block under a *Sources* heading, added by [[file:themes/folio/layouts/page.html][page.html]] and
-translated via [[file:themes/folio/i18n/en.toml][i18n/en.toml]]. A definition may contain links and emphasis.
-
-Worked example: [[file:content/posts/endnotes-test.md][content/posts/endnotes-test.md]].
-
-** Code blocks
-:PROPERTIES:
-:CUSTOM_ID: code
-:END:
-
-Fenced blocks, with or without a language:
-
-#+begin_example
-```python
-def f(x):
-    return x + 1
-```
-#+end_example
-
-A language tag turns on Chroma syntax highlighting, which ships its own inline
-colours (a dark scheme). A fence with *no* language keeps the paper-toned
-=pre= block from [[file:themes/folio/assets/css/publication.css][publication.css]], which is what the rest of the design looks
-like. For short shell or config snippets, prefer the untagged fence.
-
-Long lines scroll horizontally inside the block; they never widen the column.
-
-** Definition lists
-
-Goldmark's definition-list extension is enabled. The term goes on its own
-line, each definition on a following line starting with =:=. No blank line
-between term and definition; a blank line between entries is optional.
-Definitions take inline markup.
-
-#+begin_src markdown
-Bone
-: The only page colour in the system.
-
-Hairline
-: A single **Mist** pixel. See [one ink](/posts/one-ink/).
-: A second definition for the same term is allowed.
-#+end_src
-
-** Tables
-:PROPERTIES:
-:CUSTOM_ID: tables
-:END:
-
-GFM pipe tables. The stylesheet assumes the first column is a label and the
-rest are figures: *column one is left-aligned and every other column is
-right-aligned*, regardless of the alignment row you write.
-
-#+begin_src markdown
-| Connection | Cost | Share |
-| ---------- | ---- | ----- |
-| 3G         | 1.20 | 61%   |
-#+end_src
-
-* Not supported — on purpose
-:PROPERTIES:
-:CUSTOM_ID: not-supported
-:END:
-
-| Thing                   | What happens                                                                     |
-|-------------------------+------------------------------------------------------------------------------------|
-| Raw HTML in Markdown    | Silently dropped, replaced by =<!-- raw HTML omitted -->=. Use Markdown instead     |
-| JavaScript              | The site ships none, by design. There is no way to add any from a content file      |
-| Custom CSS per post     | Not available. If a post needs a treatment the system lacks, that is a theme change  |
-| =<img>=, =<figure>=     | See raw HTML. Use =![alt](file.png "caption")=                                       |
-| Shortcodes in a post    | There are exactly two, both homepage-only — see below                               |
-
-* Shortcodes
-
-For completeness. *Neither is used in a post*; both exist only so the
-homepage's copy can be written as Markdown rather than as config strings. You
-will only touch them if you are editing =content/_index.md=.
-
-| Shortcode     | Where it is valid                | What it does                                                                          | File                                       |
-|---------------+----------------------------------+-----------------------------------------------------------------------------------------+--------------------------------------------|
-| ={{< copy "key" >}}…{{< /copy >}}= | =content/_index.<lang>.md= only | Stores a named block of homepage prose under a canonical key; renders nothing in place. Keys in use: =hero=, =principles= | [[file:themes/folio/layouts/_shortcodes/copy.html][copy.html]] |
-| ={{< principle key="…" meta="…" >}}…{{< /principle >}}= | =content/_index.<lang>.md= only | One cell of the homepage principles grid. Numbering and icon come from position and [[file:config/_default/params.toml][params.toml]], not from you | [[file:themes/folio/layouts/_shortcodes/principle.html][principle.html]] |
-
-If you add or remove a block key in one language, do it in all three, then run
-=python3 tools/check-i18n.py=.
-
-* Translations
-
-Optional for posts. To translate one, add a sibling file with the language
-code before the extension:
-
-#+begin_example
-content/posts/one-ink.md      # English
-content/posts/one-ink.fr.md   # French
-#+end_example
-
-Languages are =en= (default, no subdirectory), =mg=, =fr= — see
-[[file:config/_default/languages.toml][config/_default/languages.toml]]. Front matter and body are both translated;
-=date= and =tags= should match. Hugo links the versions automatically and the
-header's language selector picks them up.
-
-Site chrome (menus, taglines, the homepage) has a completeness check that
-posts do not: =python3 tools/check-i18n.py=.
-
-* Preview and check
+After that, start the preview with:
 
 #+begin_src sh
-hugo server -D                    # drafts included, live reload, :1313
-hugo --buildDrafts                # one-off build into public/
-hugo --printPathWarnings          # duplicate target paths, conflicting slugs
-python3 tools/check-i18n.py       # only if you touched the homepage or config
+npm run site -- start
 #+end_src
 
-A plain =hugo= is quiet by design: it exits non-zero and prints an =ERROR= line
-for anything that actually broke — a missing bundle file, an SVG plate, a
-malformed shortcode. That, plus =--printPathWarnings=, is the whole check. An
-existing =WARN … /image-quality.html is unused= from =--printUnusedTemplates=
-is pre-existing and unrelated to your post.
+Then open =http://localhost:1313/= in a browser. Draft articles are included
+in this preview. Press =Ctrl+C= in the terminal when finished.
 
-Before publishing:
+The project provides the rest of its setup and maintenance commands through
+the same interface. To see what is available, run:
 
-- [ ] =draft: true= removed
-- [ ] =description= reads well on its own — it is the list summary and the meta description
-- [ ] Every image has real alt text
-- [ ] Every *non-image* bundle file (CSV, PDF) is linked from the prose — an unlinked one is never published. Plates referenced with =![…]()= are already covered
-- [ ] =tools/measure-image-quality.py --write-data= run if you added images, *and the resulting =data/imagequality.json= committed alongside the post*
-- [ ] =hugo= exits 0 with no =ERROR= lines, and the post renders at =/posts/<slug>/=
-
-* Full example
-
-A page bundle at =content/posts/metered-reading/index.md=, with
-=workspace.png= and =survey-2026.csv= as siblings, exercising every feature:
-
-#+begin_src markdown
----
-title: "Reading on a metered connection"
-description: "What a page costs a reader who pays by the megabyte."
-date: 2026-08-04
-tags: ["method"]
----
-
-A page asks its reader for bandwidth before it asks for attention.[^itu]
-This note measures that ask, and what **shrinking it** actually costs.
-
-## What a plate costs
-
-![A workspace, overhead](workspace.png "Plate I — the working surface")
-
-Prose continues between plates. The image above was written as plain
-Markdown; the format negotiation and width ladder are the theme's problem.
-
-> The hairline is the system's voice; thickening it is incorrect.
-
-## The numbers
-
-| Connection | Median page | Share of readers |
-| ---------- | ----------- | ---------------- |
-| 3G         | 4.2 s       | 61%              |
-| 4G         | 1.1 s       | 39%              |
-
-Regenerate the table after adding images:
-
-```sh
-python3 tools/measure-image-quality.py --write-data
-```
-
-- [x] Measured on a throttled profile
-- [ ] Re-measured after the font subset
-
-[Download the dataset](survey-2026.csv) — 120 responses, one row each.
-See also [one ink, no accents](/posts/one-ink/) and the
-[Hugo render hook docs](https://gohugo.io/render-hooks/links/).
-
-[^itu]: ITU, *Affordability of ICT services* (2025).
+#+begin_src sh
+npm run site -- help
 #+end_src
+
+* Common problems
+:PROPERTIES:
+:CUSTOM_ID: common-problems
+:END:
+
+** The article does not appear
+
+- Check whether =draft: true= is still present.
+- Confirm that the file is named =index.md= and is inside
+  =content/posts/article-name/=.
+- Open GitHub's *Actions* tab and wait for publishing to finish.
+- Check that the publication date is written as =YYYY-MM-DD=.
+
+** An image does not appear
+
+- Confirm that the image is in the same folder as =index.md=.
+- Confirm that the filename in =![]()= matches the uploaded file exactly,
+  including capital letters and the extension.
+- Use JPEG or PNG, not SVG.
+
+** A download does not appear
+
+- Confirm that the file is in the same folder as =index.md=.
+- Add a link to it in the article, such as =[Download](report.pdf)=.
+
+** GitHub Actions shows a red cross
+
+Open the failed action and read the first red error message. The most common
+causes are a missing file, a misspelled filename, an SVG image, or damaged
+=---= lines at the top of an article. Correct the file and commit again; the
+site will retry automatically.
+
+If the cause is unclear, restore the last known-good text from the file's
+*History* view, or add =draft: true= while you investigate.
+
+* Quick reference
+
+For a normal new article:
+
+1. Create =content/posts/article-name/index.md=.
+2. Start it with title, description, date, and =draft: true=.
+3. Write the article using Markdown.
+4. Upload original JPEG or PNG images to the same folder.
+5. Add image and download links to =index.md=.
+6. Commit the work.
+7. Remove =draft: true= when ready.
+8. Check GitHub Actions, then check the live site.

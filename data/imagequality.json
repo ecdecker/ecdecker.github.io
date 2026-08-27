@@ -1,54 +1,54 @@
 {
-  "_generated_by": "tools/measure-image-quality.py --write-data",
+  "_generated_by": "npm run site -- images",
   "format": "avif",
   "images": {
     "images/editorial-workspace.png": {
       "bytes": 34260,
       "hash": "7201c5b349c1f689c3fa5b5325ab5d12ad3c965018088a2597cdde9fc2733439",
       "quality": 50,
-      "ssim": 0.93315
+      "ssim": 0.933
     },
     "images/folio-sketchbooks-stem.png": {
       "bytes": 61757,
       "hash": "19d903aab6454b4bf32e1967df225d17c9a7009d1d4c7bed1527561a37192544",
       "quality": 55,
-      "ssim": 0.93183
+      "ssim": 0.93145
     },
     "images/paper-curves.png": {
       "bytes": 4027,
       "hash": "21ef39734f2a9d16b5ac031eaaa03bd987e2ebd5016269312e0b8956a642b62f",
       "quality": 25,
-      "ssim": 0.93224
+      "ssim": 0.9321
     },
     "images/parchment-texture.png": {
       "bytes": 61858,
       "hash": "1e8b579d5b8c74e3452293ab7eaab3888ea4f237651cab6bf389de4ec9b9436f",
       "quality": 70,
-      "ssim": 0.92176
+      "ssim": 0.92196
     },
     "posts/field-notes/curves.png": {
       "bytes": 4027,
       "hash": "21ef39734f2a9d16b5ac031eaaa03bd987e2ebd5016269312e0b8956a642b62f",
       "quality": 25,
-      "ssim": 0.93224
+      "ssim": 0.9321
     },
     "posts/field-notes/workspace.png": {
       "bytes": 34260,
       "hash": "7201c5b349c1f689c3fa5b5325ab5d12ad3c965018088a2597cdde9fc2733439",
       "quality": 50,
-      "ssim": 0.93315
+      "ssim": 0.933
     },
     "posts/plate-weights/plate-ladder.png": {
       "bytes": 1450,
       "hash": "76c6156258806b47c7c5335301d60d311d10cc0c93c9503a49211e8ed69ba78a",
       "quality": 25,
-      "ssim": 0.99612
+      "ssim": 0.99604
     },
     "posts/plate-weights/quality-curve.png": {
       "bytes": 3179,
       "hash": "e5508d76bb7861e931e7e8530da3b3d3df96212c9d1b395aa84dbf0007295ae6",
       "quality": 25,
-      "ssim": 0.99433
+      "ssim": 0.9947
     }
   },
   "qualities": [

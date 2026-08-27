@@ -1,0 +1,173 @@
+{{- /*
+  A ring-tailed lemur that climbs the post header's border, hangs and swings
+  from the top edge, then jumps off screen. Anchored to .post-header rather
+  than the whole .post-article: the header's height is roughly constant
+  (title, description, one meta row), where the article can run to
+  thousands of pixels on a long post. Anchoring to the article would put
+  most of the loop below the fold, and make the border-hugging climb cover
+  that whole length in the same few seconds — fast enough to read as a
+  glitch rather than a climb.
+
+  Opt in per page with `lemurs: true` in front matter — called only from
+  page.html, and only under that guard, so no other page pays any byte for
+  it. That mirrors how images.onDemand is scoped in render-image.html.
+
+  Pure CSS, no JavaScript, matching the rest of the theme. Two independent
+  animations run on the same element:
+
+    lemur-journey  moves it around the header (left/top), tilts it during the
+                   hang (transform), and swaps which action's sprite strip
+                   is showing (background-image) at each stage.
+    lemur-frames   steps background-position-x through that strip's 6
+                   frames on its own short loop, the classic CSS
+                   spritesheet run-cycle trick. It is deliberately not
+                   synced to lemur-journey's stage changes — like a looping
+                   GIF, it only needs to keep reading as motion, not to land
+                   on a particular frame at a particular instant.
+
+  Each stage below restates every animated property (left, top, transform,
+  opacity, background-image) rather than only the one that changed.
+  background-image is a discrete (non-interpolable) property: left
+  unspecified at a keyframe, its value flips at the midpoint of whatever
+  gap surrounds it, which reads as an arbitrary early or late costume
+  change. Spelling it out at every stop makes the stage boundaries land
+  exactly where authored.
+
+  The four *-strip.svg files are `npm run site -- assets sprites` output:
+  each is one <path> traced from all 6 frames of a row appended
+  side by side, deliberately untight so the frames sit on an exact 1536x256
+  (6 * 256x256) grid — see the comment above that script's strip potrace
+  call. background-size: 600% 100% relies on that even grid: it always
+  shows exactly one 256x256 frame no matter what pixel size --lemur-size
+  resolves to.
+*/ -}}
+
+{{- $climbing := "" -}}{{- with resources.Get "images/lemur-sprites/svg/climbing-strip.svg" }}{{ $climbing = . | fingerprint }}{{ end -}}
+{{- $hanging := "" -}}{{- with resources.Get "images/lemur-sprites/svg/hanging-strip.svg" }}{{ $hanging = . | fingerprint }}{{ end -}}
+{{- $jumping := "" -}}{{- with resources.Get "images/lemur-sprites/svg/jumping-strip.svg" }}{{ $jumping = . | fingerprint }}{{ end -}}
+{{- $turning := "" -}}{{- with resources.Get "images/lemur-sprites/svg/turning-strip.svg" }}{{ $turning = . | fingerprint }}{{ end -}}
+
+{{- if and $climbing $hanging $jumping $turning }}
+<style>
+  .lemurs-active {
+    position: relative;
+  }
+
+  .lemur {
+    --lemur-size: clamp(2.75rem, 6vw, 4.5rem);
+    --lemur-half: calc(var(--lemur-size) / 2);
+    position: absolute;
+    z-index: 1;
+    width: var(--lemur-size);
+    height: var(--lemur-size);
+    color: var(--color-text);
+    background-repeat: no-repeat;
+    background-size: 600% 100%;
+    pointer-events: none;
+    animation:
+      lemur-journey 16s ease-in-out infinite,
+      lemur-frames 0.72s steps(5, jump-none) infinite;
+  }
+
+  @keyframes lemur-frames {
+    from { background-position-x: 0%; }
+    to   { background-position-x: 100%; }
+  }
+
+  /* Off screen below the bottom-left corner, waiting to enter. */
+  @keyframes lemur-journey {
+    0% {
+      opacity: 0;
+      left: calc(-1 * var(--lemur-half));
+      top: calc(100% + var(--lemur-size));
+      transform: rotate(0deg) scale(1);
+      background-image: url({{ $climbing.RelPermalink }});
+    }
+    /* Enters, on the border at the bottom-left corner. */
+    3% {
+      opacity: 1;
+      left: calc(-1 * var(--lemur-half));
+      top: calc(100% - var(--lemur-half));
+      transform: rotate(0deg) scale(1);
+      background-image: url({{ $climbing.RelPermalink }});
+    }
+    /* Climbs the left border. */
+    26% {
+      opacity: 1;
+      left: calc(-1 * var(--lemur-half));
+      top: var(--lemur-half);
+      transform: rotate(0deg) scale(1);
+      background-image: url({{ $climbing.RelPermalink }});
+    }
+    /* Pivots at the top-left corner. */
+    31% {
+      opacity: 1;
+      left: calc(-1 * var(--lemur-half));
+      top: calc(-1 * var(--lemur-half));
+      transform: rotate(0deg) scale(1);
+      background-image: url({{ $turning.RelPermalink }});
+    }
+    /* Crosses the top border. */
+    52% {
+      opacity: 1;
+      left: 54%;
+      top: calc(-1 * var(--lemur-half));
+      transform: rotate(0deg) scale(1);
+      background-image: url({{ $climbing.RelPermalink }});
+    }
+    /* Grabs on and hangs from the top border, then swings. */
+    58% {
+      opacity: 1;
+      left: 54%;
+      top: calc(-1 * var(--lemur-half));
+      transform: rotate(-24deg) scale(1);
+      background-image: url({{ $hanging.RelPermalink }});
+    }
+    66% {
+      opacity: 1;
+      left: 54%;
+      top: calc(-1 * var(--lemur-half));
+      transform: rotate(20deg) scale(1);
+      background-image: url({{ $hanging.RelPermalink }});
+    }
+    73% {
+      opacity: 1;
+      left: 54%;
+      top: calc(-1 * var(--lemur-half));
+      transform: rotate(-8deg) scale(1);
+      background-image: url({{ $hanging.RelPermalink }});
+    }
+    /* Lets go and jumps off screen, up and to the right. */
+    78% {
+      opacity: 1;
+      left: 60%;
+      top: 0%;
+      transform: rotate(10deg) scale(1);
+      background-image: url({{ $jumping.RelPermalink }});
+    }
+    92% {
+      opacity: 1;
+      left: 118%;
+      top: calc(-3 * var(--lemur-size));
+      transform: rotate(42deg) scale(0.8);
+      background-image: url({{ $jumping.RelPermalink }});
+    }
+    100% {
+      opacity: 0;
+      left: 132%;
+      top: calc(-5 * var(--lemur-size));
+      transform: rotate(55deg) scale(0.6);
+      background-image: url({{ $jumping.RelPermalink }});
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lemur {
+      display: none;
+    }
+  }
+</style>
+<div class="lemur" aria-hidden="true"></div>
+{{- else }}
+  {{- warnf "lemurs.html: one or more lemur sprite strips are missing under assets/images/lemur-sprites/svg — run npm run site -- assets sprites." }}
+{{- end }}

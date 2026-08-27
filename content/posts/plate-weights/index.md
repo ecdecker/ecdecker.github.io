@@ -42,19 +42,15 @@ flat colour field is wasted at 50. A page of set type falls apart at 50.
 
 ### What the measurement actually does
 
-The tool walks every image under `assets/` and `content/`, re-encodes each one
+The production build walks every source image, re-encodes new or changed ones
 at a descending sweep of quality values, compares each candidate against the
-source, and records the lowest quality that still clears the threshold.
+source, and records the lowest quality that still clears the threshold. The
+result is cached by the source file's fingerprint, so unchanged images do not
+need to be measured again.
 
-```sh
-python3 tools/measure-image-quality.py --write-data
-```
-
-It needs `hugo`, and it needs ImageMagick's `convert` and `compare` on PATH.
-It rewrites `data/imagequality.json` in place; you do not edit that file by
-hand. Skipping the step is not fatal — an unmeasured plate quietly falls back
-to the global default — but it costs bytes, and the whole point of the
-exercise is not to spend bytes you did not decide to spend.
+This is part of the ordinary site build rather than a separate publishing
+chore. An unmeasured plate still has a safe global fallback, but the production
+pipeline measures it before the page is published.
 
 If you want the shape of the sweep rather than the plumbing:
 
@@ -113,8 +109,8 @@ And what it does not buy:
 - It does not fix a badly cropped image. ~~Compression is not composition.~~
 - It does not help a plate nobody links to; an unreferenced bundle file is
   never published at all.
-- It does not run itself. It is a step in the checklist, and checklists are
-  only load-bearing when someone runs them.
+- It does not replace editorial judgment. The score can catch damaged detail,
+  but a human still decides whether the image communicates what it should.
 
 ## Before this post shipped
 
@@ -139,9 +135,9 @@ and the structural-similarity paper that started all of this is still the
 clearest thing written on the subject.[^ssim]
 
 If you only take one thing from this: go back to
-[the numbers](#the-numbers), find the row with the worst ratio, and re-encode
-that one. The tool lives at https://imagemagick.org/ and it is already on your
-machine.
+[the numbers](#the-numbers) and notice how different the useful quality range
+is from one image to the next. That difference is why the measurement belongs
+in the publishing system rather than in an author's memory.
 
 [^ostrom]: Elinor Ostrom, *Governing the Commons* (Cambridge, 1990),
 pp. 88–102 — on why a shared resource degrades when nobody meters their own

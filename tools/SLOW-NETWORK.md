@@ -64,19 +64,19 @@ Install the local dependencies and browser once:
 
 ```sh
 npm install
-npx playwright install chromium
+npm run site -- setup --audit
 ```
 
 Run the default comparison:
 
 ```sh
-npm run capture:load
+npm run site -- audit
 ```
 
 To make the network more hostile:
 
 ```sh
-npm run capture:load -- --latency-ms 700 --download-kbps 80
+npm run site -- audit --latency-ms 700 --download-kbps 80
 ```
 
 The ignored artifacts are written to `artifacts/load-states/`. Open its

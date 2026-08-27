@@ -9,6 +9,16 @@
   Kept out of listings and RSS via _build.list = never in the front matter.
 */ -}}
 {{ define "main" }}
+  {{- if ne hugo.Environment "image-quality" }}
+  <section class="section-block">
+    <div class="container">
+      <div class="section-head">
+        <h1>{{ .Title }}</h1>
+        <p>This visual comparison is intentionally disabled in the normal preview. Restart with <code>npm run site -- start --image-lab</code> to build it.</p>
+      </div>
+    </div>
+  </section>
+  {{- else }}
   {{- $qualities := slice 30 35 40 45 50 60 70 -}}
   {{- $deliveryWidth := 800 -}}
   {{- $cropSpec := "480x320 Center" -}}
@@ -145,4 +155,5 @@
       {{- end }}
     </div>
   </section>
+  {{- end }}
 {{ end }}

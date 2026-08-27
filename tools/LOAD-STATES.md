@@ -27,18 +27,18 @@ rather than a packet-accurate 2G simulator.
 
 ```sh
 npm install
-npx playwright install chromium
-npm run capture:load
+npm run site -- setup --audit
+npm run site -- audit
 ```
 
 That command starts isolated, in-memory Hugo servers for the Instrument Serif
 and all-system variants with Hugo's live-reload client disabled, captures both,
 and stops the servers afterward.
 
-To reproduce plain `hugo server`, including its injected live-reload client:
+To include the preview server's live-reload client:
 
 ```sh
-npm run capture:load -- --with-live-reload
+npm run site -- audit --with-live-reload
 ```
 
 Artifacts are written to:
@@ -65,13 +65,13 @@ before/after races visible rather than hiding them.
 
 ```sh
 # Make the connection more hostile.
-npm run capture:load -- --latency-ms 700 --download-kbps 80
+npm run site -- audit --latency-ms 700 --download-kbps 80
 
 # Exercise another route and viewport.
-npm run capture:load -- --path /posts/ --width 390 --height 844
+npm run site -- audit --path /posts/ --width 390 --height 844
 
 # Capture an already-running URL.
-npm run capture:load -- --url http://localhost:1313/ --name local
+npm run site -- audit --url http://localhost:1313/ --name local
 ```
 
 The frame sequence is exhaustive for one recorded browser run, not for every

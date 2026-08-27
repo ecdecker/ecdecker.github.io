@@ -36,16 +36,10 @@ that change scored accessibility at 100.
 
 ## Reproduction
 
-Start Hugo without its live-reload client:
+Start the site without its live-reload client:
 
 ```sh
-hugo server \
-  --bind 127.0.0.1 \
-  --port 1414 \
-  --disableFastRender \
-  --renderToMemory \
-  --noHTTPCache \
-  --disableLiveReload
+npm run site -- start --port 1414 --published-only --no-live-reload --environment production
 ```
 
 In another shell, point `CHROME_PATH` at a current Chrome or Chromium binary

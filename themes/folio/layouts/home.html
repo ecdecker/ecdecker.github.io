@@ -23,7 +23,7 @@
   {{- /* Principle bodies live in an idempotent map so live rebuilds cannot
          duplicate them. Recover their authored order from the shortcode calls
          themselves; order is presentation here because the cells are numbered
-         by position. tools/check-i18n.py validates this same source order in
+         by position. `npm run site -- check` validates this same source order in
          every language. */}}
   {{- $principleKeys := slice }}
   {{- range findRESubmatch `\{\{<\s*principle\s+[^>]*key="([^"]+)"[^>]*>\}\}` .RawContent }}
@@ -110,7 +110,7 @@
     <div class="container">
       {{- /* The section head is one Markdown block: h2 plus intro paragraph.
              The old `default (T "principles")` fallback is gone with it -- a
-             missing block is now a check-i18n.py failure rather than a silent
+             missing block is now a site-check failure rather than a silent
              English heading under a French URL. */}}
       <div class="section-head">{{ index $copy "principles" }}</div>
 

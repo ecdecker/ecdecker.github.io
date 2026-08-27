@@ -51,7 +51,7 @@
          (SSIM 0.92) takes q25 on a soft gradient and q70 on a fine
          texture, so a single value either wastes bytes on the easy images
          or wrecks the hard ones. Measured per image by
-         tools/measure-image-quality.py --write-data, which on this corpus
+         `npm run site -- images`, which on this corpus
          is 1.70x fewer bytes than the cheapest global q clearing the same
          floor — a bigger win than the AVIF-vs-WebP choice itself.
 

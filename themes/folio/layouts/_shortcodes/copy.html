@@ -16,7 +16,7 @@
 
   The key is canonical across languages -- the same idea as linking translated
   tag pages by term key. content/_index.fr.md says `copy "hero"` too, which is
-  what lets tools/check-i18n.py name a language that dropped a block.
+  what lets `npm run site -- check` name a language that dropped a block.
 
   .Inner goes through .Page.RenderString rather than `markdownify` so it is
   rendered as the page, in the page's language, through this site's render

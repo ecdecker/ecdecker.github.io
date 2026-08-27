@@ -1,0 +1,60 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install project tools
+        run: npm ci
+
+      - name: Test project tools
+        run: npm test
+
+      - name: Restore image measurements
+        uses: actions/cache@v5
+        with:
+          path: data/imagequality.json
+          key: image-quality-${{ runner.os }}-${{ hashFiles('assets/**/*.png', 'assets/**/*.jpg', 'assets/**/*.jpeg', 'assets/**/*.tif', 'assets/**/*.tiff', 'content/**/*.png', 'content/**/*.jpg', 'content/**/*.jpeg', 'content/**/*.tif', 'content/**/*.tiff') }}
+          restore-keys: |
+            image-quality-${{ runner.os }}-
+
+      - name: Check site
+        run: npm run site -- check
+
+      - name: Build
+        run: npm run site -- build --base-url "https://emilycdecker.com/"
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

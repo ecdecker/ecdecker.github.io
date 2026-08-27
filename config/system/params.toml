@@ -1,7 +1,7 @@
 # The no-download typography treatment, for comparison against the default.
 # Layer it over config/_default/ with:
 #
-#   hugo server --environment system
+#   npm run site -- start --environment system
 #
 # (Before the config split this was hugo.system.toml, layered via
 # `--config hugo.toml,hugo.system.toml`. That form no longer works: --config

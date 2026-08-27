@@ -5,7 +5,7 @@
 # Translatable strings must NOT live here. A key present in this file would
 # silently render English on a language that forgot to translate it, which is
 # invisible in a build. Keep them in params.<lang>.toml, one file per language,
-# and let tools/check-i18n.py catch omissions.
+# and let `npm run site -- check` catch omissions.
 
 # Image delivery. AVIF first with a WebP fallback; no original-format
 # source, so WebP is the floor. That excludes only pre-2020 browsers and
@@ -13,7 +13,7 @@
 #
 # quality is now only a FALLBACK, for images with no measurement on
 # record. The real value comes per image from data/imagequality.json,
-# written by `tools/measure-image-quality.py --write-data` and read by
+# written by `npm run site -- images` and read by
 # partials/image.html: each image gets the cheapest q that still holds
 # SSIM >= 0.92 against a lossless reference.
 #

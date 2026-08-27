@@ -1,12 +1,28 @@
 {
-  "name": "folio-load-state-lab",
+  "name": "emily-site",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=24 <27"
+  },
+  "hugo-bin": {
+    "buildTags": "extended",
+    "hugoVersion": "0.165.0"
+  },
   "scripts": {
-    "capture:load": "node tools/capture-load-states.mjs",
-    "sync": "bash tools/sync-cloudflare.sh"
+    "site": "node tools/site.mjs",
+    "start": "node tools/site.mjs start",
+    "test": "node --test tools/site.test.mjs"
   },
   "devDependencies": {
-    "playwright": "1.62.0"
+    "hugo-bin": "0.162.0",
+    "playwright": "1.62.0",
+    "sharp": "0.35.4",
+    "smol-toml": "1.8.0",
+    "svgo": "4.1.0",
+    "yaml": "2.9.0"
+  },
+  "allowScripts": {
+    "hugo-bin@0.162.0": true
   }
 }

@@ -43,8 +43,8 @@ native system UI sans stack, removing 48,256 bytes from the cold font path.
 
 Usage
 -----
-    python3 -m venv .venv && .venv/bin/pip install fonttools brotli
-    .venv/bin/python tools/subset-fonts.py [--check]
+    npm run site -- assets fonts --setup
+    npm run site -- assets fonts [--check]
 
 --check re-derives the outputs and reports whether the committed files
 match, without writing anything.

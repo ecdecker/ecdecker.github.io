@@ -3,8 +3,10 @@
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import process from "node:process";
+import hugoPath from "hugo-bin";
 import { chromium } from "playwright";
 
 const defaults = {
@@ -24,9 +26,9 @@ function usage() {
 Capture every distinct compositor frame and correlate it with layout events.
 
 Usage:
-  npm run capture:load
-  npm run capture:load -- --path /posts/ --latency-ms 500 --download-kbps 150
-  npm run capture:load -- --url http://localhost:1313/ --name my-build
+  npm run site -- audit
+  npm run site -- audit --path /posts/ --latency-ms 500 --download-kbps 150
+  npm run site -- audit --url http://localhost:1313/ --name my-build
 
 Options:
   --url URL              Capture one already-running site instead of both Hugo variants
@@ -39,7 +41,7 @@ Options:
   --settle-ms N          Time to record after load and fonts.ready (default: 1800)
   --width N              Viewport width (default: 1440)
   --height N             Viewport height (default: 1000)
-  --with-live-reload     Match plain "hugo server", including its injected client
+  --with-live-reload     Include the preview server's injected client
   --help                  Show this help
 `);
 }
@@ -114,7 +116,7 @@ async function waitForServer(url, child) {
   throw new Error(`Timed out waiting for ${url}`);
 }
 
-async function startHugo({ name, port, config, withLiveReload }) {
+async function startHugo({ name, port, environment, withLiveReload }) {
   const command = [
     "server",
     "--renderToMemory",
@@ -124,12 +126,12 @@ async function startHugo({ name, port, config, withLiveReload }) {
     "--port",
     String(port),
     "--cacheDir",
-    `/tmp/folio-load-state-${name}`,
+    path.join(os.tmpdir(), `emily-load-state-${name}`),
   ];
   if (!withLiveReload) command.push("--disableLiveReload");
-  if (config) command.push("--config", config);
+  if (environment) command.push("--environment", environment);
 
-  const child = spawn("hugo", command, {
+  const child = spawn(hugoPath, command, {
     cwd: process.cwd(),
     stdio: ["ignore", "pipe", "pipe"],
   });
@@ -744,7 +746,7 @@ async function main() {
     const system = await startHugo({
       name: "system",
       port: 1414,
-      config: "hugo.toml,hugo.system.toml",
+      environment: "system",
       withLiveReload: args.withLiveReload,
     });
     managedServers.push(system.child);

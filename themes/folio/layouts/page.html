@@ -7,7 +7,8 @@
   <section class="section-block post-page">
     <div class="container">
       <article class="card post-article">
-        <header class="post-header">
+        <header class="post-header{{ if .Params.lemurs }} lemurs-active{{ end }}">
+          {{ if .Params.lemurs }}{{ partial "lemurs.html" . }}{{ end }}
           <h1>{{ .Title }}</h1>
           {{ with .Description }}<p>{{ . }}</p>{{ end }}
           <div class="row justify-between">
