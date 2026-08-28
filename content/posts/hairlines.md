@@ -3,6 +3,7 @@ title: "Depth is contrast, not shadow"
 description: "Why every separation in the system is a single Mist pixel, and what that buys."
 date: 2026-07-20
 tags: ["structure", "type"]
+draft: true
 ---
 
 The system has effectively no shadow vocabulary. There is exactly one optional

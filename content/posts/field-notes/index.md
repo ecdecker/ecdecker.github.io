@@ -3,6 +3,7 @@ title: "Field notes, with plates"
 description: "A page bundle carrying its own images, to exercise the markdown render hook."
 date: 2026-07-26
 tags: ["method"]
+draft: true
 ---
 
 This post is a page bundle: its images sit alongside the text as ordinary

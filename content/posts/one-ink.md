@@ -3,6 +3,7 @@ title: "One ink, no accents"
 description: "The palette is a single warm neutral family plus one action color. There is no third thing."
 date: 2026-07-24
 tags: ["color"]
+draft: true
 ---
 
 Background is Bone — the only page color in the entire system. Surfaces are Snow,

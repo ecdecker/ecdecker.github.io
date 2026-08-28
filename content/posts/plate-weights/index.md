@@ -9,6 +9,7 @@ aliases:
   - /posts/plate-weights/
 images:
   onDemand: true
+draft: true
 ---
 
 A plate is the most expensive thing on a page. Not in attention — a good plate

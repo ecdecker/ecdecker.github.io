@@ -4,6 +4,7 @@ description: "A ring-tailed lemur runs left to right along the top edge of this 
 date: 2026-08-27
 tags: ["motion"]
 lemurs: true
+draft: true
 ---
 
 Watch the top of the page. A lemur runs across it, left to right, full
