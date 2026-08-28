@@ -4,11 +4,11 @@
     contrast: DESIGN.md reserves Stone body copy for white surfaces,
     where it clears AA — on the Bone page background it does not.
   */}}
-  <section class="section-block post-page">
+  <section class="section-block post-page{{ if .Params.lemurs }} lemurs-active{{ end }}">
+    {{ if .Params.lemurs }}{{ partial "lemurs.html" . }}{{ end }}
     <div class="container">
       <article class="card post-article">
-        <header class="post-header{{ if .Params.lemurs }} lemurs-active{{ end }}">
-          {{ if .Params.lemurs }}{{ partial "lemurs.html" . }}{{ end }}
+        <header class="post-header">
           <h1>{{ .Title }}</h1>
           {{ with .Description }}<p>{{ . }}</p>{{ end }}
           <div class="row justify-between">

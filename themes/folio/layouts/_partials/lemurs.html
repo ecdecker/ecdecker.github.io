@@ -1,164 +1,116 @@
 {{- /*
-  A ring-tailed lemur that climbs the post header's border, hangs and swings
-  from the top edge, then jumps off screen. Anchored to .post-header rather
-  than the whole .post-article: the header's height is roughly constant
-  (title, description, one meta row), where the article can run to
-  thousands of pixels on a long post. Anchoring to the article would put
-  most of the loop below the fold, and make the border-hugging climb cover
-  that whole length in the same few seconds — fast enough to read as a
-  glitch rather than a climb.
+  A ring-tailed lemur running left to right along the top edge of the post
+  page's outer section, looping continuously. Anchored to
+  .section-block.post-page (the full-width section, not the constrained
+  .container inside it) so the run spans the whole page width rather than
+  just the card.
 
   Opt in per page with `lemurs: true` in front matter — called only from
   page.html, and only under that guard, so no other page pays any byte for
   it. That mirrors how images.onDemand is scoped in render-image.html.
 
-  Pure CSS, no JavaScript, matching the rest of the theme. Two independent
-  animations run on the same element:
+  Pure CSS, no JavaScript, matching the rest of the theme. Two animations
+  run on the same element, locked to one shared clock:
 
-    lemur-journey  moves it around the header (left/top), tilts it during the
-                   hang (transform), and swaps which action's sprite strip
-                   is showing (background-image) at each stage.
-    lemur-frames   steps background-position-x through that strip's 6
-                   frames on its own short loop, the classic CSS
-                   spritesheet run-cycle trick. It is deliberately not
-                   synced to lemur-journey's stage changes — like a looping
-                   GIF, it only needs to keep reading as motion, not to land
-                   on a particular frame at a particular instant.
+    lemur-run     sweeps `left` from off-screen left to off-screen right,
+                  linear (a constant run speed reads better than easing,
+                  which would imply slowing down at each end).
+    lemur-frames  steps background-position-x through the strip's 6 frames,
+                  the classic CSS spritesheet run-cycle trick.
 
-  Each stage below restates every animated property (left, top, transform,
-  opacity, background-image) rather than only the one that changed.
-  background-image is a discrete (non-interpolable) property: left
-  unspecified at a keyframe, its value flips at the midpoint of whatever
-  gap surrounds it, which reads as an arbitrary early or late costume
-  change. Spelling it out at every stop makes the stage boundaries land
-  exactly where authored.
+  The two MUST stay in step. The sprite row is a bounding gallop, so a
+  cycle is one bound, and a bound covers a fixed distance on the ground —
+  if the sweep covers more than that, the planted feet slide, and the
+  thing reads as a lemur skating rather than running. Both durations are
+  therefore derived from --lemur-cycle (one bound) and --lemur-bounds (how
+  many bounds it takes to cross), so the crossing is an exact whole number
+  of cycles by construction and the two can't drift apart.
 
-  The four *-strip.svg files are `npm run site -- assets sprites` output:
-  each is one <path> traced from all 6 frames of a row appended
-  side by side, deliberately untight so the frames sit on an exact 1536x256
-  (6 * 256x256) grid — see the comment above that script's strip potrace
-  call. background-size: 600% 100% relies on that even grid: it always
-  shows exactly one 256x256 frame no matter what pixel size --lemur-size
+  Choosing those two numbers:
+
+    Stride. Traced from the sheet, a planted paw travels back ~22-29px of
+    a 256px frame between consecutive ground-contact frames, and the two
+    airborne frames (2 and 3) cover the rest — about 280px, ~1.1 frame
+    widths, per 6-frame bound. --lemur-bounds is set so the sweep divides
+    into roughly that: at a 1280px-wide page --lemur-size resolves to
+    ~51px and the sweep to ~1382px, so 1382/28 = ~49px per bound, ~0.96
+    frame widths. It holds across the clamp's range (~0.93 at 768px,
+    ~1.30 at 1920px) because --lemur-size tracks vw over most of it.
+
+    Cadence. 0.32s per bound is ~3 bounds/second and ~19 sprite frames a
+    second — normal playback for a hand-drawn 6-frame cycle. The previous
+    0.6s ran the cycle at 10fps while the sweep covered ~1.8 frame widths
+    per bound, i.e. the lemur travelled nearly twice its own stride per
+    stride: the skate this replaces.
+
+  Only the running pose ships here (assets/images/lemur-sprites/svg/
+  jumping-strip.svg — "jumping" is the sprite sheet's row name, but the
+  pose itself is a four-legged running gait, which is why this partial
+  calls it "running" in its own naming). climbing/hanging/turning exist as
+  sprite output but nothing on the site currently uses them.
+
+  jumping-strip.svg is tools/generate-lemur-sprites.sh output: one <path>
+  traced from all 6 frames of that row appended side by side, deliberately
+  untight so the frames sit on an exact 1536x256 (6 * 256x256) grid — see
+  the comment above that script's strip potrace call.
+  background-size: 600% 100% relies on that even grid: it always shows
+  exactly one 256x256 frame no matter what pixel size --lemur-size
   resolves to.
 */ -}}
 
-{{- $climbing := "" -}}{{- with resources.Get "images/lemur-sprites/svg/climbing-strip.svg" }}{{ $climbing = . | fingerprint }}{{ end -}}
-{{- $hanging := "" -}}{{- with resources.Get "images/lemur-sprites/svg/hanging-strip.svg" }}{{ $hanging = . | fingerprint }}{{ end -}}
-{{- $jumping := "" -}}{{- with resources.Get "images/lemur-sprites/svg/jumping-strip.svg" }}{{ $jumping = . | fingerprint }}{{ end -}}
-{{- $turning := "" -}}{{- with resources.Get "images/lemur-sprites/svg/turning-strip.svg" }}{{ $turning = . | fingerprint }}{{ end -}}
+{{- $running := "" -}}{{- with resources.Get "images/lemur-sprites/svg/jumping-strip.svg" }}{{ $running = . | fingerprint }}{{ end -}}
 
-{{- if and $climbing $hanging $jumping $turning }}
+{{- if $running }}
 <style>
   .lemurs-active {
     position: relative;
   }
 
   .lemur {
-    --lemur-size: clamp(2.75rem, 6vw, 4.5rem);
+    --lemur-size: clamp(2rem, 4vw, 3.5rem);
     --lemur-half: calc(var(--lemur-size) / 2);
+
+    /* One bound, and how many bounds it takes to cross — see above. Every
+       duration below is derived from these two, which is what keeps the
+       run cycle and the travel in step. */
+    --lemur-cycle: 0.32s;
+    --lemur-bounds: 28;
+
     position: absolute;
     z-index: 1;
+    top: calc(-1 * var(--lemur-half));
     width: var(--lemur-size);
     height: var(--lemur-size);
     color: var(--color-text);
+    background-image: url({{ $running.RelPermalink }});
     background-repeat: no-repeat;
     background-size: 600% 100%;
     pointer-events: none;
     animation:
-      lemur-journey 16s ease-in-out infinite,
-      lemur-frames 0.72s steps(5, jump-none) infinite;
+      lemur-run calc(var(--lemur-cycle) * var(--lemur-bounds)) linear infinite,
+      lemur-frames var(--lemur-cycle) steps(6) infinite;
   }
 
+  /* The element is exactly one frame wide, and background-size makes the
+     strip exactly six of it, so one frame width == one --lemur-size. Ending
+     at -6 frame widths with steps(6) lands the six sampled positions on
+     0, -1, ... -5 frame widths: the six frames, each shown whole for
+     exactly a sixth of the cycle.
+
+     Not the percentage form. background-position-x: 100% aligns the strip's
+     right edge with the element's, i.e. it is the LAST frame, not one past
+     it — so 0%..100% is five frame widths, not six, and any steps() over it
+     that isn't a multiple of five samples between frames. steps(5,
+     jump-none), which this replaces, sampled 0/25/50/75/100% — three of its
+     five states were two half-lemurs stitched together. */
   @keyframes lemur-frames {
-    from { background-position-x: 0%; }
-    to   { background-position-x: 100%; }
+    from { background-position-x: 0; }
+    to   { background-position-x: calc(-6 * var(--lemur-size)); }
   }
 
-  /* Off screen below the bottom-left corner, waiting to enter. */
-  @keyframes lemur-journey {
-    0% {
-      opacity: 0;
-      left: calc(-1 * var(--lemur-half));
-      top: calc(100% + var(--lemur-size));
-      transform: rotate(0deg) scale(1);
-      background-image: url({{ $climbing.RelPermalink }});
-    }
-    /* Enters, on the border at the bottom-left corner. */
-    3% {
-      opacity: 1;
-      left: calc(-1 * var(--lemur-half));
-      top: calc(100% - var(--lemur-half));
-      transform: rotate(0deg) scale(1);
-      background-image: url({{ $climbing.RelPermalink }});
-    }
-    /* Climbs the left border. */
-    26% {
-      opacity: 1;
-      left: calc(-1 * var(--lemur-half));
-      top: var(--lemur-half);
-      transform: rotate(0deg) scale(1);
-      background-image: url({{ $climbing.RelPermalink }});
-    }
-    /* Pivots at the top-left corner. */
-    31% {
-      opacity: 1;
-      left: calc(-1 * var(--lemur-half));
-      top: calc(-1 * var(--lemur-half));
-      transform: rotate(0deg) scale(1);
-      background-image: url({{ $turning.RelPermalink }});
-    }
-    /* Crosses the top border. */
-    52% {
-      opacity: 1;
-      left: 54%;
-      top: calc(-1 * var(--lemur-half));
-      transform: rotate(0deg) scale(1);
-      background-image: url({{ $climbing.RelPermalink }});
-    }
-    /* Grabs on and hangs from the top border, then swings. */
-    58% {
-      opacity: 1;
-      left: 54%;
-      top: calc(-1 * var(--lemur-half));
-      transform: rotate(-24deg) scale(1);
-      background-image: url({{ $hanging.RelPermalink }});
-    }
-    66% {
-      opacity: 1;
-      left: 54%;
-      top: calc(-1 * var(--lemur-half));
-      transform: rotate(20deg) scale(1);
-      background-image: url({{ $hanging.RelPermalink }});
-    }
-    73% {
-      opacity: 1;
-      left: 54%;
-      top: calc(-1 * var(--lemur-half));
-      transform: rotate(-8deg) scale(1);
-      background-image: url({{ $hanging.RelPermalink }});
-    }
-    /* Lets go and jumps off screen, up and to the right. */
-    78% {
-      opacity: 1;
-      left: 60%;
-      top: 0%;
-      transform: rotate(10deg) scale(1);
-      background-image: url({{ $jumping.RelPermalink }});
-    }
-    92% {
-      opacity: 1;
-      left: 118%;
-      top: calc(-3 * var(--lemur-size));
-      transform: rotate(42deg) scale(0.8);
-      background-image: url({{ $jumping.RelPermalink }});
-    }
-    100% {
-      opacity: 0;
-      left: 132%;
-      top: calc(-5 * var(--lemur-size));
-      transform: rotate(55deg) scale(0.6);
-      background-image: url({{ $jumping.RelPermalink }});
-    }
+  @keyframes lemur-run {
+    from { left: calc(-1 * var(--lemur-size)); }
+    to   { left: calc(100% + var(--lemur-size)); }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -169,5 +121,5 @@
 </style>
 <div class="lemur" aria-hidden="true"></div>
 {{- else }}
-  {{- warnf "lemurs.html: one or more lemur sprite strips are missing under assets/images/lemur-sprites/svg — run npm run site -- assets sprites." }}
+  {{- warnf "lemurs.html: assets/images/lemur-sprites/svg/jumping-strip.svg is missing — run npm run site -- assets sprites." }}
 {{- end }}

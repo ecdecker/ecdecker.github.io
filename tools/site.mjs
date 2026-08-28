@@ -292,16 +292,12 @@ async function commandAudit(args) {
 async function commandAssets(args) {
   const [kind, ...rest] = args;
   if (!kind || kind === "--help") {
-    console.log("Usage: npm run site -- assets sprites [--setup]\n       npm run site -- assets fonts [--setup|--check]");
+    console.log("Usage: npm run site -- assets sprites\n       npm run site -- assets fonts [--setup|--check]");
     return;
   }
   if (kind === "sprites") {
-    if (rest.includes("--setup")) {
-      console.log("Installing the optional sprite-generation requirements...");
-      await run("bash", [path.join(projectRoot, "tools/install-lemur-sprite-deps.sh")]);
-      return;
-    }
-    console.log("Sprite generation is an advanced task and requires ImageMagick and potrace.");
+    // generate-lemur-sprites.sh installs its own dependencies (ImageMagick,
+    // potrace, svgo) if they're missing, so there's no separate --setup step.
     const spriteArgs = rest.length ? rest : [
       path.join(projectRoot, "assets/images/lemur-sprite-sheet.png"),
       path.join(projectRoot, "assets/images/lemur-sprites"),

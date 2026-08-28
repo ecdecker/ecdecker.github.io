@@ -84,7 +84,6 @@ Reports are written under `artifacts/load-states/`. See
 These commands are not needed for writing or publishing articles:
 
 ```sh
-npm run site -- assets sprites --setup
 npm run site -- assets sprites
 
 npm run site -- assets fonts --setup
@@ -92,7 +91,9 @@ npm run site -- assets fonts --check
 npm run site -- assets fonts
 ```
 
-The setup commands install the extra tools used only by those pipelines.
+Sprites installs what it needs (ImageMagick, potrace, svgo) automatically on
+first run. Fonts' separate setup command installs the extra tools used only
+by that pipeline.
 
 ## Continuous deployment
 
