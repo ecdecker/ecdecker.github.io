@@ -1,5 +1,5 @@
-baseURL = 'https://example.org/'
-title = 'Folio'
+baseURL = 'https://emilycdecker.com/'
+title = 'Emily'
 theme = 'folio'
 defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false

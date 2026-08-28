@@ -7,17 +7,17 @@
 [en]
   locale = 'en-US'
   label = 'English'
-  title = 'Folio'
+  title = 'Emily'
   weight = 1
 
 [mg]
   locale = 'mg-MG'
   label = 'Malagasy'
-  title = 'Folio'
+  title = 'Emily'
   weight = 2
 
 [fr]
   locale = 'fr-FR'
   label = 'Français'
-  title = 'Folio'
+  title = 'Emily'
   weight = 3
