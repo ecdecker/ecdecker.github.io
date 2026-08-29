@@ -2,6 +2,12 @@
   "_generated_by": "npm run site -- images",
   "format": "avif",
   "images": {
+    "fixtures/swatch.png": {
+      "bytes": 350,
+      "hash": "180c6bfb60c82e61798a2350f7f27f2ec4c6d81716f71e62c5545db6ed28d7f6",
+      "quality": 25,
+      "ssim": 0.99228
+    },
     "images/editorial-workspace.png": {
       "bytes": 34260,
       "hash": "7201c5b349c1f689c3fa5b5325ab5d12ad3c965018088a2597cdde9fc2733439",

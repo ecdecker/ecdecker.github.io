@@ -27,6 +27,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parent.parent
 BUDGETS = ROOT / "tools" / "exercise-budgets.json"
@@ -126,7 +127,10 @@ def check_internal_links(page: Path, html: str, out: Path, fail: Failures) -> No
             continue
         if not href.startswith("/"):
             continue  # relative links are resolved by the browser, not us
-        path = href.split("?")[0].split("#")[0]
+        # Published filenames on disk are literal UTF-8 (e.g. "enquête.csv");
+        # the href is percent-encoded, so the lookup must decode first or a
+        # correctly-resolving link reports as broken.
+        path = unquote(href.split("?")[0].split("#")[0])
         target = out / path.lstrip("/")
         if target.is_dir():
             target = target / "index.html"

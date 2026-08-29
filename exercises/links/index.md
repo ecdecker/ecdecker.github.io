@@ -64,9 +64,9 @@ proof that both spellings resolve. A malformed escape such as `%zz` cannot be
 decoded at all; it is left alone and misses, rather than failing the build.
 
 A destination naming a directory is not a download. [This bundle](./) and
-[the shared image directory](/images/) both name one, and the hook leaves both
-untouched — worth stating because asking a directory for its contents or its
-permalink is a hard build failure, not a quiet miss.
+[the images exercise](/exercises/images/) both name one, and the hook leaves
+both untouched — worth stating because asking a directory for its contents or
+its permalink is a hard build failure, not a quiet miss.
 
 ## Contact schemes
 
@@ -92,7 +92,7 @@ it is left doing its job.
 ## Everything else is left alone
 
 Ordinary links keep behaving exactly as they did. An internal page reference
-such as [one ink only](/posts/one-ink/) or a relative one such as
+such as [the post index](/posts/) or a relative one such as
 [the image exercises](../images/) resolves normally, an anchor like
 [the section above](#contact-schemes) stays a fragment, an external link such as
 [the Hugo documentation](https://gohugo.io/render-hooks/links/) is emitted
