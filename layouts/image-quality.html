@@ -6,17 +6,20 @@
   renders real crops at 1:1 so the quality floor can be set by eye, with the
   byte cost of each choice shown alongside.
 
-  Kept out of listings and RSS via _build.list = never in the front matter.
+  Lives in exercises/, which is mounted into the content tree only when
+  environment is development. It used to sit in content/ with build.list = never,
+  which kept it out of listings but still RENDERED it into production — the page
+  was publicly reachable at /image-quality/ the whole time. Being unmounted in
+  production means it is now absent rather than merely unlisted.
 
-  Not built in production. This page asks Hugo for 7 qualities x 2 codecs
-  across 4 images, as crops and as full frames, plus a lossless PNG
+  The `hugo.Environment "image-quality"` gate below is a second, independent
+  guard against the actual cost: this page asks Hugo for 7 qualities x 2
+  codecs across 4 images, as crops and as full frames, plus a lossless PNG
   reference per image — 1.55 MB of derivatives, 71% of every image byte the
   site published, for a page no reader ever opens. The four 480x320 lossless
-  PNG references alone are 842 KB. Nothing else on the site links to any of
-  it, so skipping the body in production means nothing calls .RelPermalink
-  on those derivatives and none of them are written at all. Run
-  `hugo server`, which defaults to the development environment, to use the
-  tool.
+  PNG references alone are 842 KB. It keeps those derivatives from being
+  generated during ordinary development too, not just production, so
+  `npm run site -- start --image-lab` is required even locally to build them.
 */ -}}
 {{ define "main" }}
   {{- if ne hugo.Environment "image-quality" }}
