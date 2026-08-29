@@ -137,7 +137,47 @@
     {{- $rh = index $parts 1 | int -}}
   {{- end }}
 
+  {{- /* Grayscale sources and the AVIF encoder.
+
+         Hugo keeps a source's colour model all the way through Resize/Fill
+         and every images.* filter, so a 16-bit grayscale PNG reaches the
+         AVIF encoder as image.Gray16, hits its encodeGray path and fails:
+
+           error calling Resize: failed to resize image "...": encodeGray:
+           Failed to add image to encoder: Encoding of color planes failed
+
+         That aborts the WHOLE build, not just the one image. 8-bit gray
+         (and gray+alpha, and 16-bit RGB) all encode fine — only Gray16
+         trips it. Verified on Hugo 0.164.0.
+
+         It is also cache-masked: once any successful derivative of the
+         image exists in resources/_gen, a warm rebuild can pass and then
+         fail on a cold CI checkout. So this is guarded, not just tested.
+
+         The fix is to shed the grayscale colour model. No lossless route
+         exists: PNG preserves it, and Overlay/Mask/Text/Brightness/
+         Saturation/Colorize/Dither/Padding all leave it intact. Only a
+         re-encode through a format with no grayscale representation works,
+         so the ladder is rebuilt off a WebP q100 intermediate.
+
+         Measured, cheapest q holding SSIM >= 0.92, AVIF-via-round-trip vs
+         just dropping the AVIF <source> and shipping WebP:
+
+           smooth gray plate   640px  3304 -> 2730 B   round-trip 1.21x smaller
+                               800px  4778 -> 3430 B              1.39x
+                              1200px 10928 -> 5907 B              1.85x
+           gray parchment      640px 43230 -> 38319 B             1.13x
+                               800px 60096 -> 64135 B   WebP-only 1.06x smaller
+                              1200px 154050 -> 180794 B           1.17x
+
+         So neither wins everywhere, but the round-trip's worst case is
+         +17% while WebP-only's worst case is +85%. Bytes are the priority
+         here, so take the bounded downside. (A JPEG q100 intermediate
+         measured within 1-3% of WebP q100 either way; WebP keeps the
+         pipeline to the two codecs it already ships.) */ -}}
   {{- $avif := slice }}{{- $webp := slice }}{{- $largest := "" -}}
+  {{- $avifOK := true -}}
+  {{- $needsRGB := false -}}
   {{- range $w := $usable }}
     {{- $spec := "" -}}
     {{- if eq $fit "fill" -}}
@@ -145,21 +185,75 @@
     {{- else -}}
       {{- $spec = printf "%dx" $w -}}
     {{- end -}}
-    {{- $a := "" }}{{- $p := "" -}}
+    {{- $p := "" -}}
     {{- if eq $fit "fill" -}}
-      {{- $a = $img.Fill (printf "%s avif q%d" $spec $quality) -}}
       {{- $p = $img.Fill (printf "%s webp q%d" $spec $quality) -}}
     {{- else -}}
-      {{- $a = $img.Resize (printf "%s avif q%d" $spec $quality) -}}
       {{- $p = $img.Resize (printf "%s webp q%d" $spec $quality) -}}
     {{- end -}}
-    {{- $avif = $avif | append (printf "%s %dw" $a.RelPermalink $w) -}}
+
+    {{- /* Direct AVIF first — the only path a normal image ever takes, and
+           it costs nothing extra because this derivative ships anyway.
+           $needsRGB latches on the first failure so later widths skip
+           straight to the round-trip instead of re-failing.
+
+           The emptiness check is not paranoia. A failed AVIF transform
+           leaves a ZERO-BYTE entry in the image cache, and on the next
+           build try() reads that back as a success — so a warm rebuild
+           silently publishes a 0 B .avif, the <source> wins over the WebP,
+           and the image renders as nothing. It compounds: each rebuild
+           poisons one more width. Observed on Hugo 0.164 as 3 of 4 widths
+           at 0 B after three warm builds, with the build still exiting 0.
+           Treating an empty payload as a failure is what makes this
+           correct on a warm cache, not just on CI. */ -}}
+    {{- $a := "" -}}
+    {{- if not $needsRGB -}}
+      {{- $t := "" -}}
+      {{- if eq $fit "fill" -}}
+        {{- $t = try ($img.Fill (printf "%s avif q%d" $spec $quality)) -}}
+      {{- else -}}
+        {{- $t = try ($img.Resize (printf "%s avif q%d" $spec $quality)) -}}
+      {{- end -}}
+      {{- if $t.Err -}}
+        {{- $needsRGB = true -}}
+      {{- else if not (len $t.Value.Content) -}}
+        {{- $needsRGB = true -}}
+      {{- else -}}
+        {{- $a = $t.Value -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if $needsRGB -}}
+      {{- $base := "" -}}
+      {{- if eq $fit "fill" -}}
+        {{- $base = $img.Fill (printf "%s webp q100" $spec) -}}
+      {{- else -}}
+        {{- $base = $img.Resize (printf "%s webp q100" $spec) -}}
+      {{- end -}}
+      {{- $t := try ($base.Resize (printf "%dx avif q%d" $w $quality)) -}}
+      {{- /* Nested rather than `or`, so .Value is never touched when .Err
+             is set — this must not depend on argument short-circuiting. */ -}}
+      {{- if $t.Err -}}
+        {{- /* Round-trip did not help either: ship WebP only rather than
+               kill the build. Every browser with AVIF also has WebP. */ -}}
+        {{- $avifOK = false -}}
+      {{- else if not (len $t.Value.Content) -}}
+        {{- $avifOK = false -}}
+      {{- else -}}
+        {{- $a = $t.Value -}}
+      {{- end -}}
+    {{- end -}}
+    {{- with $a }}{{ $avif = $avif | append (printf "%s %dw" .RelPermalink $w) }}{{ end -}}
     {{- $webp = $webp | append (printf "%s %dw" $p.RelPermalink $w) -}}
     {{- $largest = $p -}}
   {{- end }}
+  {{- if not $avifOK }}
+    {{- warnf "image.html: %q cannot be AVIF-encoded even after an RGB round-trip — shipping WebP only." (or $src $img.Name) }}
+  {{- end }}
 
   <picture>
+    {{- if and $avifOK $avif }}
     <source type="image/avif" srcset="{{ delimit $avif ", " }}" sizes="{{ $sizes }}">
+    {{- end }}
     <img src="{{ $largest.RelPermalink }}"
          srcset="{{ delimit $webp ", " }}"
          sizes="{{ $sizes }}"
@@ -167,7 +261,11 @@
          {{- with $class }} class="{{ . }}"{{ end }}
          width="{{ $largest.Width }}" height="{{ $largest.Height }}"
          decoding="async"
-         {{ if $eager }}loading="eager" fetchpriority="high"{{ else }}loading="lazy"{{ end }}>
+         {{- /* fetchpriority="low" on the lazy branch: lazy alone only defers
+                the *start* of the fetch, it does not deprioritise it once it
+                starts, so a below-fold image scrolled into view still competes
+                with fonts, CSS and the LCP image for a narrow pipe. */}}
+         {{ if $eager }}loading="eager" fetchpriority="high"{{ else }}loading="lazy" fetchpriority="low"{{ end }}>
   </picture>
 {{- else }}
   {{- warnf "image.html: no asset at %q — image omitted." $src }}

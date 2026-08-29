@@ -15,3 +15,6 @@ fileMeta = "({{ .kind }}, {{ .size }})"
 unitBytes = "B"
 unitKilobytes = "KB"
 unitMegabytes = "MB"
+
+# Opt-in full-resolution plate link — see layouts/_markup/render-image.html
+viewFullRes = "View full resolution"

@@ -59,6 +59,63 @@
        fixed and there is no reason to fetch a wider variant. */ -}}
 {{- $sizes := "(min-width: 880px) 640px, 100vw" -}}
 
+{{- /* Full-resolution on request.
+
+       The ladder tops out at 640px because that is the widest the plate is
+       ever drawn, which is right for reading and wrong for looking closely
+       at a plate — the whole point of this corpus. So each plate gets a
+       link to a bigger encode, placed after the figure and never fetched
+       until it is clicked. Transfer stays opt-in, which is the only version
+       of "full resolution" that is defensible on a metered connection.
+
+       Capped at 1600px, NOT the original. Two reasons, one of them a
+       landmine: build.publishResources = false means an original is written
+       only if something calls .RelPermalink on it, and doing that here
+       would silently republish every source PNG — the exact 13 MB
+       regression c7f5a07 removed. This calls .RelPermalink on a derivative
+       only; the source is read for .Width, which publishes nothing. The
+       second reason is that the cap is where the bytes are: for
+       editorial-workspace (2688x1792) the ladder runs 1600w 120167 B,
+       2048w 192677 B, native 313013 B against an 8.2 MB PNG. 1600px is
+       past retina for a 640px slot and 2.6x cheaper than native.
+
+       q60 rather than the measured per-image q, because the measured value
+       is tuned to hold SSIM 0.92 at the 800px delivery width. Someone who
+       clicked through is looking for detail, and the request is already
+       explicit.
+
+       The weight is stated in the link, reusing the fileMeta/unit keys that
+       render-link.html already uses for downloads — a reader on a prepaid
+       bundle gets to decide with the number in front of them. */ -}}
+{{- $full := "" -}}
+{{- $fullMeta := "" -}}
+{{- if $res -}}
+  {{- $cap := 1600 -}}
+  {{- if lt $res.Width $cap }}{{ $cap = $res.Width }}{{ end -}}
+  {{- /* Only worth offering if it is meaningfully bigger than the widest
+         variant the plate already ships. */ -}}
+  {{- if gt $cap 640 -}}
+    {{- $t := try ($res.Resize (printf "%dx avif q60" $cap)) -}}
+    {{- /* Same guard as image.html: a failed AVIF transform leaves a
+           zero-byte cache entry that reads back as success on the next
+           build, so an empty payload is a failure, not a result. A plate
+           that cannot be encoded simply gets no link. */ -}}
+    {{- if and (not $t.Err) (len $t.Value.Content) -}}
+      {{- $full = $t.Value -}}
+      {{- $bytes := len $full.Content -}}
+      {{- $size := "" -}}
+      {{- if lt $bytes 1024 -}}
+        {{- $size = printf "%s %s" (lang.FormatNumber 0 $bytes) (T "unitBytes") -}}
+      {{- else if lt $bytes 1048576 -}}
+        {{- $size = printf "%s %s" (lang.FormatNumber 1 (div (float $bytes) 1024.0)) (T "unitKilobytes") -}}
+      {{- else -}}
+        {{- $size = printf "%s %s" (lang.FormatNumber 1 (div (float $bytes) 1048576.0)) (T "unitMegabytes") -}}
+      {{- end -}}
+      {{- $fullMeta = T "fileMeta" (dict "kind" "AVIF" "size" $size) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
 {{- if $defer }}<details class="plate"><summary class="plate-summary">{{ with .Title }}{{ . }}{{ else }}{{ with .Text }}{{ . }}{{ else }}{{ T "showPlate" }}{{ end }}{{ end }}</summary>{{ end -}}
 <figure>
   <div class="media-frame">
@@ -69,11 +126,21 @@
         "sizes" $sizes
         "eager" $first) }}
     {{- else }}
-      {{- /* Remote or unresolvable — emit a plain tag rather than dropping it. */ -}}
+      {{- /* Remote or unresolvable — emit a plain tag rather than dropping it.
+
+             fetchpriority matches the resolved path in _partials/image.html.
+             It matters more here, not less: this is the branch for an image
+             on someone else's host, at an unknown size, over a connection
+             this site cannot measure or shrink. Nothing in the corpus takes
+             this branch today, so it costs nothing now and is correct the
+             first time a post carries a remote URL. */ -}}
       <img src="{{ $dest }}" alt="{{ .Text }}" decoding="async"
-           {{ if $first }}loading="eager" fetchpriority="high"{{ else }}loading="lazy"{{ end }}>
+           {{ if $first }}loading="eager" fetchpriority="high"{{ else }}loading="lazy" fetchpriority="low"{{ end }}>
     {{- end }}
   </div>
   {{- with .Title }}<figcaption>{{ . }}</figcaption>{{ end }}
+  {{- with $full }}
+  <p class="plate-full body-sm"><a href="{{ .RelPermalink }}">{{ T "viewFullRes" }}</a> {{ $fullMeta }}</p>
+  {{- end }}
 </figure>
 {{- if $defer }}</details>{{ end -}}

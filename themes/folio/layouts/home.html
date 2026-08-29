@@ -69,13 +69,40 @@
 
           {{- with $site.heroImage }}
           <div class="hero-media" aria-hidden="true">
-            {{/* The one above-the-fold image: eager, high priority. Roughly
-                 half the card above 880px, full width below. */}}
+            {{/* The one above-the-fold image: eager, high priority, and the
+                 likely LCP element — so the one image worth being exact
+                 about.
+
+                 fit=fill, because .hero-media crops this in the browser
+                 anyway: it is `object-fit: cover` over a roughly square box
+                 and the source is 816x1456 portrait. A plain resize ships the
+                 whole tall frame and lets the browser throw most of it away,
+                 paying for pixels that are never drawn. Cropping in the
+                 encoder instead is 28% fewer bytes at every rung of the
+                 ladder (800w: 61757 -> 44315 B).
+
+                 4:5 is deliberately conservative. The box is 552 CSS px wide
+                 at the container cap, but its height is whatever .hero-text
+                 stretches to — min-height 32rem plus padding, so a
+                 rendered-text measurement rather than a fixed number. 4:5
+                 stays taller than any plausible box, so the frame still
+                 covers it and `object-position: center 35%` keeps material to
+                 work with. A squarer crop saves more (1:1 is 36659 B at 800w)
+                 but starts dictating the composition from here.
+
+                 sizes describes that box, not the viewport. .container is
+                 capped at 1200px with clamp(1.25rem, 4vw, 3rem) of padding,
+                 so this half-card never exceeds (1200 - 96) / 2 = 552px however
+                 wide the window gets. The old "50vw" claimed 720px at a 1440px
+                 viewport and bought the 800w candidate to fill 552px of
+                 screen. */}}
             {{ partial "image.html" (dict
               "src" .
               "alt" ""
               "eager" true
-              "sizes" "(min-width: 880px) 50vw, 100vw") }}
+              "fit" "fill"
+              "ratio" "4:5"
+              "sizes" "(min-width: 1200px) 552px, (min-width: 880px) 46vw, 100vw") }}
             {{ with $f.heroImageCaption }}
             <span class="hero-media-tag">
               <svg width="12" height="12" aria-hidden="true"><use href="#folio-spark"/></svg>

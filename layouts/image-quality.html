@@ -7,6 +7,16 @@
   byte cost of each choice shown alongside.
 
   Kept out of listings and RSS via _build.list = never in the front matter.
+
+  Not built in production. This page asks Hugo for 7 qualities x 2 codecs
+  across 4 images, as crops and as full frames, plus a lossless PNG
+  reference per image — 1.55 MB of derivatives, 71% of every image byte the
+  site published, for a page no reader ever opens. The four 480x320 lossless
+  PNG references alone are 842 KB. Nothing else on the site links to any of
+  it, so skipping the body in production means nothing calls .RelPermalink
+  on those derivatives and none of them are written at all. Run
+  `hugo server`, which defaults to the development environment, to use the
+  tool.
 */ -}}
 {{ define "main" }}
   {{- if ne hugo.Environment "image-quality" }}
