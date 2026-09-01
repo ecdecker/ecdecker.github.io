@@ -100,9 +100,8 @@ by that pipeline.
 GitHub Actions uses the same interface as a local checkout:
 
 1. `npm ci`
-2. `npm test`
-3. `npm run site -- check`
-4. `npm run site -- build --base-url https://emilycdecker.com/`
+2. `npm run site -- check`
+3. `npm run site -- build --base-url https://emilycdecker.com/`
 
 The resulting `public/` directory is deployed to GitHub Pages. Local and
 hosted builds therefore use the same pinned Hugo version and command path.

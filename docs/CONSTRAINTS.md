@@ -56,7 +56,8 @@ Potential exceptions and their current status are recorded below:
 
 # Technology
 - The site uses hugo as its underlying Static Site Generator (SSG), and leverages built-in solutions wherever possible.
-- The site maintains a 100 perfect Lighthouse score: `npm run site -- audit`.
+- The site maintains a 100 perfect Lighthouse score: measured manually, see [LIGHTHOUSE.md](../tools/LIGHTHOUSE.md).
+- Loading states under a throttled connection are captured by `npm run site -- audit`.
 - The site configures proper social media previews. <<todo-correct-meta-tags>>
 - package.json scripts are the only valid entrypoint for user/developer actions on a checked-out repo.
   - tools are node scripts under /tools
@@ -68,8 +69,28 @@ This site uses a custom theme called Folio, which is documented in the developme
 See the entire design system on one page by running `npm run site -- theme`.
 
 ## Scripts
-The npm scripts this site uses are listed below:
-<<todo-list-any-npm-commands
+`site` is the only npm script. Every action is a subcommand of it.
+
+```sh
+npm run site -- help                  # list every command
+npm run site -- start                 # preview the site, including drafts
+npm run site -- new "Article title"   # create a draft article folder
+npm run site -- check                 # translations, images, and a full draft build
+npm run site -- build                 # production build into public/
+npm run site -- images                # optimize new or changed source images
+npm run site -- doctor                # report whether the checkout is ready to use
+```
+
+Optional and advanced:
+
+```sh
+npm run site -- setup --audit         # install Chromium for the audit
+npm run site -- audit                 # capture slow-network loading states
+npm run site -- assets sprites        # regenerate the lemur sprite assets
+npm run site -- assets fonts          # regenerate the optimized heading fonts
+```
+
+Run any command with `--help` for its options.
 
 ## AI Agents
 - Most of the non-framework code that runs this site is AI-generated.

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
@@ -67,7 +67,7 @@ function numberOption(args, name, fallback) {
   return value;
 }
 
-export function slugify(value) {
+function slugify(value) {
   return value
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -76,7 +76,7 @@ export function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
-export function localDate() {
+function localDate() {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/New_York",
     year: "numeric",
@@ -134,35 +134,20 @@ async function commandNew(args) {
   if (!slug || slug !== slugify(slug)) throw new SiteError("The slug must contain lowercase words separated by hyphens.");
   const date = optionValue(args, "--date", localDate());
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new SiteError("The date must use YYYY-MM-DD.");
-  const file = await createArticle({ title, slug, date });
-  console.log(`Created ${path.relative(projectRoot, file).split(path.sep).join("/")}`);
+  if (await exists(path.join(projectRoot, "content/posts", slug, "index.md"))) {
+    throw new SiteError(`An article already exists at content/posts/${slug}/index.md.`);
+  }
+  // archetypes/default.md is the template. `hugo new` has no title or date
+  // flag, so both travel as environment variables, which the archetype reads
+  // because Hugo's default security.funcs.getenv allowlist is ^HUGO_. The
+  // date is passed as the finished string rather than through --clock: that
+  // sets an instant, which Hugo then renders in the site's zone, so midnight
+  // UTC writes the day before.
+  await hugo(["new", "content", `posts/${slug}/index.md`], {
+    env: { ...process.env, HUGO_NEW_TITLE: title, HUGO_NEW_DATE: date },
+  });
+  console.log(`Created content/posts/${slug}/index.md`);
   console.log("It is a draft and will not appear on the public site until draft: true is removed.");
-}
-
-export async function createArticle({ title, slug = slugify(title), date = localDate(), root = projectRoot }) {
-  if (!title) throw new SiteError("An article title is required.");
-  if (!slug || slug !== slugify(slug)) throw new SiteError("The slug must contain lowercase words separated by hyphens.");
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new SiteError("The date must use YYYY-MM-DD.");
-  const directory = path.join(root, "content/posts", slug);
-  const file = path.join(directory, "index.md");
-  if (await exists(file)) throw new SiteError(`An article already exists at content/posts/${slug}/index.md.`);
-  await mkdir(directory, { recursive: true });
-  const safeTitle = title.replaceAll('"', '\\"');
-  await writeFile(file, `---
-title: "${safeTitle}"
-description: "Add a one- or two-sentence summary."
-date: ${date}
-draft: true
-tags: []
----
-
-Write the opening paragraph here.
-
-## First section
-
-Continue the article here.
-`);
-  return file;
 }
 
 async function commandImages(args) {

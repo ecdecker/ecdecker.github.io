@@ -199,7 +199,17 @@ ${variantLines}{{- end -}}
   }
 
   async score(referencePath, candidatePath) {
-    if (!this.references.has(referencePath)) this.references.set(referencePath, await decodeLuma(referencePath));
+    if (!this.references.has(referencePath)) {
+      const reference = await decodeLuma(referencePath);
+      // A broken SSIM kernel does not fail, it silently picks the wrong
+      // quality for every image. Identity is the one value that is knowable
+      // without a second implementation, and the reference is already decoded
+      // and in memory here, so checking it costs one pass and no extra decode.
+      if (structuralSimilarity(reference, reference) !== 1) {
+        throw new SiteError("SSIM does not score a reference against itself as 1.");
+      }
+      this.references.set(referencePath, reference);
+    }
     return structuralSimilarity(this.references.get(referencePath), await decodeLuma(candidatePath));
   }
 }

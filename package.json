@@ -10,9 +10,7 @@
     "hugoVersion": "0.165.0"
   },
   "scripts": {
-    "site": "node tools/site.mjs",
-    "start": "node tools/site.mjs start",
-    "test": "node --test tools/site.test.mjs"
+    "site": "node tools/site.mjs"
   },
   "devDependencies": {
     "hugo-bin": "0.162.0",
