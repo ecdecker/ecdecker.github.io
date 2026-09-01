@@ -2,8 +2,10 @@
 #+SUBTITLE: A practical guide to writing, updating, and publishing the site
 #+OPTIONS: toc:2 num:nil
 
-You can manage the day-to-day content of this website from GitHub. You do not
-need to edit the design or understand how the site is built.
+You can manage the day-to-day content of this website with Pages CMS, GitHub's
+file editor, or a local checkout. They all edit the same files in Git, so Pages
+CMS is a convenience rather than a required or separate publishing system. You
+do not need to edit the design or understand how the site is built.
 
 The important folders are:
 
@@ -18,7 +20,7 @@ everyday content.
 
 * How publishing works
 
-Each saved change in GitHub is called a /commit/. A commit to the =main=
+Each saved change in GitHub is called a /commit/. A commit to the =master=
 branch automatically rebuilds and publishes the website. This normally takes
 a few minutes.
 
@@ -28,6 +30,25 @@ the change needs attention; see [[#common-problems][Common problems]].
 
 GitHub keeps the history of every commit, so an earlier version can be
 recovered if necessary.
+
+* Choose an editor
+
+For ordinary notes, open =/admin/= on the website or go directly to
+[[https://app.pagescms.org/][Pages CMS]], sign in with an authorized GitHub account, and choose this
+repository. The visual editor includes a *Source* mode for Markdown that needs
+to remain exact. New notes start as drafts, and Pages CMS cannot rename or
+delete published notes.
+
+GitHub's file editor and a local checkout remain fully supported. Use them for
+translations, article-local files, Hugo shortcodes, unusual front matter, or
+anything else the CMS form does not expose. Pages CMS preserves front-matter
+keys outside its form rather than deleting them.
+
+Box and Zotero synchronization is a separate input workflow. Imported Box
+snapshots and generated Zotero bibliographies are intentionally not editable
+in Pages CMS. Do not author one article independently in both Box and Pages
+CMS; choose one authority for that article. The technical ownership and trial
+instructions are in [[file:docs/PAGES-CMS.md][the Pages CMS authoring note]].
 
 * Edit an existing article
 
@@ -39,7 +60,7 @@ recovered if necessary.
    top intact unless you intend to change it.
 5. Select *Commit changes*.
 6. Enter a short description, such as “Correct opening paragraph.”
-7. Commit directly to =main= if GitHub offers that choice.
+7. Commit directly to =master= if GitHub offers that choice.
 8. Wait for the publishing action to finish, then check the live page.
 
 * Create a new article

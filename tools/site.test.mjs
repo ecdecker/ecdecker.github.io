@@ -4,6 +4,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { test } from "node:test";
 import os from "node:os";
 import path from "node:path";
+import { parse as parseYaml } from "yaml";
 
 import { structuralSimilarity } from "./lib/images.mjs";
 import { projectRoot } from "./lib/project.mjs";
@@ -67,6 +68,36 @@ test("help exposes the single command surface", async () => {
   assert.equal(result.code, 0);
   assert.match(result.stdout, /Everyday commands:/);
   assert.match(result.stdout, /npm run site -- start/);
+});
+
+test("Pages CMS is an additive editor with safe ownership boundaries", async () => {
+  const config = parseYaml(await readFile(path.join(projectRoot, ".pages.yml"), "utf8"));
+  const posts = config.content.find(({ name }) => name === "posts");
+
+  assert.equal(config.settings.content.merge, true);
+  assert.equal(posts.path, "content/posts");
+  assert.equal(posts.filename.template, "{primary}/index.md");
+  assert.equal(posts.operations.rename, false);
+  assert.equal(posts.operations.delete, false);
+  assert.equal(posts.fields.find(({ name }) => name === "draft").default, true);
+  assert.equal(posts.fields.find(({ name }) => name === "body").options.switcher, true);
+  assert.equal(config.media.input, "assets/uploads");
+
+  const editablePaths = config.content.map(({ path }) => path).filter(Boolean);
+  assert.ok(!editablePaths.some((entry) => entry.startsWith("imports/box")));
+  assert.ok(!editablePaths.some((entry) => entry.startsWith("bibliography")));
+});
+
+test("admin is a script-free handoff to hosted Pages CMS", async () => {
+  const admin = await readFile(path.join(projectRoot, "static/admin/index.html"), "utf8");
+  assert.match(admin, /https:\/\/app\.pagescms\.org\//);
+  assert.doesNotMatch(admin, /<script\b/i);
+});
+
+test("the publishing workflow follows the repository master branch", async () => {
+  const workflow = await readFile(path.join(projectRoot, ".github/workflows/gh-pages.yml"), "utf8");
+  assert.match(workflow, /^\s*branches: \[master\]$/m);
+  assert.doesNotMatch(workflow, /^\s*branches: \[main\]$/m);
 });
 
 test("unknown commands fail with an actionable message", async () => {

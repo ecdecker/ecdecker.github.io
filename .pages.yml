@@ -1,0 +1,84 @@
+# Pages CMS is an optional editor over the Git repository, not the publishing
+# system or the owner of synchronized research inputs. See docs/PAGES-CMS.md.
+media:
+  input: assets/uploads
+  output: /uploads
+  rename: safe
+  extensions: [jpg, jpeg, png, pdf, csv, xlsx]
+
+content:
+  - name: posts
+    label: Notes
+    type: collection
+    path: content/posts
+    format: yaml-frontmatter
+    subfolders: true
+    exclude: [_index.md, _index.fr.md, _index.mg.md]
+    filename:
+      template: "{primary}/index.md"
+      field: create
+    operations:
+      create: true
+      rename: false
+      delete: false
+    view:
+      fields: [title, date, draft]
+      primary: title
+      sort: [date, title]
+      search: [title, description, body]
+      default:
+        sort: date
+        order: desc
+      layout: tree
+      node:
+        filename: index.md
+        hideDirs: others
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Summary
+        type: text
+        description: A one- or two-sentence summary for note lists and search engines.
+      - name: date
+        label: Publication date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+      - name: categories
+        label: Categories
+        type: string
+        list: true
+      - name: draft
+        label: Draft
+        type: boolean
+        default: true
+        description: Leave enabled until the note is ready to appear on the public site.
+      - name: body
+        label: Body
+        type: rich-text
+        options:
+          format: markdown
+          switcher: true
+        description: Use Source mode for Hugo shortcodes, citation keys, or other advanced Markdown.
+
+settings:
+  hide: true
+  content:
+    # Preserve aliases, bibliography/citation settings, image options, and any
+    # future Zotero metadata that this deliberately small form does not model.
+    merge: true
+  commit:
+    identity: user
+    templates:
+      create: "Create {path} via Pages CMS"
+      update: "Update {path} via Pages CMS"
+      delete: "Delete {path} via Pages CMS"
+      rename: "Rename {oldPath} to {newPath} via Pages CMS"

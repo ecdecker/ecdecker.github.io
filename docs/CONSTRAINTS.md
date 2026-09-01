@@ -38,12 +38,12 @@ This project intends to remain as simple and minimal as possible, without sacrif
 ## Policy: no-js
 The site itself serves no javascript whatsoever.
 This also gates deployment.
-Instances explicitly excepted from this policy are recorded below:
+Potential exceptions and their current status are recorded below:
 
 | JS exception instance | Status                    | Link |
 |-----------------------|---------------------------|------|
 | search                | Unimplemented - postponed |      |
-| /admin pagescms       | Unimplemented - postponed |      |
+| /admin Pages CMS      | No exception: static handoff to the externally hosted editor | [source](../static/admin/index.html) |
 
 # Externalities
 - The domain name is provided by iwantmyname.com under the mjdiloreto account.
