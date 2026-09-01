@@ -11,18 +11,39 @@ Index is a profile page for Emily Decker, and Ph.D student at Duke studying Envi
 This site is [socially engineered](../content/socially-engineered.md).
 
 # Site Policies
+The socially engineered blog post describes some of the site's policies:
+- There is no JavaScript, advertising, analytics or tracking.
+- The stylesheet travels inside the document, so readable text does not wait
+  for another request.
+- Body copy uses the typeface already installed on the reader's device.
+- The serif used for headings is optional. Its fallback is matched to the same
+  proportions, which prevents the page from jumping if the font is skipped or
+  arrives late.
+- Images elsewhere on the site are resized for the screen and supplied as AVIF
+  or WebP. Images below the first one load later; an article can keep
+  non-essential plates closed until a reader asks for them.
+- Links to datasets and papers show the file type and size before the download.
+- Pages are built as static files. They require little server work and remain
+  straightforward to archive.
+
+Additionally, the creation of the site itself follows these additional policies.
 
 ## Policy: simplicity+minimalism
 This project intends to remain as simple and minimal as possible, without sacrificing other constraints.
 
 ## Policy: transfer-size
 - This site maintains strict thresholds in terms of transferred data.
-- All images are optimized for the web. 
 - Every page adheres to strict non-content maximum transfer size, the measurement of which gates deployment.
 
 ## Policy: no-js
 The site itself serves no javascript whatsoever.
-<<todo-search>> How to integrate search (quarto-style)? Is search needed? Postpone.
+This also gates deployment.
+Instances explicitly excepted from this policy are recorded below:
+
+| JS exception instance | Status                    | Link |
+|-----------------------|---------------------------|------|
+| search                | Unimplemented - postponed |      |
+| /admin pagescms       | Unimplemented - postponed |      |
 
 # Externalities
 - The domain name is provided by iwantmyname.com under the mjdiloreto account.

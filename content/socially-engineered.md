@@ -45,6 +45,8 @@ the full cold visit is larger because of the optional type. That distinction
 matters. A small HTML file that quietly calls several megabytes of scripts and
 images is not a small page.
 
+<<todo-can-we-use-a-minimal-font-that-still-looks-similar?>>
+
 For scale, the [2024 HTTP
 Archive](https://almanac.httparchive.org/en/2024/sustainability) found that the
 median mobile page transferred just under 2 MB. Its 90th-percentile page
