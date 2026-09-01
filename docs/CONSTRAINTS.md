@@ -8,7 +8,7 @@ Authoring / publishing can only be done by people with access to this repository
 # Content
 Index is a profile page for Emily Decker, and Ph.D student at Duke studying Environmental Economics & Policy. Interested in clean energy transitions, environmental health impacts, climate change resilience, as well as the role of climate finance to address these issues.
 
-This site is socially engineered. <<todo-insert-link-to-that-post>>
+This site is [socially engineered](../content/socially-engineered.md).
 
 # Site Policies
 

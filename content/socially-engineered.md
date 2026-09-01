@@ -2,8 +2,6 @@
 title: "Socially Engineered"
 description: "The cost of opening this site, measured in data, time and demands on the reader."
 date: 2026-07-28
-aliases:
-  - /sustainably-engineered/
 ---
 
 A website asks every reader to provide some of its infrastructure: a device, a
