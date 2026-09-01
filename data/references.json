@@ -1,0 +1,25 @@
+[
+  {
+    "id": "ostrom1990",
+    "type": "book",
+    "title": "Governing the Commons: The Evolution of Institutions for Collective Action",
+    "author": [{ "family": "Ostrom", "given": "Elinor" }],
+    "issued": { "date-parts": [[1990]] },
+    "publisher": "Cambridge University Press",
+    "publisher-place": "Cambridge"
+  },
+  {
+    "id": "wang2004",
+    "type": "article-journal",
+    "title": "Image Quality Assessment: From Error Visibility to Structural Similarity",
+    "author": [
+      { "family": "Wang", "given": "Zhou" },
+      { "family": "Bovik", "given": "Alan C." },
+      { "family": "Sheikh", "given": "Hamid R." },
+      { "family": "Simoncelli", "given": "Eero P." }
+    ],
+    "issued": { "date-parts": [[2004]] },
+    "container-title": "IEEE Transactions on Image Processing",
+    "DOI": "10.1109/TIP.2003.819861"
+  }
+]

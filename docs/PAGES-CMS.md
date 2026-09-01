@@ -3,7 +3,7 @@
 Pages CMS is an optional browser editor over the same Git repository used by
 GitHub's file editor and local checkouts. It does not replace Hugo, GitHub
 Actions, GitHub's editor, local Markdown tools, Box, or Zotero. Every Pages CMS
-save is an ordinary Git commit. Saves to the publishing branch (`master`) pass
+save is an ordinary Git commit. Saves merged to the publishing branch (`main`) pass
 through the existing build and deployment workflow.
 
 ## Try the branch
@@ -29,11 +29,11 @@ Each article must have one authoring authority:
 
 - Pages CMS, GitHub, and local editors may edit ordinary source notes under
   `content/posts/**` because all three write the same Git-controlled files.
-- Box owns its one-way imported snapshot when the synchronization work is
-  adopted (reserved path: `imports/box/**`). Do not expose or manually edit
+- Box owns its one-way imported snapshot, refreshed only with
+  `npm run site -- sync box` (reserved path: `imports/box/**`). Do not expose or manually edit
   that snapshot in Pages CMS.
-- Zotero owns the generated bibliography when synchronization is adopted
-  (reserved path: `bibliography/references.json`). Do not expose or manually
+- Zotero owns the generated bibliography, refreshed only with
+  `npm run site -- sync zotero` (reserved path: `data/references.json`). Do not expose or manually
   edit it in Pages CMS.
 
 Pages CMS deliberately configures only `content/posts`; neither synchronized
@@ -41,7 +41,7 @@ path is a CMS collection. `settings.content.merge: true` preserves front matter
 outside the form schema, including aliases, bibliography/citation metadata,
 execution settings, and image options.
 
-This means a future `npm run site -- sync` can refresh Box and Zotero without
+This means the explicit sync commands can refresh Box and Zotero without
 making Pages CMS the only way to work in the repository. Conversely, never
 author the same article independently in Box and `content/posts`, because a
 one-way snapshot cannot safely reconcile two authorities.
@@ -74,6 +74,6 @@ all authoring surfaces.
 The hosted app and its GitHub App must be authorized manually, so an offline
 repository test cannot prove a remote save. Before merging this branch, verify
 a draft save on `pagescms` and manually dispatch its Pages workflow. After
-merging `.pages.yml` to `master`, verify a draft save there and confirm the
+merging `.pages.yml` to `main`, verify a draft save there and confirm the
 normal push workflow. Test publishing by disabling **Draft** only with content
 that is genuinely ready for the live site.

@@ -9,6 +9,8 @@ colophon = "Bone paper · Ink · One spark."
 showPlate = "Show plate"
 sources = "Sources"
 noTerms = "No terms have been published yet."
+references = "References"
+backToCitation = "Back to citation"
 
 # File download meta, e.g. "(CSV, 2.4 MB)" — see layouts/_markup/render-link.html
 fileMeta = "({{ .kind }}, {{ .size }})"

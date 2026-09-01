@@ -1,0 +1,177 @@
+{
+  "version": 1,
+  "global": {
+    "cold": {
+      "bytes": 150000,
+      "gzip": 100000
+    },
+    "cached": {
+      "bytes": 45000,
+      "gzip": 15000
+    },
+    "maximumFileBytes": 1048576
+  },
+  "fileExceptions": {},
+  "routes": {
+    "/": {
+      "cold": {
+        "bytes": 132784,
+        "gzip": 91552
+      },
+      "cached": {
+        "bytes": 34346,
+        "gzip": 8707
+      }
+    },
+    "/admin/": {
+      "cold": {
+        "bytes": 646,
+        "gzip": 383
+      },
+      "cached": {
+        "bytes": 646,
+        "gzip": 383
+      }
+    },
+    "/categories/": {
+      "cold": {
+        "bytes": 80391,
+        "gzip": 41622
+      },
+      "cached": {
+        "bytes": 30699,
+        "gzip": 7540
+      }
+    },
+    "/en/": {
+      "cold": {
+        "bytes": 255,
+        "gzip": 179
+      },
+      "cached": {
+        "bytes": 255,
+        "gzip": 179
+      }
+    },
+    "/fr/": {
+      "cold": {
+        "bytes": 84612,
+        "gzip": 43041
+      },
+      "cached": {
+        "bytes": 34921,
+        "gzip": 8959
+      }
+    },
+    "/fr/categories/": {
+      "cold": {
+        "bytes": 80595,
+        "gzip": 41744
+      },
+      "cached": {
+        "bytes": 30904,
+        "gzip": 7662
+      }
+    },
+    "/fr/posts/": {
+      "cold": {
+        "bytes": 80710,
+        "gzip": 41827
+      },
+      "cached": {
+        "bytes": 31018,
+        "gzip": 7744
+      }
+    },
+    "/fr/tags/": {
+      "cold": {
+        "bytes": 80536,
+        "gzip": 41731
+      },
+      "cached": {
+        "bytes": 30844,
+        "gzip": 7649
+      }
+    },
+    "/fr/tags/couleur/": {
+      "cold": {
+        "bytes": 80192,
+        "gzip": 41642
+      },
+      "cached": {
+        "bytes": 30500,
+        "gzip": 7560
+      }
+    },
+    "/mg/": {
+      "cold": {
+        "bytes": 84681,
+        "gzip": 42960
+      },
+      "cached": {
+        "bytes": 34989,
+        "gzip": 8877
+      }
+    },
+    "/mg/categories/": {
+      "cold": {
+        "bytes": 80606,
+        "gzip": 41721
+      },
+      "cached": {
+        "bytes": 30915,
+        "gzip": 7639
+      }
+    },
+    "/mg/posts/": {
+      "cold": {
+        "bytes": 80768,
+        "gzip": 41813
+      },
+      "cached": {
+        "bytes": 31077,
+        "gzip": 7730
+      }
+    },
+    "/mg/tags/": {
+      "cold": {
+        "bytes": 80547,
+        "gzip": 41709
+      },
+      "cached": {
+        "bytes": 30855,
+        "gzip": 7627
+      }
+    },
+    "/posts/": {
+      "cold": {
+        "bytes": 80485,
+        "gzip": 41699
+      },
+      "cached": {
+        "bytes": 30794,
+        "gzip": 7617
+      }
+    },
+    "/socially-engineered/": {
+      "cold": {
+        "bytes": 91057,
+        "gzip": 46276
+      },
+      "cached": {
+        "bytes": 41366,
+        "gzip": 12194
+      }
+    },
+    "/tags/": {
+      "cold": {
+        "bytes": 80305,
+        "gzip": 41611
+      },
+      "cached": {
+        "bytes": 30613,
+        "gzip": 7529
+      }
+    }
+  }
+}

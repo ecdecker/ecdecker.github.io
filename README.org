@@ -20,8 +20,8 @@ everyday content.
 
 * How publishing works
 
-Each saved change in GitHub is called a /commit/. A commit to the =master=
-branch automatically rebuilds and publishes the website. This normally takes
+Each saved change in GitHub is called a /commit/. An approved pull request
+merged into the protected =main= branch automatically rebuilds and publishes the website. This normally takes
 a few minutes.
 
 To see whether publishing succeeded, open the repository's *Actions* tab in
@@ -60,7 +60,7 @@ instructions are in [[file:docs/PAGES-CMS.md][the Pages CMS authoring note]].
    top intact unless you intend to change it.
 5. Select *Commit changes*.
 6. Enter a short description, such as “Correct opening paragraph.”
-7. Commit directly to =master= if GitHub offers that choice.
+7. Commit to a new branch and open a pull request into =main=.
 8. Wait for the publishing action to finish, then check the live page.
 
 * Create a new article

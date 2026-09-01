@@ -1,0 +1,17 @@
+{{- $id := .Get 0 -}}
+{{- $record := false -}}
+{{- range hugo.Data.references -}}
+  {{- if eq (printf "%v" .id) $id }}{{ $record = . }}{{ end -}}
+{{- end -}}
+{{- if not $record -}}
+  {{- errorf "cite shortcode on %s references missing CSL id %q" .Page.File.Path $id -}}
+{{- end -}}
+{{- .Page.Store.SetInMap "folioCitations" $id $record -}}
+{{- $author := "Anon." -}}
+{{- with $record.author -}}
+  {{- $author = (index . 0).family | default (index . 0).literal | default "Anon." -}}
+  {{- if gt (len .) 1 }}{{ $author = printf "%s et al." $author }}{{ end -}}
+{{- end -}}
+{{- $year := "n.d." -}}
+{{- with $record.issued -}}{{ with index . "date-parts" }}{{ with index . 0 }}{{ $year = printf "%v" (index . 0) }}{{ end }}{{ end }}{{ end -}}
+<a class="citation" href="#reference-{{ $id | urlize }}">({{ $author }}, {{ $year }})</a>

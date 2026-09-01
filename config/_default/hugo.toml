@@ -5,6 +5,20 @@ defaultContentLanguage = 'en'
 defaultContentLanguageInSubdir = false
 enableRobotsTXT = true
 
+# Box is an offline authoring input. The sync command mirrors only referenced
+# files beneath imports/box using their absolute site paths; Hugo merely mounts
+# that checked-in snapshot as static data and never contacts Box.
+[module]
+[[module.mounts]]
+  source = "content"
+  target = "content"
+[[module.mounts]]
+  source = "static"
+  target = "static"
+[[module.mounts]]
+  source = "imports/box"
+  target = "static"
+
 # Page-bundle originals are not published. Hugo copies every bundle resource
 # into public/ by default, so the multi-megabyte source PNGs shipped alongside
 # their own optimized derivatives. With this off, a resource is published only

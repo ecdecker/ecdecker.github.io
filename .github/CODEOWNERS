@@ -1,2 +1,6 @@
-# Site content is Emily's — see README.org for what "content" covers.
-/content/ @edecker9
+# Matthew owns the repository by default. Emily's review is additionally
+# required for authored content and synchronized authoring snapshots.
+* @mjdiloreto
+/content/ @ecdecker
+/imports/box/ @ecdecker
+/data/references.json @ecdecker

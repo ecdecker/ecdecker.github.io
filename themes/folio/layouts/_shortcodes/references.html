@@ -1,0 +1,19 @@
+{{- $citations := .Page.Store.Get "folioCitations" | default dict -}}
+{{- with $citations -}}
+<section class="references" aria-labelledby="references-title">
+  <h2 id="references-title">{{ T "references" }}</h2>
+  <ol>
+  {{- range $id, $record := . }}
+    <li id="reference-{{ $id | urlize }}">
+      {{- with $record.author -}}
+        {{- range $index, $person := . }}{{ if $index }}; {{ end }}{{ or $person.family $person.literal }}{{ with $person.given }}, {{ . }}{{ end }}{{ end }}.
+      {{- end }}
+      {{- with $record.issued }}{{ with index . "date-parts" }}{{ with index . 0 }} ({{ index . 0 }}).{{ end }}{{ end }}{{ end }}
+      <cite>{{ $record.title }}</cite>{{ with index $record "container-title" }}. {{ . }}{{ end }}.
+      {{- with $record.DOI }} <a href="https://doi.org/{{ . }}">doi:{{ . }}</a>.{{ end }}
+      <a href="#reference-{{ $id | urlize }}" aria-label="{{ T "backToCitation" }}">↩</a>
+    </li>
+  {{- end }}
+  </ol>
+</section>
+{{- end -}}

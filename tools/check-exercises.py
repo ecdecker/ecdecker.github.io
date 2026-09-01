@@ -26,6 +26,7 @@ import struct
 import subprocess
 import sys
 import tempfile
+import os
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -53,7 +54,7 @@ class Failures:
 
 def build(dest: Path) -> None:
     proc = subprocess.run(
-        ["hugo", "--source", str(ROOT), "--environment", "development",
+        [os.environ.get("HUGO_BIN", "hugo"), "--source", str(ROOT), "--environment", "development",
          "--destination", str(dest), "--quiet"],
         capture_output=True, text=True,
     )

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
@@ -11,6 +11,10 @@ import { chromium } from "playwright";
 
 import { checkTranslations } from "./lib/i18n.mjs";
 import { defaultParameters, imageStatus, optimizeImages } from "./lib/images.mjs";
+import { auditBoxSnapshot, syncBox } from "./lib/box.mjs";
+import { auditMarkdownImages, auditOutput, updateBaselines } from "./lib/site-audit.mjs";
+import { prepareSocialCard } from "./lib/social-card.mjs";
+import { syncZotero } from "./lib/zotero.mjs";
 import {
   exists,
   hugo,
@@ -29,6 +33,8 @@ Usage:
 
 Everyday commands:
   start                 Preview the site, including drafts
+  theme                 Preview the published Folio homepage
+  test                  Run the project's automated tests
   new "Article title"   Create a draft article folder
   check                 Check content, translations, images, and the build
   build                 Optimize changed images and make a production build
@@ -39,6 +45,8 @@ Everyday commands:
 Optional and advanced commands:
   setup --audit         Install Chromium for the browser audit
   audit [options]       Capture the site's slow-network loading states
+  baselines --update    Accept new routes and refresh route byte ceilings
+  sync box|zotero       Refresh an offline, checked-in authoring snapshot
   assets sprites        Regenerate the lemur sprite assets
   assets fonts          Regenerate the optimized heading fonts
 
@@ -67,7 +75,7 @@ function numberOption(args, name, fallback) {
   return value;
 }
 
-function slugify(value) {
+export function slugify(value) {
   return value
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -76,7 +84,7 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
-function localDate() {
+export function localDate() {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/New_York",
     year: "numeric",
@@ -101,7 +109,9 @@ async function commandStart(args) {
   ];
   if (!args.includes("--published-only")) command.push("--buildDrafts", "--buildFuture");
   if (args.includes("--no-live-reload")) command.push("--disableLiveReload");
-  const environment = args.includes("--image-lab") ? "image-quality" : optionValue(args, "--environment");
+  const environment = args.includes("--image-lab")
+    ? "image-quality"
+    : optionValue(args, "--environment", args.includes("--published-only") ? "production" : undefined);
   const baseUrl = optionValue(args, "--base-url");
   if (environment) command.push("--environment", environment);
   if (baseUrl) command.push("--baseURL", baseUrl);
@@ -134,20 +144,21 @@ async function commandNew(args) {
   if (!slug || slug !== slugify(slug)) throw new SiteError("The slug must contain lowercase words separated by hyphens.");
   const date = optionValue(args, "--date", localDate());
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new SiteError("The date must use YYYY-MM-DD.");
-  if (await exists(path.join(projectRoot, "content/posts", slug, "index.md"))) {
-    throw new SiteError(`An article already exists at content/posts/${slug}/index.md.`);
-  }
-  // archetypes/default.md is the template. `hugo new` has no title or date
-  // flag, so both travel as environment variables, which the archetype reads
-  // because Hugo's default security.funcs.getenv allowlist is ^HUGO_. The
-  // date is passed as the finished string rather than through --clock: that
-  // sets an instant, which Hugo then renders in the site's zone, so midnight
-  // UTC writes the day before.
-  await hugo(["new", "content", `posts/${slug}/index.md`], {
-    env: { ...process.env, HUGO_NEW_TITLE: title, HUGO_NEW_DATE: date },
-  });
+  await createArticle({ title, slug, date });
   console.log(`Created content/posts/${slug}/index.md`);
   console.log("It is a draft and will not appear on the public site until draft: true is removed.");
+}
+
+export async function createArticle({ title, slug = slugify(title), date = localDate(), root = projectRoot }) {
+  if (!title) throw new SiteError("An article title is required.");
+  if (!slug || slug !== slugify(slug)) throw new SiteError("The slug must contain lowercase words separated by hyphens.");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new SiteError("The date must use YYYY-MM-DD.");
+  const directory = path.join(root, "content/posts", slug);
+  const file = path.join(directory, "index.md");
+  if (await exists(file)) throw new SiteError(`An article already exists at content/posts/${slug}/index.md.`);
+  await mkdir(directory, { recursive: true });
+  await writeFile(file, `---\ntitle: ${JSON.stringify(title)}\ndescription: "Add a one- or two-sentence summary."\ndate: ${date}\ndraft: true\ntags: []\n---\n\nWrite the opening paragraph here.\n\n## First section\n\nContinue the article here.\n`);
+  return file;
 }
 
 async function commandImages(args) {
@@ -195,6 +206,9 @@ async function commandCheck(args) {
   console.log("Checking translations...");
   await checkTranslations({ quiet: true });
   console.log("Translations are complete.");
+  await auditMarkdownImages();
+  await auditBoxSnapshot();
+  await prepareSocialCard({ check: true });
   const imageState = await imageStatus();
   if (imageState.stale.length || imageState.dropped.length || imageState.staleParameters) {
     const message = `${imageState.stale.length} image(s) need optimization${imageState.dropped.length ? ` and ${imageState.dropped.length} old entry/entries can be removed` : ""}.`;
@@ -207,6 +221,13 @@ async function commandCheck(args) {
   try {
     console.log("Checking a complete build, including drafts...");
     await buildTo(destination, { drafts: true });
+    console.log("Checking development exercises...");
+    await run("python3", [path.join(projectRoot, "tools/check-exercises.py")], {
+      env: { ...process.env, HUGO_BIN: hugoPath },
+    });
+    console.log("Auditing a production artifact...");
+    await buildTo(destination, { production: true, baseUrl: "https://emilycdecker.com/" });
+    await auditOutput({ output: destination });
   } finally {
     await rm(destination, { recursive: true, force: true });
   }
@@ -222,12 +243,51 @@ async function commandBuild(args) {
     console.log("Preparing images...");
     await optimizeImages();
   }
+  await auditMarkdownImages();
+  await auditBoxSnapshot();
+  await prepareSocialCard();
   console.log("Building the production site...");
   await buildTo(path.join(projectRoot, "public"), {
     baseUrl: optionValue(args, "--base-url"),
     production: true,
   });
+  await auditOutput({ output: path.join(projectRoot, "public") });
   console.log("Production site written to public/.");
+}
+
+async function commandBaselines(args) {
+  if (args.includes("--help") || !args.includes("--update")) {
+    console.log("Usage: npm run site -- baselines --update\n\nAdds new HTML routes and refreshes ceilings without deleting preserved routes or weakening global caps.");
+    return;
+  }
+  await auditMarkdownImages();
+  await auditBoxSnapshot();
+  await prepareSocialCard({ check: true });
+  const destination = await mkdtemp(path.join(os.tmpdir(), "emily-baselines-"));
+  try {
+    await buildTo(destination, { production: true, baseUrl: "https://emilycdecker.com/" });
+    const baseline = await updateBaselines({ output: destination });
+    console.log(`Recorded ${Object.keys(baseline.routes).length} preserved HTML route(s) in tools/site-baselines.json.`);
+  } finally {
+    await rm(destination, { recursive: true, force: true });
+  }
+}
+
+async function commandSync(args) {
+  const [target] = args.filter((arg) => !arg.startsWith("--"));
+  if (args.includes("--help") || !target) {
+    console.log("Usage: npm run site -- sync box|zotero");
+    return;
+  }
+  if (target === "box") {
+    await syncBox();
+    return;
+  }
+  if (target === "zotero") {
+    await syncZotero();
+    return;
+  }
+  throw new SiteError(`Unknown sync target: ${target}`);
 }
 
 async function commandDoctor() {
@@ -319,6 +379,8 @@ export async function main(argv = process.argv.slice(2)) {
     case "--help":
     case "-h": console.log(help); break;
     case "start": await commandStart(args); break;
+    case "theme": await commandStart([...args, "--published-only"]); break;
+    case "test": await run(process.execPath, [path.join(projectRoot, "tools/site.test.mjs")]); break;
     case "new": await commandNew(args); break;
     case "check": await commandCheck(args); break;
     case "build": await commandBuild(args); break;
@@ -327,6 +389,8 @@ export async function main(argv = process.argv.slice(2)) {
     case "setup": await commandSetup(args); break;
     case "audit": await commandAudit(args); break;
     case "assets": await commandAssets(args); break;
+    case "baselines": await commandBaselines(args); break;
+    case "sync": await commandSync(args); break;
     default: throw new SiteError(`Unknown command: ${command}\n\n${help}`);
   }
 }

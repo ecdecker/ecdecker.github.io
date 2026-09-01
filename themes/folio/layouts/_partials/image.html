@@ -268,5 +268,5 @@
          {{ if $eager }}loading="eager" fetchpriority="high"{{ else }}loading="lazy" fetchpriority="low"{{ end }}>
   </picture>
 {{- else }}
-  {{- warnf "image.html: no asset at %q — image omitted." $src }}
+  {{- errorf "image.html: no local asset at %q" $src }}
 {{- end }}
