@@ -9,8 +9,9 @@
     or a sentence in it -- lives in Markdown where it can be written like
     prose. Short labels with no internal markup (volume, heroImageCaption,
     hint) stay in front matter, and site-wide chrome stays in
-    params.<lang>.toml. Links are menu entries, so a translation supplies the
-    name and Hugo resolves the language-correct URL from pageRef.
+    params.<lang>.toml. CTA links are menu entries, so a translation supplies
+    the name. The notebook destination is fixed, and Hugo resolves its
+    language-correct posts URL from the current site.
 
     Evaluation order matters: shortcodes run when .Content is rendered, so
     .Content has to be forced before .Store is read. Reading the store first
@@ -32,9 +33,9 @@
   {{- $f := .Params }}
   {{- $site := site.Params.folio | default dict }}
 
-  {{/* Hero — the canonical split card: text left, single image right. */}}
+  {{/* Hero — profile card followed by the full-width research notebook. */}}
   <section class="hero">
-    <div class="container">
+    <div class="container hero-stack">
       <article class="card card--leaf hero-card">
         <div class="split">
           <div class="hero-text">
@@ -50,16 +51,9 @@
             <div class="hero-copy">{{ index $copy "hero" }}</div>
 
             <div class="hero-cta">
-              {{- range $i, $e := site.Menus.home }}
-              {{- /* Whitespace is trimmed hard around the label: .btn is an
-                     inline-flex row and a stray leading space becomes a text
-                     node that offsets the centred content. The gap between
-                     label and arrow is the flex `gap`, not markup. */ -}}
-              <a class="btn btn--{{ if eq $i 0 }}primary{{ else }}secondary{{ end }}" href="{{ $e.URL }}">
-                {{- $e.Name -}}
-                {{- if eq $i 0 -}}
-                <svg width="14" height="14" aria-hidden="true"><use href="#i-arrow-right"/></svg>
-                {{- end -}}
+              {{- range site.Menus.home }}
+              <a class="btn btn--secondary" href="{{ .URL }}">
+                {{- .Name -}}
               </a>
               {{- end }}
               {{ with $f.hint }}<span class="hint">{{ . }}</span>{{ end }}
@@ -73,21 +67,13 @@
                  about.
 
                  fit=fill, because .hero-media crops this in the browser
-                 anyway: it is `object-fit: cover` over a roughly square box
-                 and the source is 816x1456 portrait. A plain resize ships the
-                 whole tall frame and lets the browser throw most of it away,
-                 paying for pixels that are never drawn. Cropping in the
-                 encoder instead is 28% fewer bytes at every rung of the
-                 ladder (800w: 61757 -> 44315 B).
+                 anyway: it is `object-fit: cover` over a roughly square box.
+                 A plain resize would ship the whole portrait and let the
+                 browser throw some of it away.
 
-                 4:5 is deliberately conservative. The box is 552 CSS px wide
-                 at the container cap, but its height is whatever .hero-text
-                 stretches to — min-height 32rem plus padding, so a
-                 rendered-text measurement rather than a fixed number. 4:5
-                 stays taller than any plausible box, so the frame still
-                 covers it and `object-position: center 35%` keeps material to
-                 work with. A squarer crop saves more (1:1 is 36659 B at 800w)
-                 but starts dictating the composition from here.
+                 4:5 preserves enough of the portrait for the desktop frame
+                 while `object-position: center 35%` keeps Emily's face in
+                 view when the text column makes that frame more square.
 
                  sizes describes that box, not the viewport. .container is
                  capped at 1200px with clamp(1.25rem, 4vw, 3rem) of padding,
@@ -102,16 +88,31 @@
               "fit" "fill"
               "ratio" "4:5"
               "sizes" "(min-width: 1200px) 552px, (min-width: 880px) 46vw, 100vw") }}
-            {{ with $f.heroImageCaption }}
-            <span class="hero-media-tag">
-              <svg width="12" height="12" aria-hidden="true"><use href="#folio-spark"/></svg>
-              {{ . }}
-            </span>
-            {{ end }}
           </div>
           {{- end }}
         </div>
       </article>
+
+      {{- with $site.notebookImage }}
+      <div class="card notebook-card">
+        <div class="notebook-media">
+          {{ partial "image.html" (dict
+            "src" .
+            "alt" ""
+            "fit" "fill"
+            "ratio" "16:9"
+            "sizes" "(min-width: 1200px) 1008px, calc(100vw - 2 * clamp(1.25rem, 4vw, 3rem) - 2 * clamp(1.5rem, 3vw, 3rem))") }}
+          {{ with $f.heroImageCaption }}
+          {{- with site.GetPage "/posts" }}
+          <a class="hero-media-tag" href="{{ .RelPermalink }}">
+            <svg width="12" height="12" aria-hidden="true"><use href="#folio-spark"/></svg>
+            {{ $f.heroImageCaption }}
+          </a>
+          {{- end }}
+          {{ end }}
+        </div>
+      </div>
+      {{- end }}
     </div>
   </section>
 

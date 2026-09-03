@@ -142,6 +142,11 @@
   padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(3.5rem, 6vw, 6rem);
 }
 
+.hero-stack {
+  display: grid;
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+}
+
 .hero-card {
   padding: 0;
   overflow: hidden;
@@ -243,11 +248,26 @@
   font-size: 0.75rem;
   color: var(--color-text);
   letter-spacing: 0.04em;
+  text-decoration: none;
 }
 
 .hero-media-tag svg {
   width: 12px;
   height: 12px;
+}
+
+.notebook-card {
+  overflow: hidden;
+}
+
+.notebook-media {
+  position: relative;
+  background-color: var(--color-surface-subtle);
+}
+
+.notebook-media img {
+  width: 100%;
+  height: auto;
 }
 
 @media (max-width: 879px) {

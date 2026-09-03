@@ -15,14 +15,9 @@
   weight = 20
 
 [[home]]
-  name = "Vakio ny fanamarihana fikarohana"
-  pageRef = '/posts'
-  weight = 10
-
-[[home]]
   name = "Semantic Scholar"
   url = 'https://www.semanticscholar.org/author/Emily-Decker/2346865864'
-  weight = 20
+  weight = 10
 
 [[footer]]
   identifier = 'folio'

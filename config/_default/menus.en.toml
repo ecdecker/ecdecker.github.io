@@ -16,17 +16,12 @@
   pageRef = '/posts'
   weight = 20
 
-# Homepage call-to-action buttons. The first entry by weight renders as the
-# primary button (with the arrow), the rest as secondary.
-[[home]]
-  name = 'Read the research notes'
-  pageRef = '/posts'
-  weight = 10
-
+# Homepage call-to-action button. The research-notes link lives on the
+# notebook card itself.
 [[home]]
   name = 'Semantic Scholar'
   url = 'https://www.semanticscholar.org/author/Emily-Decker/2346865864'
-  weight = 20
+  weight = 10
 
 # Footer columns. A parent entry is the column heading and carries no
 # destination of its own; its children are the links.

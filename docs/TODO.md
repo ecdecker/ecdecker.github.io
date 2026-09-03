@@ -15,6 +15,3 @@ https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pag
 - Research can be a new Header item
 - email emily.decker@duke.edu
 - Sanford School of Public Policy (apparently?)
-
-I like the research notebook on the index page, but it should be moved out of the card it resides in and placed in a new full-width card below it. The link to open the notebook should be removed from the card above as well. The overlying  "Research notebook" pill should be a link to /posts instead. An optimized emily.jpeg should be used in place of where the notebook currently resides.
-
