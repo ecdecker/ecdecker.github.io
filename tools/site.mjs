@@ -13,6 +13,7 @@ import { checkTranslations } from "./lib/i18n.mjs";
 import { defaultParameters, imageStatus, optimizeImages } from "./lib/images.mjs";
 import { auditBoxSnapshot, syncBox } from "./lib/box.mjs";
 import { auditMarkdownImages, auditOutput, updateBaselines } from "./lib/site-audit.mjs";
+import { prepareFavicon } from "./lib/favicon.mjs";
 import { prepareSocialCard } from "./lib/social-card.mjs";
 import { syncZotero } from "./lib/zotero.mjs";
 import {
@@ -210,6 +211,7 @@ async function commandCheck(args) {
   await auditMarkdownImages();
   await auditBoxSnapshot();
   await prepareSocialCard({ check: true });
+  await prepareFavicon({ check: true });
   const imageState = await imageStatus();
   if (imageState.stale.length || imageState.dropped.length || imageState.staleParameters) {
     const message = `${imageState.stale.length} image(s) need optimization${imageState.dropped.length ? ` and ${imageState.dropped.length} old entry/entries can be removed` : ""}.`;
@@ -247,6 +249,7 @@ async function commandBuild(args) {
   await auditMarkdownImages();
   await auditBoxSnapshot();
   await prepareSocialCard();
+  await prepareFavicon();
   console.log("Building the production site...");
   await buildTo(path.join(projectRoot, "public"), {
     baseUrl: optionValue(args, "--base-url"),
@@ -264,6 +267,7 @@ async function commandBaselines(args) {
   await auditMarkdownImages();
   await auditBoxSnapshot();
   await prepareSocialCard({ check: true });
+  await prepareFavicon({ check: true });
   const destination = await mkdtemp(path.join(os.tmpdir(), "emily-baselines-"));
   try {
     await buildTo(destination, { production: true, baseUrl: "https://emilycdecker.com/" });

@@ -15,6 +15,7 @@ import {
   routeForHtml,
   updateBaselines,
 } from "./lib/site-audit.mjs";
+import { FAVICON_SIZES, prepareFavicon } from "./lib/favicon.mjs";
 import { SOCIAL_CARD_HEIGHT, SOCIAL_CARD_WIDTH, prepareSocialCard } from "./lib/social-card.mjs";
 import { fetchZoteroItems, nextLink, sortCslItems } from "./lib/zotero.mjs";
 import { createArticle, localDate, main, slugify } from "./site.mjs";
@@ -238,6 +239,11 @@ test("social card is fresh and exactly 1200 by 630", async () => {
   const metadata = await prepareSocialCard({ check: true });
   assert.equal(metadata.width, SOCIAL_CARD_WIDTH);
   assert.equal(metadata.height, SOCIAL_CARD_HEIGHT);
+});
+
+test("favicon is fresh and carries every configured size", async () => {
+  const metadata = await prepareFavicon({ check: true });
+  assert.deepEqual(metadata.sizes, FAVICON_SIZES);
 });
 
 test("SSIM is one for identical data", () => {

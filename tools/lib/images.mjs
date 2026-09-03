@@ -25,7 +25,9 @@ const c2 = (0.03 * 255) ** 2;
 
 function excludedSource(file) {
   const relative = path.relative(projectRoot, file).split(path.sep).join("/");
-  return relative.startsWith("assets/images/lemur-sprites/png/") || /-sprite-sheet\.[^.]+$/i.test(relative);
+  // profile.jpeg is favicon.mjs's source, never rendered through
+  // partial "image.html" — measuring it here would just be wasted work.
+  return relative.startsWith("assets/images/lemur-sprites/png/") || /-sprite-sheet\.[^.]+$/i.test(relative) || relative === "assets/images/profile.jpeg";
 }
 
 async function walk(directory, found = []) {
