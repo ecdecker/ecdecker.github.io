@@ -13,14 +13,24 @@ import { exists, projectRoot, SiteError } from "./project.mjs";
 // which every route's byte budget pays for on every load.
 export const FAVICON_SIZES = [16, 32];
 
+function circleMask(size) {
+  return Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">` +
+      `<circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="#fff"/></svg>`,
+  );
+}
+
 async function renderPlate(source, size) {
+  const square = await sharp(source).resize(size, size, { fit: "cover" }).ensureAlpha().toBuffer();
+  // The source is a square portrait crop, not actually round — this clips it
+  // to a circle (transparent corners) so the favicon reads as a round avatar
+  // against a tab bar instead of a hard-edged square.
+  const round = await sharp(square).composite([{ input: circleMask(size), blend: "dest-in" }]).png().toBuffer();
   // Palette-quantized PNG: at 16-32px a photographic source has no gradient
   // detail left for truecolor to preserve, so a reduced palette is free
-  // savings rather than a visible quality trade.
-  return sharp(source)
-    .resize(size, size, { fit: "cover" })
-    .png({ compressionLevel: 9, palette: true, colors: 64 })
-    .toBuffer();
+  // savings rather than a visible quality trade. The uniform transparent
+  // corners the circle mask adds compress away to almost nothing either way.
+  return sharp(round).png({ compressionLevel: 9, palette: true, colors: 64 }).toBuffer();
 }
 
 // Hand-rolled ICO container: a 6-byte ICONDIR, one 16-byte ICONDIRENTRY per
