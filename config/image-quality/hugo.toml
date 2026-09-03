@@ -1,0 +1,12 @@
+# The optional image laboratory uses its own environment so its expensive
+# derivatives are built only on request. Mirror the development mounts so the
+# one exercise page remains available at /exercises/ in that environment.
+[module]
+
+[[module.mounts]]
+  source = "content"
+  target = "content"
+
+[[module.mounts]]
+  source = "exercises"
+  target = "content/exercises"

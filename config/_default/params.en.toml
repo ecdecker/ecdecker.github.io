@@ -5,7 +5,7 @@
 # short labels in that file's front matter, and links in menus.en.toml. What
 # is left is the two strings below.
 
-description = 'A quieter way to put things on paper.'
+description = 'Emily C. Decker studies environmental economics, policy, health, and climate resilience at Duke University.'
 
 [folio]
-  tagline = 'A quiet, paper-thin design system. Made on a desk by a window, not in a war room.'
+  tagline = 'Environmental economics and policy research at Duke University.'

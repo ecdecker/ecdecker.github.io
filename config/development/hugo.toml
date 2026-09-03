@@ -4,11 +4,10 @@
 # for `hugo server`, so everything here applies while developing and is absent
 # from any deployed build.
 #
-# The one job of this file is to mount exercises/ into the content tree. Those
-# pages drive every component and every capability edge case — deliberately
-# awkward images, every link scheme, all three languages — and they must never
-# reach the public site. The audience reads on metered mobile data; a kitchen
-# sink page is the last thing that should be deployable.
+# The one job of this file is to mount the single exercises/ page into the
+# content tree. It drives every component and capability edge case and must
+# never reach the public site. The audience reads on metered mobile data; a
+# kitchen-sink page is the last thing that should be deployable.
 #
 # A mount is used rather than `draft: true` or `build.list: never`:
 #

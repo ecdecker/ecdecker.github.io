@@ -1,0 +1,29 @@
+{{ define "main" }}
+  <section class="section-block post-page{{ if .Params.lemurs }} lemurs-active{{ end }}">
+    {{ if .Params.lemurs }}{{ partial "lemurs.html" . }}{{ end }}
+    <div class="container">
+      <article class="card post-article">
+        <header class="post-header">
+          <h1>{{ .Title }}</h1>
+          {{ with .Description }}<p>{{ . }}</p>{{ end }}
+        </header>
+
+        <div class="post-body">
+          {{- $content := .Content -}}
+          {{- $sourcesTitle := T "sources" -}}
+          {{- $endnotesStart := printf `<div class="footnotes" role="doc-endnotes" aria-labelledby="sources-title"><hr><h2 class="footnotes-title" id="sources-title">%s</h2>` $sourcesTitle -}}
+          {{- $content = replaceRE `<div class="footnotes" role="doc-endnotes">\s*<hr>` $endnotesStart $content -}}
+          {{ $content | safeHTML }}
+        </div>
+
+        <div class="divider" aria-hidden="true">
+          <svg class="spark"><use href="#folio-spark"/></svg>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  {{ partial "exercise-components.html" . }}
+  {{ partial "exercise-tokens.html" . }}
+  {{ partial "exercise-image-quality.html" . }}
+{{ end }}

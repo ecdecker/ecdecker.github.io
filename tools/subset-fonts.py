@@ -37,9 +37,8 @@ ignores it outright, and the smallest use of this font in the system is
 1.25rem / 20px (the wordmark and h3). It is a display face; it is never
 set at body size.
 
-The former Inter variable file is left untouched as a source artifact, but
-the Hugo theme no longer serves it. Body and interface copy now use the
-native system UI sans stack, removing 48,256 bytes from the cold font path.
+Body and interface copy use the native system UI sans stack. The former Inter
+variable file was removed because no build or regeneration step consumed it.
 
 Usage
 -----

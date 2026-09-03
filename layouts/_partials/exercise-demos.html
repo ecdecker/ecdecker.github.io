@@ -11,15 +11,19 @@
   appears here.
 */ -}}
 
-<h2>Brand</h2>
+<h3>Brand</h3>
 <div class="ex-row">
   {{ partial "brand.html" . }}
   <svg class="spark" width="14" height="14" aria-hidden="true"><use href="#folio-spark"/></svg>
   <span><svg class="spark spark--bullet" width="10" height="10" aria-hidden="true"><use href="#folio-spark"/></svg> bullet spark</span>
 </div>
 
-<h2>Surfaces</h2>
+<h3>Surfaces</h3>
 <div class="ex-grid">
+  <div class="hero-copy">
+    <p class="body-sm">The hero copy column constrains editorial text inside
+    the wider homepage composition.</p>
+  </div>
   <div class="card">
     <h3>Card</h3>
     <p class="body-sm">Snow surface, hairline edge. Stone body copy is only legible to AA on Snow, which is why long-form articles sit inside one.</p>
@@ -38,7 +42,7 @@
   </div>
 </div>
 
-<h2>Buttons</h2>
+<h3>Buttons</h3>
 <div class="ex-row">
   <a class="btn btn--primary" href="#components">Primary</a>
   <a class="btn btn--secondary" href="#components">Secondary</a>
@@ -53,7 +57,7 @@
 offset — the design system carries no hover tint, so focus is the only state
 that changes colour.</p>
 
-<h2>Fields</h2>
+<h3>Fields</h3>
 <div class="ex-grid">
   <div class="field">
     <label class="field-label" for="ex-input">Text input</label>
@@ -90,7 +94,7 @@ that changes colour.</p>
   </div>
 </div>
 
-<h2>Tabs</h2>
+<h3>Tabs</h3>
 <div class="tabs" role="tablist">
   <button class="tab tab--active" role="tab" aria-selected="true" type="button">Type</button>
   <button class="tab" role="tab" aria-selected="false" type="button">Structure</button>
@@ -100,7 +104,7 @@ that changes colour.</p>
 <code>[aria-selected="true"]</code>. The first tab carries both; the others carry
 neither, so the two selectors are exercised independently.</p>
 
-<h2>Lists and marks</h2>
+<h3>Lists and marks</h3>
 <div class="ex-grid">
   <div>
     <ul class="feature-list">
@@ -116,12 +120,12 @@ neither, so the two selectors are exercised independently.</p>
   </div>
 </div>
 
-<h2>Divider</h2>
+<h3>Divider</h3>
 <div class="divider" aria-hidden="true">
   <svg class="spark" width="12" height="12"><use href="#folio-spark"/></svg>
 </div>
 
-<h2>Utilities</h2>
+<h3>Utilities</h3>
 <p class="body-sm muted">Layout helpers. They carry no appearance of their own,
 so each specimen pairs the helper with a hairline so its effect is visible.</p>
 
@@ -159,7 +163,7 @@ so each specimen pairs the helper with a hairline so its effect is visible.</p>
   <code>display: none</code>, or it would leave the accessibility tree.</p>
 </div>
 
-<h2>Media frame</h2>
+<h3>Media frame</h3>
 <div class="media-frame">
   {{ with resources.Get "fixtures/swatch.png" }}
     {{ $w := .Resize "480x webp q60" }}

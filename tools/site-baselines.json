@@ -15,12 +15,12 @@
   "routes": {
     "/": {
       "cold": {
-        "bytes": 132784,
-        "gzip": 91552
+        "bytes": 138837,
+        "gzip": 94264
       },
       "cached": {
-        "bytes": 34346,
-        "gzip": 8707
+        "bytes": 40399,
+        "gzip": 11418
       }
     },
     "/admin/": {
@@ -35,12 +35,12 @@
     },
     "/categories/": {
       "cold": {
-        "bytes": 80391,
-        "gzip": 41622
+        "bytes": 86438,
+        "gzip": 44318
       },
       "cached": {
-        "bytes": 30699,
-        "gzip": 7540
+        "bytes": 36747,
+        "gzip": 10236
       }
     },
     "/en/": {
@@ -55,122 +55,122 @@
     },
     "/fr/": {
       "cold": {
-        "bytes": 84612,
-        "gzip": 43041
+        "bytes": 90666,
+        "gzip": 45758
       },
       "cached": {
-        "bytes": 34921,
-        "gzip": 8959
+        "bytes": 40974,
+        "gzip": 11676
       }
     },
     "/fr/categories/": {
       "cold": {
-        "bytes": 80595,
-        "gzip": 41744
+        "bytes": 86643,
+        "gzip": 44442
       },
       "cached": {
-        "bytes": 30904,
-        "gzip": 7662
+        "bytes": 36952,
+        "gzip": 10359
       }
     },
     "/fr/posts/": {
       "cold": {
-        "bytes": 80710,
-        "gzip": 41827
+        "bytes": 86757,
+        "gzip": 44525
       },
       "cached": {
-        "bytes": 31018,
-        "gzip": 7744
+        "bytes": 37066,
+        "gzip": 10443
       }
     },
     "/fr/tags/": {
       "cold": {
-        "bytes": 80536,
-        "gzip": 41731
+        "bytes": 86584,
+        "gzip": 44428
       },
       "cached": {
-        "bytes": 30844,
-        "gzip": 7649
+        "bytes": 36892,
+        "gzip": 10346
       }
     },
     "/fr/tags/couleur/": {
       "cold": {
-        "bytes": 80192,
-        "gzip": 41642
+        "bytes": 86239,
+        "gzip": 44337
       },
       "cached": {
-        "bytes": 30500,
-        "gzip": 7560
+        "bytes": 36548,
+        "gzip": 10255
       }
     },
     "/mg/": {
       "cold": {
-        "bytes": 84681,
-        "gzip": 42960
+        "bytes": 90734,
+        "gzip": 45672
       },
       "cached": {
-        "bytes": 34989,
-        "gzip": 8877
+        "bytes": 41043,
+        "gzip": 11590
       }
     },
     "/mg/categories/": {
       "cold": {
-        "bytes": 80606,
-        "gzip": 41721
+        "bytes": 86654,
+        "gzip": 44418
       },
       "cached": {
-        "bytes": 30915,
-        "gzip": 7639
+        "bytes": 36963,
+        "gzip": 10336
       }
     },
     "/mg/posts/": {
       "cold": {
-        "bytes": 80768,
-        "gzip": 41813
+        "bytes": 86816,
+        "gzip": 44514
       },
       "cached": {
-        "bytes": 31077,
-        "gzip": 7730
+        "bytes": 37124,
+        "gzip": 10432
       }
     },
     "/mg/tags/": {
       "cold": {
-        "bytes": 80547,
-        "gzip": 41709
+        "bytes": 86595,
+        "gzip": 44406
       },
       "cached": {
-        "bytes": 30855,
-        "gzip": 7627
+        "bytes": 36903,
+        "gzip": 10324
       }
     },
     "/posts/": {
       "cold": {
-        "bytes": 80485,
-        "gzip": 41699
+        "bytes": 86533,
+        "gzip": 44395
       },
       "cached": {
-        "bytes": 30794,
-        "gzip": 7617
+        "bytes": 36842,
+        "gzip": 10313
       }
     },
     "/socially-engineered/": {
       "cold": {
-        "bytes": 91057,
-        "gzip": 46276
+        "bytes": 97105,
+        "gzip": 49018
       },
       "cached": {
-        "bytes": 41366,
-        "gzip": 12194
+        "bytes": 47414,
+        "gzip": 14935
       }
     },
     "/tags/": {
       "cold": {
-        "bytes": 80305,
-        "gzip": 41611
+        "bytes": 86353,
+        "gzip": 44307
       },
       "cached": {
-        "bytes": 30613,
-        "gzip": 7529
+        "bytes": 36661,
+        "gzip": 10225
       }
     }
   }

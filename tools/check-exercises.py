@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assert the invariants the exercise pages exist to expose.
+"""Assert the invariants the development exercise exists to expose.
 
 Builds the site with --environment development, so exercises/ is mounted, then
 reads the emitted HTML. Every check here corresponds to a defect that actually
@@ -265,6 +265,12 @@ def main() -> int:
     tmp = Path(tempfile.mkdtemp(prefix="folio-check-"))
     out = tmp / "public"
     try:
+        sources = sorted((ROOT / "exercises").rglob("*.md"))
+        expected = ROOT / "exercises" / "index.md"
+        if sources != [expected]:
+            found = ", ".join(str(path.relative_to(ROOT)) for path in sources) or "none"
+            sys.exit(f"expected one development page at exercises/index.md; found {found}")
+
         build(out)
         widths = source_widths()
         fail = Failures()
@@ -279,7 +285,12 @@ def main() -> int:
             check_upscale(rel, html, widths, fail)
             check_img_attrs(rel, html, fail)
             check_loading(rel, html, fail)
-            weights[str(rel.parent).replace("\\", "/")] = cold_weight(rel, html, out)
+            if rel.as_posix() == "exercises/index.html":
+                if '<ul class="ex-miss">' in html:
+                    fail.add("component-coverage", f"{rel}: one or more stylesheet classes lack a specimen")
+                if html.count('<details class="plate">') < 1:
+                    fail.add("on-demand-images", f"{rel}: deferred plates are not enclosed in disclosures")
+                weights["exercises"] = cold_weight(rel, html, out)
 
         check_published_sizes(out, fail)
 
@@ -313,7 +324,7 @@ def main() -> int:
                 print(f"    {detail}")
             return 1
 
-        print(f"OK — {pages} pages, {len(weights)} routes within their ceilings")
+        print(f"OK — one development page and {pages} total rendered pages; its route is within budget")
         return 0
     finally:
         if args.keep:

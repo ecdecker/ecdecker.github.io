@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------
-   Brand mark — Folio four-point spark
+   Brand mark — turning lemur
    --------------------------------------------------------------------- */
 
 .brand {
@@ -11,8 +11,11 @@
 }
 
 .brand-mark {
-  width: 18px;
-  height: 18px;
+  /* The lemur's traced viewBox (115.566 x 176.099) is portrait, ~0.656:1 —
+     sized to that ratio so it fills its box instead of letterboxing
+     inside a square one. */
+  width: 16px;
+  height: 24px;
   color: var(--color-text);
   flex: none;
 }

@@ -32,29 +32,35 @@
       "quality": 70,
       "ssim": 0.92196
     },
-    "posts/field-notes/curves.png": {
-      "bytes": 4027,
-      "hash": "21ef39734f2a9d16b5ac031eaaa03bd987e2ebd5016269312e0b8956a642b62f",
+    "posts/camel-leasing-resilience/dairies-reasons-for-leasing.png": {
+      "bytes": 5493,
+      "hash": "50ece71069248fe9a53f729e7d934a42ed758460c483789911c4f867d22f81bd",
       "quality": 25,
-      "ssim": 0.9321
+      "ssim": 0.97734
     },
-    "posts/field-notes/workspace.png": {
-      "bytes": 34260,
-      "hash": "7201c5b349c1f689c3fa5b5325ab5d12ad3c965018088a2597cdde9fc2733439",
-      "quality": 50,
-      "ssim": 0.933
-    },
-    "posts/plate-weights/plate-ladder.png": {
-      "bytes": 1450,
-      "hash": "76c6156258806b47c7c5335301d60d311d10cc0c93c9503a49211e8ed69ba78a",
+    "posts/camel-leasing-resilience/pastoralist-households-saving-cash.png": {
+      "bytes": 8255,
+      "hash": "2f4c1eed546f190a06f85cfec9f254ba06eb8ec6ae4fdf2df6f25e3e401143d0",
       "quality": 25,
-      "ssim": 0.99604
+      "ssim": 0.96301
     },
-    "posts/plate-weights/quality-curve.png": {
-      "bytes": 3179,
-      "hash": "e5508d76bb7861e931e7e8530da3b3d3df96212c9d1b395aa84dbf0007295ae6",
+    "posts/trachoma-survey-biomarkers/mozambique-cost-effectiveness.png": {
+      "bytes": 20394,
+      "hash": "b8cf5556b620be2b31cce0afe3c994dddbd515ef8e86958554397f2b77a22632",
+      "quality": 35,
+      "ssim": 0.93289
+    },
+    "posts/trachoma-survey-biomarkers/tanzania-cost-effectiveness.png": {
+      "bytes": 21736,
+      "hash": "5635ff492b9a148cfdda7a8cee8c49e438a9e1e55b6add3a50f9f464a0d981f9",
+      "quality": 35,
+      "ssim": 0.93568
+    },
+    "posts/value-of-flood-forecasts/forecast-value-summary.png": {
+      "bytes": 7309,
+      "hash": "f54e969152a650d54500adf6158d107a1280cc49d219f98dce48a4ec2f4e1251",
       "quality": 25,
-      "ssim": 0.9947
+      "ssim": 0.95882
     }
   },
   "qualities": [

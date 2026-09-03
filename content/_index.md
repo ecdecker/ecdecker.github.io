@@ -1,52 +1,50 @@
 ---
-# Front matter carries only short labels with no internal markup. Anything
-# with a sentence, a list, a link, or emphasis in it is written as Markdown
-# below, in a named block that layouts/home.html places.
-title: "Folio"
-volume: "Volume 01 · 2026"
-heroImageCaption: "Plate I — Reading shelf"
-hint: "One downloaded family, one system stack."
+title: "Emily C. Decker"
+volume: "Duke University · 2026"
+heroImageCaption: "Research notebook"
+hint: "Environmental economics, policy, and resilience."
 ---
 
 {{< copy "hero" >}}
-A quieter way\
-to put things on *paper*.
-=========================
+Emily C. Decker
+================
 
-Folio is a small, monochrome system for editorial product work. Bone paper,
-hairline borders, one serif marquee — and nothing else asking for attention.
+Emily is a Ph.D. student in Environmental Social Systems at Duke University's
+[Nicholas School of the Environment](https://scholars.duke.edu/person/Emily.Decker).
+Her work brings economic and policy analysis to environmental problems that
+cross households, public institutions, and markets.
 
-- One warm neutral. One ink. No accent colors.
-- Instrument Serif for marquee, system UI for everything else.
-- 1px hairlines carry every separation.
-- A single four-point spark, used sparingly.
+- Clean energy transitions
+- Environmental health impacts
+- Climate resilience and climate finance
 {{< /copy >}}
 
 {{< copy "principles" >}}
-Three quiet rules.
-------------------
+Research across systems.
+------------------------
 
-Folio is small on purpose. The whole system runs on a handful of decisions
-that never get spent on decoration.
+Emily studies how information, incentives, and institutions shape responses to
+environmental and public-health risks. Her publications are also collected on
+[Semantic Scholar](https://www.semanticscholar.org/author/Emily-Decker/2346865864).
 {{< /copy >}}
 
-{{< principle key="serif" meta="Type" >}}
-### Set in serif.
+{{< principle key="serif" meta="Energy" >}}
+### Clean energy transitions.
 
-Headlines live in Instrument Serif from 32 to 96 pixels. Body uses the native
-system UI sans at 400/500.
+How policy and finance can make decarbonization more effective, durable, and
+equitable.
 {{< /principle >}}
 
-{{< principle key="hairlines" meta="Structure" >}}
-### Built on hairlines.
+{{< principle key="hairlines" meta="Health" >}}
+### Environmental health.
 
-Every divider, card edge, input outline, and table line is a single Mist pixel.
-Depth is contrast, not shadow.
+How better measurement and economic evidence can improve public-health
+decisions under uncertainty.
 {{< /principle >}}
 
-{{< principle key="ink" meta="Color" >}}
-### One ink only.
+{{< principle key="ink" meta="Resilience" >}}
+### Climate resilience.
 
-Action is the only thing allowed to be ink-black. There is no accent color and
-no tinted hover state.
+How households, communities, businesses, and governments prepare for and
+recover from climate shocks.
 {{< /principle >}}

@@ -63,8 +63,11 @@ Potential exceptions and their current status are recorded below:
   - tools are node scripts under /tools
   
 ## Theme
-This site uses a custom theme called Folio, which is documented in the development-only (draft) post which exercises all of its features.
-<<todo-reduce-existing-development-only-pages-to-one-all-encompassing-post>>
+This site uses a custom theme called Folio, documented by a development-only
+exercise that covers all of its features.
+The theme has one all-encompassing development-only exercise at `/exercises/`.
+It is mounted only in development and image-laboratory environments, never in
+the production content tree.
 
 See the entire design system on one page by running `npm run site -- theme`.
 

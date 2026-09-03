@@ -21,6 +21,20 @@
         </ul>
       </div>
       {{- end }}
+
+      {{- /* Profile links are shared configuration rather than translated
+             content. Empty URLs are placeholders and do not render. */}}
+      {{- $social := where (site.Params.social | default slice) "url" "ne" "" }}
+      {{- with $social }}
+      <nav class="foot-col" aria-label="{{ T "socialLinks" }}">
+        <h2>{{ T "elsewhere" }}</h2>
+        <ul>
+          {{- range . }}
+          <li><a href="{{ .url | safeURL }}" rel="me">{{ .name }}</a></li>
+          {{- end }}
+        </ul>
+      </nav>
+      {{- end }}
     </div>
 
     <div class="copyright">

@@ -20,7 +20,7 @@
 # That indirection is worth its weight. Reaching the same floor takes
 # q25 on a soft gradient and q70 on a fine-grained texture, so any single
 # value either wastes bytes on the easy images or leaves the hard ones
-# visibly broken. Measured on the field-notes article, per-image
+# visibly broken. Measured on representative editorial plates, per-image
 # targeting ships 382,268 B where a global q70 — the cheapest global
 # setting that clears the floor everywhere — ships 759,996 B.
 #
@@ -31,6 +31,25 @@
 [images]
   quality = 50
   widths = [320, 480, 640, 800, 1200]
+
+# Social profiles. Fill in a URL to show that service in the footer; entries
+# with an empty URL remain harmless placeholders. Add more entries using the
+# same name/url shape without changing the theme.
+[[social]]
+  name = 'LinkedIn'
+  url = ''
+
+[[social]]
+  name = 'Twitter / X'
+  url = ''
+
+[[social]]
+  name = 'Bluesky'
+  url = ''
+
+[[social]]
+  name = 'Mastodon'
+  url = ''
 
 [folio]
   # Not translatable: an image path, identical in every language.

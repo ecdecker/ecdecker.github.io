@@ -146,7 +146,6 @@ CELL_W=256
 INSET_X=2
 CROP_W=$((CELL_W - INSET_X * 2))
 
-ROW_NAMES=("climbing" "hanging" "jumping" "turning")
 ROW_Y=(18 300 587 795)
 ROW_H=(256 250 158 198)
 
@@ -173,94 +172,59 @@ optimize_svg() {
   "${SVGO[@]}" "$1" -o "$1" >/dev/null
 }
 
-for ((row=0; row<4; row++)); do
-  action="${ROW_NAMES[$row]}"
-  y="${ROW_Y[$row]}"
-  h="${ROW_H[$row]}"
-  frame_pngs=()
+make_frame_png() {
+  local row="$1"
+  local col="$2"
+  local output="$3"
+  local y="${ROW_Y[$row]}"
+  local h="${ROW_H[$row]}"
+  local x=$((col * CELL_W + INSET_X))
 
-  for ((col=0; col<COLS; col++)); do
-    frame="$(printf "%02d" "$col")"
-    name="${action}-${frame}"
+  magick "$INPUT" \
+    -crop "${CROP_W}x${h}+${x}+${y}" \
+    +repage \
+    -colorspace Gray \
+    -threshold 70% \
+    -gravity center \
+    -background white \
+    -extent "${FRAME}x${FRAME}" \
+    "$output"
+}
 
-    x=$((col * CELL_W + INSET_X))
-
-    # PNG/PBM are intermediates only — potrace needs a bitmap to trace, and
-    # the strip step needs frames to append — so they live in TMPDIR and
-    # never touch OUTDIR. SVG (per-frame and the strip) is the only output.
-    png="$TMPDIR/$name.png"
-    pbm="$TMPDIR/$name.pbm"
-    svg="$OUTDIR/svg/$name.svg"
-
-    echo "Generating $name"
-
-    # Crop the measured content band, remove grayscale/antialiasing, then
-    # center onto a fixed FRAMExFRAME canvas — padding shorter rows,
-    # trimming the couple of stray pixels a too-generous margin might add.
-    magick "$INPUT" \
-      -crop "${CROP_W}x${h}+${x}+${y}" \
-      +repage \
-      -colorspace Gray \
-      -threshold 70% \
-      -gravity center \
-      -background white \
-      -extent "${FRAME}x${FRAME}" \
-      "$png"
-
-    frame_pngs+=("$png")
-
-    # Potrace works particularly well from PBM for pure B/W art.
-    magick "$png" "$pbm"
-
-    potrace "$pbm" \
-      --svg \
-      --tight \
-      --output "$svg"
-
-    recolor_svg "$svg"
-    optimize_svg "$svg"
-  done
-
-  # Also trace the whole row as one image, frames left to right, so it can
-  # be used as a single CSS sprite sheet: background-size: 600% 100% and a
-  # steps(5) animation on background-position-x steps through the 6 frames
-  # without any JavaScript.
-  strip_name="${action}-strip"
-  strip_png="$TMPDIR/$strip_name.png"
-  strip_pbm="$TMPDIR/$strip_name.pbm"
-  strip_svg="$OUTDIR/svg/$strip_name.svg"
-
-  echo "Generating $strip_name"
-
-  magick "${frame_pngs[@]}" +append "$strip_png"
-  magick "$strip_png" "$strip_pbm"
-
-  # No --tight here, deliberately: it crops to the union bounding box of ink
-  # across the *whole* row, which trims the outer edges by different amounts
-  # on each side. That shifts the traced viewBox's origin away from frame
-  # 0's cell boundary, so a background-position steps() animation assuming
-  # 6 even divisions would drift out of alignment by the last frame. Leaving
-  # the canvas untouched keeps every cell at its exact multiple of
-  # $FRAME, which is what the stepped background-position math relies on.
-  potrace "$strip_pbm" \
-    --svg \
-    --output "$strip_svg"
-
-  recolor_svg "$strip_svg"
-  optimize_svg "$strip_svg"
+# The site ships one animated strip and one static source frame for the brand
+# mark. The original sheet remains the source for any future pose.
+frame_pngs=()
+for ((col=0; col<COLS; col++)); do
+  png="$TMPDIR/jumping-$(printf "%02d" "$col").png"
+  make_frame_png 2 "$col" "$png"
+  frame_pngs+=("$png")
 done
+
+echo "Generating jumping-strip"
+magick "${frame_pngs[@]}" +append "$TMPDIR/jumping-strip.png"
+magick "$TMPDIR/jumping-strip.png" "$TMPDIR/jumping-strip.pbm"
+
+# No --tight here: the exact 1536x256 canvas is what makes six equal CSS
+# background-position steps line up with six frames.
+potrace "$TMPDIR/jumping-strip.pbm" \
+  --svg \
+  --output "$OUTDIR/svg/jumping-strip.svg"
+recolor_svg "$OUTDIR/svg/jumping-strip.svg"
+optimize_svg "$OUTDIR/svg/jumping-strip.svg"
+
+echo "Generating turning-00"
+make_frame_png 3 0 "$TMPDIR/turning-00.png"
+magick "$TMPDIR/turning-00.png" "$TMPDIR/turning-00.pbm"
+potrace "$TMPDIR/turning-00.pbm" \
+  --svg \
+  --tight \
+  --output "$OUTDIR/svg/turning-00.svg"
+recolor_svg "$OUTDIR/svg/turning-00.svg"
+optimize_svg "$OUTDIR/svg/turning-00.svg"
 
 echo
 echo "Done."
 echo
-echo "SVG sprites:"
-echo "  $OUTDIR/svg/climbing-00.svg ... climbing-05.svg"
-echo "  $OUTDIR/svg/hanging-00.svg  ... hanging-05.svg"
-echo "  $OUTDIR/svg/jumping-00.svg  ... jumping-05.svg"
-echo "  $OUTDIR/svg/turning-00.svg  ... turning-05.svg"
-echo
-echo "SVG strips (one traced image per row, for CSS sprite animation):"
-echo "  $OUTDIR/svg/climbing-strip.svg"
-echo "  $OUTDIR/svg/hanging-strip.svg"
+echo "SVG assets:"
 echo "  $OUTDIR/svg/jumping-strip.svg"
-echo "  $OUTDIR/svg/turning-strip.svg"
+echo "  $OUTDIR/svg/turning-00.svg"

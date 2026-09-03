@@ -15,18 +15,18 @@
   weight = 20
 
 [[home]]
-  name = "Vakio ny fanamarihana"
+  name = "Vakio ny fanamarihana fikarohana"
   pageRef = '/posts'
   weight = 10
 
 [[home]]
-  name = "Jereo ny marika"
-  pageRef = '/tags'
+  name = "Semantic Scholar"
+  url = 'https://www.semanticscholar.org/author/Emily-Decker/2346865864'
   weight = 20
 
 [[footer]]
   identifier = 'folio'
-  name = "Folio"
+  name = "Emily C. Decker"
   weight = 10
 
 [[footer]]
@@ -43,7 +43,7 @@
 
 [[footer]]
   identifier = 'system'
-  name = "Rafitra"
+  name = "Tranonkala"
   weight = 20
 
 [[footer]]

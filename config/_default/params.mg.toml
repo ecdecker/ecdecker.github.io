@@ -5,7 +5,7 @@
 # apostrophe at all, and there is no escape for one inside them. Malagasy prose
 # is full of them, which is one reason the copy is better off in Markdown.
 
-description = "Fomba mangina kokoa hametrahana zavatra an-taratasy."
+description = "Mandalina ny toekarena momba ny tontolo iainana, politika, fahasalamana ary faharetana manoloana ny toetrandro ao amin'ny Oniversiten'i Duke i Emily C. Decker."
 
 [folio]
-  tagline = "Rafitra famolavolana mangina, manify toy ny taratasy. Namboarina teo ambony latabatra akaikin'ny varavarankely, fa tsy tao an-trano fivoriana."
+  tagline = "Fikarohana momba ny toekarena sy politika ara-tontolo iainana ao amin'ny Oniversiten'i Duke."

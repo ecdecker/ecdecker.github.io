@@ -12,18 +12,18 @@
   weight = 20
 
 [[home]]
-  name = "Lire les notes"
+  name = "Lire les notes de recherche"
   pageRef = '/posts'
   weight = 10
 
 [[home]]
-  name = "Voir les étiquettes"
-  pageRef = '/tags'
+  name = "Semantic Scholar"
+  url = 'https://www.semanticscholar.org/author/Emily-Decker/2346865864'
   weight = 20
 
 [[footer]]
   identifier = 'folio'
-  name = "Folio"
+  name = "Emily C. Decker"
   weight = 10
 
 [[footer]]
@@ -40,7 +40,7 @@
 
 [[footer]]
   identifier = 'system'
-  name = "Système"
+  name = "Site"
   weight = 20
 
 [[footer]]

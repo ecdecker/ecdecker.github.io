@@ -171,13 +171,13 @@ components:
 
 Folio is a one-color, one-mark, one-voice system. The page is the leaf of a well-printed book — warm bone paper underneath, a pure white surface card on top, and editorial serif marquee headlines doing all the talking. Action is the only thing allowed to be ink-black. Decoration is the only thing not allowed at all.
 
-The intended feel is calm, deliberate, and quietly confident — closer to a printed folio or a small architecture monograph than to a SaaS dashboard. Pages should feel composed, not assembled. Whitespace is a primary material; hairline borders are the structural language; the four-point spark is the only ornament permitted.
+The intended feel is calm, deliberate, and quietly confident — closer to a printed folio or a small architecture monograph than to a SaaS dashboard. Pages should feel composed, not assembled. Whitespace is a primary material; hairline borders are the structural language; the four-point spark and the lemur brand mark are the only ornaments permitted.
 
 What to preserve from the visual direction:
 
 - The single white card floating on a warm neutral page, framed by a 1px hairline.
 - A high-contrast serif display paired with a quiet sans body — never two serifs, never two sans.
-- A small italic-serif wordmark with a four-point spark mark to its left.
+- A small italic-serif wordmark with the lemur brand mark to its left.
 - Pill-shaped controls — ink primary, hairline secondary — in close proximity.
 - Tight, asymmetric, left-aligned editorial layouts. Nothing centered for the sake of centering.
 
@@ -240,13 +240,14 @@ Four radii, used consistently:
 - **Inputs (10px)** — text inputs, selects, textareas, dropdowns, small panels.
 - **Checkbox / squarish (4px)** — checkboxes, the only square geometry in the system.
 
-The signature ornament is the **four-point Folio spark** — a compass-style star with concave sides. It appears:
+The **four-point Folio spark** — a compass-style star with concave sides — is the system's divider ornament. It appears:
 
-- As the brand mark next to the italic-serif wordmark.
 - As the optional centered ornament between two hairline segments in a section divider.
 - As a tiny inline glyph in marquee statements where a separator is needed.
 
 It is never recolored, never animated, never used as a repeating pattern, and never larger than 24px inside running content.
+
+The brand mark itself is the **lemur mark** — a single static frame traced from the site's lemur illustration (`assets/images/lemur-sprites/svg/turning-00.svg`), inlined as an SVG symbol and sized to its own portrait proportions rather than squared off. It replaces the spark specifically in that one role; like the spark, it is a plain, static, single-color glyph — not animated, not recolored, not repeated.
 
 ## Components
 
@@ -281,7 +282,8 @@ It is never recolored, never animated, never used as a repeating pattern, and ne
 - Do use the 1px Mist hairline for every structural separation.
 - Do use Stone (not Ink) for body paragraphs and helper text.
 - Do reserve Ink as the only "action" color — primary button fill, checkbox checked, focus ring.
-- Do use the four-point spark exclusively as the brand mark and the optional divider ornament.
+- Do use the four-point spark exclusively as the optional divider ornament and inline marquee glyph.
+- Do use the lemur mark exclusively as the brand mark, as a plain static glyph like the spark.
 - Do prefer generous whitespace over visual chrome to communicate hierarchy.
 - Do collapse split layouts into a single column on mobile and let media sit below text.
 
@@ -292,6 +294,7 @@ It is never recolored, never animated, never used as a repeating pattern, and ne
 - Don't tint hover states with color — use a 1px lift on buttons or Whisper infill on secondaries.
 - Don't mix more than two type voices. Instrument Serif + the native system UI sans only.
 - Don't decorate with the spark, repeat it as a pattern, or recolor it.
+- Don't animate, recolor, or repeat the lemur mark — it's a plain static glyph, same rules as the spark.
 - Don't use double borders, 2px borders, or inset rings — the hairline is the voice.
 - Don't center every section. Editorial left alignment is the default.
 - Don't add badges, pills, or chips above headings as eyebrows or kickers.

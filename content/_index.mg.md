@@ -1,51 +1,53 @@
 ---
-title: "Folio"
-volume: "Boky 01 · 2026"
-heroImageCaption: "Sary I — Talantalana famakiana"
-hint: "Fianakaviana endri-tsoratra iray nalaina, rafitra iray."
+title: "Emily C. Decker"
+volume: "Oniversiten'i Duke · 2026"
+heroImageCaption: "Boky fikarohana"
+hint: "Toekarena momba ny tontolo iainana, politika ary faharetana."
 ---
 
 {{< copy "hero" >}}
-Fomba mangina kokoa\
-hametrahana zavatra an-*taratasy*.
-==================================
+Emily C. Decker
+================
 
-Folio dia rafitra kely tokan-doko ho an'ny asa vokatra fanaovan-gazety.
-Taratasy taolana, sisiny tsipika manify, endri-tsoratra serif tokana — ary tsy
-misy zavatra hafa mitady saina.
+Emily dia mpianatra Ph.D. ao amin'ny Environmental Social Systems ao amin'ny
+[Nicholas School of the Environment](https://scholars.duke.edu/person/Emily.Decker),
+Oniversiten'i Duke. Mampifandray ny famakafakana ara-toekarena sy ara-politika
+amin'ny olana momba ny tontolo iainana mahakasika tokantrano, andrim-panjakana
+ary tsena ny asany.
 
-- Loko malefaka iray. Ranomainty iray. Tsy misy loko fanamafisana.
-- Instrument Serif ho an'ny lohateny, ny rafitra ho an'ny ambiny rehetra.
-- Tsipika iray piksely no mizara ny rehetra.
-- Pitik'afo tokana efa-jorony, ampiasaina am-pitandremana.
+- Fifindrana mankany amin'ny angovo madio
+- Fiantraikan'ny tontolo iainana amin'ny fahasalamana
+- Faharetana manoloana ny toetrandro sy famatsiam-bola ho an'ny toetrandro
 {{< /copy >}}
 
 {{< copy "principles" >}}
-Fitsipika telo mangina.
------------------------
+Fikarohana manerana ny rafitra.
+--------------------------------
 
-Kely an-kalalahana ny Folio. Ny rafitra manontolo dia mihazona amin'ny
-fanapahan-kevitra vitsivitsy izay tsy lany amin'ny haingo.
+Mandalina ny fomba anovan'ny vaovao, ny fandrisihana ary ny andrim-panjakana ny
+fandraisana andraikitra manoloana ny loza ara-tontolo iainana sy ara-pahasalamana
+i Emily. Hita ao amin'ny
+[Semantic Scholar](https://www.semanticscholar.org/author/Emily-Decker/2346865864)
+koa ny boky sy lahatsorany.
 {{< /copy >}}
 
-{{< principle key="serif" meta="Endri-tsoratra" >}}
-### Voasoratra amin'ny serif.
+{{< principle key="serif" meta="Angovo" >}}
+### Fifindrana amin'ny angovo madio.
 
-Ny lohateny dia amin'ny Instrument Serif, 32 ka hatramin'ny 96 piksely. Ny
-votoaty dia mampiasa ny sans an'ny rafitra amin'ny 400/500.
+Ny fomba ahafahan'ny politika sy ny famatsiam-bola mampahomby sy mampaharitra
+ary mampitovy kokoa ny fampihenana karbônina.
 {{< /principle >}}
 
-{{< principle key="hairlines" meta="Rafitra" >}}
-### Naorina amin'ny tsipika manify.
+{{< principle key="hairlines" meta="Fahasalamana" >}}
+### Fahasalamana sy tontolo iainana.
 
-Ny mpampisaraka, sisin-karatra, faritry ny saha ary tsipiky ny tabilao rehetra
-dia piksely Mist tokana. Ny halalina dia avy amin'ny fifanoherana, fa tsy
-amin'ny aloka.
+Ny fomba ahafahan'ny fandrefesana sy porofo ara-toekarena tsara kokoa manatsara
+ny fanapahan-kevitra momba ny fahasalamam-bahoaka ao anatin'ny tsy fahazoana antoka.
 {{< /principle >}}
 
-{{< principle key="ink" meta="Loko" >}}
-### Ranomainty tokana.
+{{< principle key="ink" meta="Faharetana" >}}
+### Faharetana manoloana ny toetrandro.
 
-Ny hetsika ihany no mahazo alalana ho mainty ranomainty. Tsy misy loko
-fanamafisana na endrika hover misy loko.
+Ny fomba iomanan'ny tokantrano, vondrom-piarahamonina, orinasa ary fitondram-panjakana
+amin'ny dona ara-toetrandro sy ny fomba hiverenany aorian'izany.
 {{< /principle >}}

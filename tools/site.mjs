@@ -113,9 +113,10 @@ async function commandStart(args) {
     ? "image-quality"
     : optionValue(args, "--environment", args.includes("--published-only") ? "production" : undefined);
   const baseUrl = optionValue(args, "--base-url");
+  const landingPath = optionValue(args, "--landing-path", "/");
   if (environment) command.push("--environment", environment);
   if (baseUrl) command.push("--baseURL", baseUrl);
-  const url = `http://127.0.0.1:${port}/`;
+  const url = `http://127.0.0.1:${port}${landingPath}`;
   console.log(`Starting the site at ${url}`);
   console.log("Press Ctrl+C to stop.\n");
   const child = spawnManaged(hugoPath, command);
@@ -379,7 +380,7 @@ export async function main(argv = process.argv.slice(2)) {
     case "--help":
     case "-h": console.log(help); break;
     case "start": await commandStart(args); break;
-    case "theme": await commandStart([...args, "--published-only"]); break;
+    case "theme": await commandStart(["--published-only", "--environment", "development", "--landing-path", "/exercises/", ...args]); break;
     case "test": await run(process.execPath, [path.join(projectRoot, "tools/site.test.mjs")]); break;
     case "new": await commandNew(args); break;
     case "check": await commandCheck(args); break;
