@@ -123,6 +123,19 @@
   --btn-bg: var(--color-surface-subtle);
 }
 
+/* Duke Blue is the site's one deliberate exception to its otherwise
+   warm-monochrome palette, scoped to the Duke Research Profile CTA. */
+.btn--duke {
+  --btn-bg: #00539b;
+  --btn-fg: #ffffff;
+  --btn-border: #00539b;
+}
+
+.btn--duke:hover {
+  --btn-bg: #003d75;
+  --btn-border: #003d75;
+}
+
 .btn--ghost {
   --btn-bg: transparent;
   --btn-fg: var(--color-text);

@@ -98,6 +98,7 @@ that would change its web address.
    date: 2026-08-27
    draft: true
    tags: ["field notes"]
+   locations: []
    ---
 
    Write the opening paragraph here.
@@ -124,10 +125,25 @@ The lines between =---= and =---= control how the article appears:
 | =date=        | The publication date in =YYYY-MM-DD= form                            |
 | =draft=       | =true= while unpublished; remove the entire line to publish          |
 | =tags=        | Optional subjects, such as =tags: ["field notes", "research"]=      |
+| =locations=   | Optional places that put the note on the homepage research map       |
 
 Keep the quotation marks around titles and descriptions. Do not add a =#=
 heading for the title in the article itself; the site adds the title for you.
 Start sections with =##=.
+
+To put a note on the research map, add one or more place names with decimal
+coordinates. Use negative latitude south of the equator and negative longitude
+west of Greenwich:
+
+#+begin_src yaml
+locations:
+  - name: "Saint Paul, Minnesota, United States"
+    latitude: 44.9537
+    longitude: -93.09
+#+end_src
+
+The map appears automatically when =locations= is present. No map tag is
+needed. Leave =locations: []= when a note is not tied to a place.
 
 * Add images
 

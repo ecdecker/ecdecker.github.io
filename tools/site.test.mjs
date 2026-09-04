@@ -7,6 +7,7 @@ import { test } from "node:test";
 import { extractBoxReferences, validateBoxMounts } from "./lib/box.mjs";
 import { FAVICON_SIZES, prepareFavicon } from "./lib/favicon.mjs";
 import { structuralSimilarity } from "./lib/images.mjs";
+import { auditResearchLocations, locationFailures } from "./lib/locations.mjs";
 import {
   auditMarkdownImages,
   auditOutput,
@@ -69,6 +70,30 @@ test("new articles are safe draft page bundles", async () => {
     const file = await createArticle({ title: "Garden notes", date: "2026-08-27", root });
     assert.equal(path.relative(root, file), "content/posts/garden-notes/index.md");
     assert.match(await readFile(file, "utf8"), /draft: true/);
+    assert.match(await readFile(file, "utf8"), /locations: \[\]/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("research locations require names and valid world coordinates", async () => {
+  assert.deepEqual(locationFailures([{ name: "Saint Paul", latitude: 44.9537, longitude: -93.09 }]), []);
+  assert.deepEqual(locationFailures(undefined), []);
+  assert.match(locationFailures("Saint Paul").join("\n"), /must be a list/);
+  assert.match(
+    locationFailures([{ name: "", latitude: 91, longitude: "west" }]).join("\n"),
+    /name must be a non-empty string[\s\S]*latitude must be a number from -90 to 90[\s\S]*longitude must be a number/,
+  );
+
+  const root = await mkdtemp(path.join(os.tmpdir(), "emily-locations-"));
+  try {
+    const directory = path.join(root, "content/posts/example");
+    await mkdir(directory, { recursive: true });
+    await writeFile(
+      path.join(directory, "index.md"),
+      "---\nlocations:\n  - name: Example\n    latitude: 0\n    longitude: 181\n---\n",
+    );
+    await assert.rejects(auditResearchLocations({ root }), /Research location check failed[\s\S]*longitude/);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

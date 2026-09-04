@@ -13,6 +13,7 @@ import { auditBoxSnapshot, syncBox } from "./lib/box.mjs";
 import { prepareFavicon } from "./lib/favicon.mjs";
 import { checkTranslations } from "./lib/i18n.mjs";
 import { defaultParameters, imageStatus, optimizeImages } from "./lib/images.mjs";
+import { auditResearchLocations } from "./lib/locations.mjs";
 import {
   exists,
   hugo,
@@ -125,7 +126,7 @@ export async function createArticle({ title, slug = slugify(title), date = local
   await mkdir(directory, { recursive: true });
   await writeFile(
     file,
-    `---\ntitle: ${JSON.stringify(title)}\ndescription: "Add a one- or two-sentence summary."\ndate: ${date}\ndraft: true\ntags: []\n---\n\nWrite the opening paragraph here.\n\n## First section\n\nContinue the article here.\n`,
+    `---\ntitle: ${JSON.stringify(title)}\ndescription: "Add a one- or two-sentence summary."\ndate: ${date}\ndraft: true\ntags: []\nlocations: []\n---\n\nWrite the opening paragraph here.\n\n## First section\n\nContinue the article here.\n`,
   );
   return file;
 }
@@ -157,6 +158,7 @@ async function buildTo(destination, { drafts = false, baseUrl, production = fals
 
 async function prepareInputs({ check }) {
   await auditMarkdownImages();
+  await auditResearchLocations();
   await auditBoxSnapshot();
   await prepareSocialCard({ check });
   await prepareFavicon({ check });
@@ -199,7 +201,13 @@ async function commandBuild({ baseUrl, skipImages = false } = {}) {
   console.log("Building the production site...");
   const output = path.join(projectRoot, "public");
   await buildTo(output, { baseUrl, production: true });
-  await auditOutput({ output });
+  const result = await auditOutput({ output });
+  const homepage = result.routes["/"];
+  if (homepage) {
+    console.log(
+      `Homepage transfer: ${homepage.cold.bytes} B cold / ${homepage.cold.gzip} B gzip; ${homepage.cached.bytes} B cached / ${homepage.cached.gzip} B gzip.`,
+    );
+  }
   console.log("Production site written to public/.");
 }
 

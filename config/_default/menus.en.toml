@@ -16,12 +16,21 @@
   pageRef = '/posts'
   weight = 20
 
-# Homepage call-to-action button. The research-notes link lives on the
+# Homepage call-to-action buttons. The research-notes link lives on the
 # notebook card itself.
 [[home]]
   name = 'Semantic Scholar'
   url = 'https://www.semanticscholar.org/author/Emily-Decker/2346865864'
   weight = 10
+
+# Identifier 'duke' is matched in home.html to render this one button with
+# the Duke wordmark and Duke Blue -- the site's one deliberate exception to
+# its otherwise warm-monochrome palette.
+[[home]]
+  identifier = 'duke'
+  name = 'Duke University Research Profile'
+  url = 'https://scholars.duke.edu/person/Emily.Decker'
+  weight = 20
 
 # Footer columns. A parent entry is the column heading and carries no
 # destination of its own; its children are the links.

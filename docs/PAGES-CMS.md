@@ -64,6 +64,22 @@ Renaming and deleting notes are disabled in Pages CMS because either can break
 published URLs. Hide a note with `draft: true`; use Git directly for a reviewed
 rename or deletion.
 
+## Research map locations
+
+The **Research locations** field is a repeatable group. Add a place name,
+latitude, and longitude for every geography represented by a note; saving the
+note is enough to put each place on the homepage map. Latitude and longitude
+are decimal numbers from -90 to 90 and -180 to 180 respectively. South and
+west are negative.
+
+The map reads `locations` directly, so there is deliberately no parallel map
+tag or checkbox to keep synchronized. Ordinary topical tags remain unchanged.
+The repository check rejects an incomplete place or an out-of-range
+coordinate before publication.
+
+The rendering and byte-budget decisions are recorded in
+[RESEARCH-MAP.md](./RESEARCH-MAP.md).
+
 ## Concurrency and recovery
 
 Pages CMS does not lock files against other Git clients. Before local work,

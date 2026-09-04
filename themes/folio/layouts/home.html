@@ -1,3 +1,10 @@
+{{- /* Map styles are homepage-only. The normal stylesheet is inlined on every
+       page; putting these rules in that bundle would charge every article and
+       taxonomy route for a component they never render. */ -}}
+{{ define "head" }}
+  {{- partialCached "head/inline-css.html" "css/research-map.css" "research-map" -}}
+{{ end }}
+
 {{ define "main" }}
   {{- /*
     Homepage copy is authored as Markdown in content/_index.<lang>.md, in
@@ -32,6 +39,7 @@
   {{- end }}
   {{- $f := .Params }}
   {{- $site := site.Params.folio | default dict }}
+  {{- $posts := where site.RegularPages "Section" "posts" }}
 
   {{/* Hero — profile card followed by the full-width research notebook. */}}
   <section class="hero">
@@ -52,9 +60,16 @@
 
             <div class="hero-cta">
               {{- range site.Menus.home }}
+              {{- if eq .Identifier "duke" }}
+              <a class="btn btn--secondary btn--duke" href="{{ .URL }}">
+                <svg width="14" height="14" aria-hidden="true"><use href="#logo-duke"/></svg>
+                {{- .Name -}}
+              </a>
+              {{- else }}
               <a class="btn btn--secondary" href="{{ .URL }}">
                 {{- .Name -}}
               </a>
+              {{- end }}
               {{- end }}
               {{ with $f.hint }}<span class="hint">{{ . }}</span>{{ end }}
             </div>
@@ -93,26 +108,9 @@
         </div>
       </article>
 
-      {{- with $site.notebookImage }}
       <div class="card notebook-card">
-        <div class="notebook-media">
-          {{ partial "image.html" (dict
-            "src" .
-            "alt" ""
-            "fit" "fill"
-            "ratio" "16:9"
-            "sizes" "(min-width: 1200px) 1008px, calc(100vw - 2 * clamp(1.25rem, 4vw, 3rem) - 2 * clamp(1.5rem, 3vw, 3rem))") }}
-          {{ with $f.heroImageCaption }}
-          {{- with site.GetPage "/posts" }}
-          <a class="hero-media-tag" href="{{ .RelPermalink }}">
-            <svg width="12" height="12" aria-hidden="true"><use href="#folio-spark"/></svg>
-            {{ $f.heroImageCaption }}
-          </a>
-          {{- end }}
-          {{ end }}
-        </div>
+        {{ partial "research-map.html" (dict "label" $f.heroImageCaption "posts" $posts) }}
       </div>
-      {{- end }}
     </div>
   </section>
 
@@ -164,7 +162,7 @@
   {{- end }}
 
   {{/* Recent notes */}}
-  {{- with where site.RegularPages "Section" "posts" }}
+  {{- with $posts }}
   <section class="section-block" id="notes">
     <div class="container">
       <div class="section-head">

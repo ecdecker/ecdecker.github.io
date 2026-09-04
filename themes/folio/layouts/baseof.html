@@ -8,6 +8,7 @@
 <html lang="{{ site.Language.Lang }}" dir="{{ or site.Language.Direction `ltr` }}"{{ if $systemTypography }} class="type-system"{{ end }}>
 <head>
   {{ partial "head.html" . }}
+  {{ block "head" . }}{{ end }}
 </head>
 <body>
   {{ partial "sprite.html" . }}

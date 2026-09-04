@@ -56,6 +56,33 @@ content:
         label: Categories
         type: string
         list: true
+      - name: locations
+        label: Research locations
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{name}"
+        description: Add each place studied to show this note on the homepage map. Decimal coordinates use negative values for south and west.
+        fields:
+          - name: name
+            label: Place name
+            type: string
+            required: true
+          - name: latitude
+            label: Latitude
+            type: number
+            required: true
+            options:
+              min: -90
+              max: 90
+          - name: longitude
+            label: Longitude
+            type: number
+            required: true
+            options:
+              min: -180
+              max: 180
       - name: draft
         label: Draft
         type: boolean

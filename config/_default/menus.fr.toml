@@ -16,6 +16,12 @@
   url = 'https://www.semanticscholar.org/author/Emily-Decker/2346865864'
   weight = 10
 
+[[home]]
+  identifier = 'duke'
+  name = "Duke University Research Profile"
+  url = 'https://scholars.duke.edu/person/Emily.Decker'
+  weight = 20
+
 [[footer]]
   identifier = 'folio'
   name = "Emily C. Decker"

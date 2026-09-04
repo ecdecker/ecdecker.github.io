@@ -1,0 +1,6 @@
+{{- with resources.Get . -}}
+  {{- $opts := dict "minify" true "sourceMap" "none" -}}
+  {{- with . | css.Build $opts -}}
+    <style>{{ .Content | safeCSS }}</style>
+  {{- end -}}
+{{- end -}}

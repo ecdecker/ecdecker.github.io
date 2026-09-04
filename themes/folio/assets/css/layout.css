@@ -260,16 +260,6 @@
   overflow: hidden;
 }
 
-.notebook-media {
-  position: relative;
-  background-color: var(--color-surface-subtle);
-}
-
-.notebook-media img {
-  width: 100%;
-  height: auto;
-}
-
 @media (max-width: 879px) {
   .hero-text { min-height: 0; }
   .hero-media {

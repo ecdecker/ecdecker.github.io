@@ -46,8 +46,9 @@ npm run site -- build
 - `format` formats the JavaScript tools, organizes their imports, and applies
   safe lint fixes.
 - `new` creates `content/posts/<slug>/index.md` with safe draft front matter.
-- `check` validates translation parity, reports stale image measurements, and
-  performs a complete temporary build including drafts.
+- `check` validates translation parity and research-map coordinates, reports
+  stale image measurements, and performs a complete temporary build including
+  drafts.
 - `build` refreshes changed image measurements and writes a clean, minified
   production site to `public/`.
 

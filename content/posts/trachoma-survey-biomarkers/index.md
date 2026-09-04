@@ -3,6 +3,13 @@ title: "What extra trachoma testing costs—and what it finds"
 description: "A cost-effectiveness study compares clinical grading with ocular swabs and dried blood spots in trachoma surveys in Tanzania and Mozambique."
 date: 2025-07-21
 tags: ["environmental health", "cost-effectiveness", "trachoma"]
+locations:
+  - name: "Tanzania"
+    latitude: -6.37
+    longitude: 34.89
+  - name: "Mozambique"
+    latitude: -18.67
+    longitude: 35.53
 draft: true
 ---
 

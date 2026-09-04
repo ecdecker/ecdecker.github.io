@@ -1,0 +1,55 @@
+{{- /*
+  Zero-request research map. The intentionally coarse land silhouette is
+  inline geometry rather than a raster, tile set, GeoJSON payload, or mapping
+  runtime. Locations are projected from post front matter at build time:
+
+    x = longitude + 180
+    y = 90 - latitude
+
+  `npm run site -- check` validates the inputs before Hugo sees them. The text
+  key repeats the SVG links because SVG title behavior varies across assistive
+  technology and touch browsers.
+*/ -}}
+{{- $label := .label -}}
+{{- $posts := .posts -}}
+<figure class="research-map">
+  <div class="research-map-plot">
+    <svg viewBox="0 0 360 180" role="img" aria-labelledby="research-map-title">
+      <title id="research-map-title">{{ $label }}</title>
+      <path class="research-map-grid" d="M0 45h360M0 90h360M0 135h360M60 0v180M120 0v180M180 0v180M240 0v180M300 0v180"/>
+      <path class="research-map-land" d="M8 32 18 20 44 16 57 20 70 25 84 22 105 28 113 38 105 48 96 53 91 61 82 65 74 57 65 55 58 48 49 50 39 44 29 45 20 40ZM117 16l13-3 13 5-4 13-13 5-8-7ZM74 57l8 7 3 8 6 4-4 4-6-6-3-8ZM91 77l15-3 15 6 7 12-4 15-7 15-10 18-6 16-6-8-3-18-6-15-4-17 3-13ZM157 31l14-7 20 1 11-6 23 1 14 6 15-3 20 6 20 2 19 5 16 11 9 10-9 6h-15l-11 6-14-3-14 6-8 8-14-2-8-10-14-4-12-8-12 2-8 9-11-3-6-8-12-1-8-7ZM168 62l16-4 18 7 12 13-3 18-10 14-8 18-10 6-9-11-6-16-9-14-3-16ZM210 68l18 4 10 13-9 7-13-4-9-9ZM245 72l13 5 7 13-9 15-8-9-7-13ZM267 79l15 3 11 9-6 9-10-4-7-6ZM282 116l15-9 21 4 15 13-4 17-17 9-19-5-13-13ZM225 106l5 7-2 16-5 7-2-13ZM340 142l5-7 5 5-2 9Z"/>
+      {{- range $post := $posts -}}
+        {{- range $location := $post.Params.locations -}}
+          {{- $x := add (float (index $location "longitude")) 180 -}}
+          {{- $y := sub 90 (float (index $location "latitude")) -}}
+          <a class="research-map-marker" href="{{ $post.RelPermalink }}" aria-label="{{ printf "%s — %s" (index $location "name") $post.LinkTitle }}">
+            <circle class="research-map-marker-ring" cx="{{ $x }}" cy="{{ $y }}" r="4"/>
+            <circle cx="{{ $x }}" cy="{{ $y }}" r="1.8"/>
+            <title>{{ index $location "name" }} — {{ $post.LinkTitle }}</title>
+          </a>
+        {{- end -}}
+      {{- end -}}
+    </svg>
+    {{- with site.GetPage "/posts" }}
+    <a class="hero-media-tag" href="{{ .RelPermalink }}">
+      <svg width="12" height="12" aria-hidden="true"><use href="#folio-spark"/></svg>
+      {{ $label }}
+    </a>
+    {{- end }}
+  </div>
+  {{- $hasLocations := false -}}
+  {{- range $post := $posts -}}
+    {{- with $post.Params.locations -}}{{- $hasLocations = true -}}{{- end -}}
+  {{- end -}}
+  {{- if $hasLocations }}
+  <figcaption>
+    <ul class="research-map-key" aria-label="{{ $label }}">
+      {{- range $post := $posts -}}
+        {{- range $location := $post.Params.locations }}
+        <li><a href="{{ $post.RelPermalink }}"><span aria-hidden="true"></span>{{ index $location "name" }}<span class="sr-only"> — {{ $post.LinkTitle }}</span></a></li>
+        {{- end -}}
+      {{- end }}
+    </ul>
+  </figcaption>
+  {{- end }}
+</figure>

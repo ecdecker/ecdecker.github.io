@@ -3,6 +3,10 @@ title: "Camel leasing as a resilience-building practice"
 description: "What a mixed-methods study in Somaliland suggests about camel leasing, household resilience, dairy businesses, and the people the market can leave behind."
 date: 2025-03-01
 tags: ["climate resilience", "livelihoods", "Somaliland"]
+locations:
+  - name: "Woqooyi Galbeed, Somaliland"
+    latitude: 9.56
+    longitude: 44.07
 draft: true
 ---
 

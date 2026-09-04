@@ -3,6 +3,10 @@ title: "What is a flood forecast worth?"
 description: "A Saint Paul case study values flood forecasts by tracing how better information changes emergency decisions and their costs."
 date: 2026-02-23
 tags: ["climate resilience", "flooding", "value of information"]
+locations:
+  - name: "Saint Paul, Minnesota, United States"
+    latitude: 44.9537
+    longitude: -93.09
 draft: true
 ---
 

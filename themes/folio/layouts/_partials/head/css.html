@@ -1,14 +1,4 @@
-{{- with resources.Get "css/main.css" }}
-  {{- $opts := dict
-    "minify" true
-    "sourceMap" "none"
-  }}
-  {{- with . | css.Build $opts }}
-    {{- /*
-      The complete compiled stylesheet is small enough to inline. Keeping it
-      in the root response guarantees that the browser cannot expose an
-      unstyled DOM while waiting on a second, render-blocking request.
-    */}}
-    <style>{{ .Content | safeCSS }}</style>
-  {{- end }}
-{{- end }}
+{{- /* The complete compiled stylesheet is small enough to inline. Keeping it
+       in the root response guarantees that the browser cannot expose an
+       unstyled DOM while waiting on a second, render-blocking request. */ -}}
+{{- partialCached "head/inline-css.html" "css/main.css" "main" -}}
