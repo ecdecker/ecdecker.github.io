@@ -113,12 +113,16 @@ Reports are written under `artifacts/load-states/`. See
 These commands are not needed for writing or publishing articles:
 
 ```sh
+npm run site -- assets map
 npm run site -- assets sprites
 
 npm run site -- assets fonts --setup
 npm run site -- assets fonts --check
 npm run site -- assets fonts
 ```
+
+Map downloads the pinned, one-bit world land mask and verifies its checksum
+and dimensions. Normal builds are offline and use the checked-in copy.
 
 Sprites installs what it needs (ImageMagick, potrace, svgo) automatically on
 first run. Fonts' separate setup command installs the extra tools used only

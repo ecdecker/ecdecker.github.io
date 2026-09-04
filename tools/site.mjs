@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
@@ -159,6 +160,7 @@ async function buildTo(destination, { drafts = false, baseUrl, production = fals
 async function prepareInputs({ check }) {
   await auditMarkdownImages();
   await auditResearchLocations();
+  await checkResearchMap();
   await auditBoxSnapshot();
   await prepareSocialCard({ check });
   await prepareFavicon({ check });
@@ -284,6 +286,53 @@ async function commandSprites(source, destination) {
         path.join(projectRoot, "assets/images/lemur-sprites"),
       ];
   await run("bash", [path.join(projectRoot, "tools/generate-lemur-sprites.sh"), ...args]);
+}
+
+const researchMapSource = "https://raw.githubusercontent.com/shuding/cobe/1f37b22/src/texture.png";
+const researchMapDestination = path.join(projectRoot, "themes/folio/assets/images/research-map.png");
+const researchMapHash = "467619a98670dbb446bc614076d6ba9dc924c9eb395012da10a4a57e15c462da";
+
+async function validateResearchMap(body) {
+  const hash = createHash("sha256").update(body).digest("hex");
+  if (hash !== researchMapHash) {
+    throw new SiteError(`Research map checksum mismatch (expected ${researchMapHash}, received ${hash}).`);
+  }
+  const metadata = await sharp(body).metadata();
+  if (metadata.format !== "png" || metadata.width !== 256 || metadata.height !== 128) {
+    throw new SiteError(
+      `Research map has unexpected format or dimensions (${metadata.format}, ${metadata.width}×${metadata.height}).`,
+    );
+  }
+  return hash;
+}
+
+async function checkResearchMap() {
+  let body;
+  try {
+    body = await readFile(researchMapDestination);
+  } catch (error) {
+    throw new SiteError("The research map asset is missing. Run: npm run site -- assets map", { cause: error });
+  }
+  await validateResearchMap(body);
+}
+
+async function commandResearchMap() {
+  if (!(await exists(chromium.executablePath()))) {
+    throw new SiteError("Browser support is required. Run: npm run site -- setup --audit");
+  }
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage();
+    const response = await page.goto(researchMapSource, { waitUntil: "load", timeout: 60_000 });
+    if (!response?.ok()) throw new SiteError(`Could not download the pinned research map (${response?.status()}).`);
+    const body = await response.body();
+    const hash = await validateResearchMap(body);
+    await mkdir(path.dirname(researchMapDestination), { recursive: true });
+    await writeFile(researchMapDestination, body);
+    console.log(`Wrote ${path.relative(projectRoot, researchMapDestination)} (${body.length} B, sha256 ${hash}).`);
+  } finally {
+    await browser.close();
+  }
 }
 
 async function commandFonts({ setup = false, check = false } = {}) {
@@ -476,6 +525,10 @@ export function createSiteProgram({ writeOut, writeErr } = {}) {
     .summary("Regenerate advanced design assets")
     .description("Regenerate optional design assets that are not needed for everyday publishing.");
   assets.action(() => assets.outputHelp());
+  assets
+    .command("map")
+    .description("Refresh the pinned, public-domain research-map land mask.")
+    .action(commandResearchMap);
   assets
     .command("sprites [source] [destination]")
     .description("Regenerate the lemur sprite assets.")

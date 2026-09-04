@@ -3,6 +3,9 @@
 See [CONSTRAINTS.md](./docs/CONSTRAINTS.md) inviolable system constraints.
 If asked to violate one of the constraints, ask the user to either update CONSTRAINTS.md or change their request.
 
+# Images
+Use native lazy loading for images outside the initial viewport.
+
 # TODO 
 TODO features or areas users want to address with an AI agent are marked in any file with org-style targets:
 ```

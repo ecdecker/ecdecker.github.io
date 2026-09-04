@@ -1,7 +1,7 @@
 # Research map design
 
 The homepage research map is a progressively enhanced list of links drawn on a
-coarse world silhouette. A post joins the map by declaring one or more
+geographically faithful world land mask. A post joins the map by declaring one or more
 `locations` in front matter; Hugo projects those coordinates and writes normal
 links into the SVG at build time.
 
@@ -10,23 +10,28 @@ links into the SVG at build time.
 The component has three firm constraints:
 
 - no JavaScript, tile service, remote subresource, or browser-side data fetch;
-- no new request—the silhouette, markers, and map-only CSS are in the homepage
-  HTML;
+- the land image uses native lazy loading and remains a local resource;
 - map-only CSS must not inflate article or taxonomy responses.
 
-An inline coarse SVG sits on the useful frontier for this site. A raster would
-cost a request and scale less cleanly; a detailed GeoJSON outline would add
-geometry readers do not need; a mapping library or tile layer would violate
-the no-JavaScript and isolation policies. The map therefore keeps only enough
-continental geometry to orient a reader and spends its interaction budget on
-linked markers and a linked text key.
+The land source is COBE's 256×128, one-bit equirectangular mask, derived from
+Wikimedia's public-domain `World_map_blank_without_borders.svg`. The local
+image uses `loading="lazy"`; its dimensions reserve the complete map area while
+the immediately available SVG overlay provides linked markers. Each pixel
+represents 1.40625 degrees in both axes. This is accurate at the component's
+display scale, though it is deliberately not a political-boundary or survey
+map.
+
+`npm run site -- assets map` can reproduce the checked-in mask from a pinned
+COBE revision. The command and every build verify its SHA-256 checksum and
+256×128 dimensions. A detailed GeoJSON outline or mapping library would spend
+substantially more bytes without improving location selection at this scale.
 
 The shared inline-CSS partial compiles both the global bundle and the separate
-homepage map bundle. The source map CSS is 1,302 bytes (508 bytes with
-deterministic gzip). The 2026-09-04 production measurement was 92,022 bytes
-cold / 63,623 bytes gzip and 39,704 bytes cached / 11,274 bytes gzip. Run
-`npm run site -- build` to print the current homepage measurement after future
-changes.
+homepage map bundle. The map-specific CSS is 1,306 bytes (533 bytes with
+deterministic gzip), and the lazy land image is 1,108 bytes. The 2026-09-04
+production measurement is 91,600 bytes cold / 63,371 bytes gzip and 39,282
+bytes cached / 11,022 bytes gzip. Run `npm run site -- build` to print the
+current measurement after future changes.
 
 ## Content contract
 

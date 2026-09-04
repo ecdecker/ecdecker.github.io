@@ -374,6 +374,7 @@ test("CLI generates top-level and command help", async () => {
   for (const argv of [
     ["start", "--help"],
     ["audit", "--help"],
+    ["assets", "map", "--help"],
     ["assets", "fonts", "--help"],
   ]) {
     const result = await runCli(argv);
