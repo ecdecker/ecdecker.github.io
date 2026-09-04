@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { test } from "node:test";
 import os from "node:os";
 import path from "node:path";
+import { test } from "node:test";
 
 import { extractBoxReferences, validateBoxMounts } from "./lib/box.mjs";
+import { FAVICON_SIZES, prepareFavicon } from "./lib/favicon.mjs";
 import { structuralSimilarity } from "./lib/images.mjs";
-import { projectRoot } from "./lib/project.mjs";
 import {
   auditMarkdownImages,
   auditOutput,
@@ -15,10 +15,27 @@ import {
   routeForHtml,
   updateBaselines,
 } from "./lib/site-audit.mjs";
-import { FAVICON_SIZES, prepareFavicon } from "./lib/favicon.mjs";
-import { SOCIAL_CARD_HEIGHT, SOCIAL_CARD_WIDTH, prepareSocialCard } from "./lib/social-card.mjs";
+import { prepareSocialCard, SOCIAL_CARD_HEIGHT, SOCIAL_CARD_WIDTH } from "./lib/social-card.mjs";
 import { fetchZoteroItems, nextLink, sortCslItems } from "./lib/zotero.mjs";
-import { createArticle, localDate, main, slugify } from "./site.mjs";
+import { createArticle, createSiteProgram, localDate, main, slugify, themePreviewOptions } from "./site.mjs";
+
+async function runCli(argv) {
+  let stdout = "";
+  let stderr = "";
+  try {
+    await main(argv, {
+      writeOut: (text) => {
+        stdout += text;
+      },
+      writeErr: (text) => {
+        stderr += text;
+      },
+    });
+    return { error: undefined, stdout, stderr };
+  } catch (error) {
+    return { error, stdout, stderr };
+  }
+}
 
 function socialMeta({ type = "website" } = {}) {
   return `<meta property="og:title" content="Test"><meta property="og:description" content="Description"><meta property="og:url" content="https://emilycdecker.com/"><meta property="og:type" content="${type}"><meta property="og:image" content="https://emilycdecker.com/social-card.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Test"><meta name="twitter:description" content="Description"><meta name="twitter:image" content="https://emilycdecker.com/social-card.jpg">`;
@@ -52,7 +69,9 @@ test("new articles are safe draft page bundles", async () => {
     const file = await createArticle({ title: "Garden notes", date: "2026-08-27", root });
     assert.equal(path.relative(root, file), "content/posts/garden-notes/index.md");
     assert.match(await readFile(file, "utf8"), /draft: true/);
-  } finally { await rm(root, { recursive: true, force: true }); }
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });
 
 test("budget math and route normalization are exact", () => {
@@ -73,10 +92,14 @@ test("gzip output is deterministic", () => {
 
 test("Box mappings reject traversal and overlap", () => {
   assert.throws(() => validateBoxMounts([{ source: "../secret", target: "/box/research/" }]), /without traversal/);
-  assert.throws(() => validateBoxMounts([
-    { source: "Research", target: "/box/research/" },
-    { source: "Other", target: "/box/research/data/" },
-  ]), /overlap/);
+  assert.throws(
+    () =>
+      validateBoxMounts([
+        { source: "Research", target: "/box/research/" },
+        { source: "Other", target: "/box/research/data/" },
+      ]),
+    /overlap/,
+  );
 });
 
 test("Box link extraction covers Markdown, definitions, and HTML", () => {
@@ -95,15 +118,28 @@ test("Zotero pagination and sorting are deterministic", async () => {
     { items: [{ id: "a" }], link: null },
   ];
   const items = await fetchZoteroItems({
-    libraryId: "1", apiKey: "key",
+    libraryId: "1",
+    apiKey: "key",
     fetcher: async () => {
       const response = responses.shift();
-      return { ok: true, status: 200, statusText: "OK", json: async () => response.items, headers: { get: () => response.link } };
+      return {
+        ok: true,
+        status: 200,
+        statusText: "OK",
+        json: async () => response.items,
+        headers: { get: () => response.link },
+      };
     },
   });
-  assert.deepEqual(items.map((item) => item.id), ["a", "z"]);
+  assert.deepEqual(
+    items.map((item) => item.id),
+    ["a", "z"],
+  );
   assert.equal(nextLink('<https://example.test/2>; rel="next"'), "https://example.test/2");
-  assert.deepEqual(sortCslItems([{ id: "b" }, { id: "a" }]).map((item) => item.id), ["a", "b"]);
+  assert.deepEqual(
+    sortCslItems([{ id: "b" }, { id: "a" }]).map((item) => item.id),
+    ["a", "b"],
+  );
 });
 
 test("Markdown images must be local and resolvable", async () => {
@@ -117,7 +153,9 @@ test("Markdown images must be local and resolvable", async () => {
     await writeFile(path.join(root, "content/local.png"), "local");
     await writeFile(path.join(root, "content/post.md"), "![local](local.png)");
     await auditMarkdownImages({ root });
-  } finally { await rm(root, { recursive: true, force: true }); }
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });
 
 test("artifact audit rejects scripts, remote resources, and malformed images", async () => {
@@ -127,10 +165,17 @@ test("artifact audit rejects scripts, remote resources, and malformed images", a
   });
   try {
     await assert.rejects(
-      auditOutput({ output: fixture.output, root: fixture.root, baselineFile: fixture.baseline, requireBaseline: false }),
+      auditOutput({
+        output: fixture.output,
+        root: fixture.root,
+        baselineFile: fixture.baseline,
+        requireBaseline: false,
+      }),
       /JavaScript is forbidden|remote page-load subresource|image lacks width/,
     );
-  } finally { await rm(fixture.root, { recursive: true, force: true }); }
+  } finally {
+    await rm(fixture.root, { recursive: true, force: true });
+  }
 });
 
 test("artifact audit rejects broken links and development routes", async () => {
@@ -140,10 +185,17 @@ test("artifact audit rejects broken links and development routes", async () => {
   });
   try {
     await assert.rejects(
-      auditOutput({ output: fixture.output, root: fixture.root, baselineFile: fixture.baseline, requireBaseline: false }),
+      auditOutput({
+        output: fixture.output,
+        root: fixture.root,
+        baselineFile: fixture.baseline,
+        requireBaseline: false,
+      }),
       /broken internal link|development route/,
     );
-  } finally { await rm(fixture.root, { recursive: true, force: true }); }
+  } finally {
+    await rm(fixture.root, { recursive: true, force: true });
+  }
 });
 
 test("artifact audit rejects remote fonts and tracking pixels", async () => {
@@ -154,10 +206,17 @@ test("artifact audit rejects remote fonts and tracking pixels", async () => {
   });
   try {
     await assert.rejects(
-      auditOutput({ output: fixture.output, root: fixture.root, baselineFile: fixture.baseline, requireBaseline: false }),
+      auditOutput({
+        output: fixture.output,
+        root: fixture.root,
+        baselineFile: fixture.baseline,
+        requireBaseline: false,
+      }),
       /remote CSS subresource|tracking-pixel-sized/,
     );
-  } finally { await rm(fixture.root, { recursive: true, force: true }); }
+  } finally {
+    await rm(fixture.root, { recursive: true, force: true });
+  }
 });
 
 test("artifact audit rejects leaked originals and oversized files", async () => {
@@ -171,10 +230,17 @@ test("artifact audit rejects leaked originals and oversized files", async () => 
     await mkdir(path.join(fixture.root, "assets"), { recursive: true });
     await writeFile(path.join(fixture.root, "assets/source.png"), source);
     await assert.rejects(
-      auditOutput({ output: fixture.output, root: fixture.root, baselineFile: fixture.baseline, requireBaseline: false }),
+      auditOutput({
+        output: fixture.output,
+        root: fixture.root,
+        baselineFile: fixture.baseline,
+        requireBaseline: false,
+      }),
       /original source image escaped|maximum file size/,
     );
-  } finally { await rm(fixture.root, { recursive: true, force: true }); }
+  } finally {
+    await rm(fixture.root, { recursive: true, force: true });
+  }
 });
 
 test("artifact audit rejects draft and future source routes", async () => {
@@ -188,10 +254,17 @@ test("artifact audit rejects draft and future source routes", async () => {
     await writeFile(path.join(fixture.root, "content/posts/draft.md"), "---\ndraft: true\n---\n");
     await writeFile(path.join(fixture.root, "content/posts/future.md"), "---\ndate: 2999-01-01\n---\n");
     await assert.rejects(
-      auditOutput({ output: fixture.output, root: fixture.root, baselineFile: fixture.baseline, requireBaseline: false }),
+      auditOutput({
+        output: fixture.output,
+        root: fixture.root,
+        baselineFile: fixture.baseline,
+        requireBaseline: false,
+      }),
       /draft or future content escaped/,
     );
-  } finally { await rm(fixture.root, { recursive: true, force: true }); }
+  } finally {
+    await rm(fixture.root, { recursive: true, force: true });
+  }
 });
 
 test("all four per-route budget categories are independently enforced", async () => {
@@ -199,7 +272,12 @@ test("all four per-route budget categories are independently enforced", async ()
   try {
     const accepted = await updateBaselines({ output: fixture.output, file: fixture.baseline, root: fixture.root });
     const actual = await auditOutput({ output: fixture.output, root: fixture.root, baselineFile: fixture.baseline });
-    for (const [mode, measure] of [["cold", "bytes"], ["cold", "gzip"], ["cached", "bytes"], ["cached", "gzip"]]) {
+    for (const [mode, measure] of [
+      ["cold", "bytes"],
+      ["cold", "gzip"],
+      ["cached", "bytes"],
+      ["cached", "gzip"],
+    ]) {
       const changed = structuredClone(accepted);
       changed.routes["/"][mode][measure] = actual.routes["/"][mode][measure] - 1;
       await writeFile(fixture.baseline, `${JSON.stringify(changed)}\n`);
@@ -208,7 +286,9 @@ test("all four per-route budget categories are independently enforced", async ()
         new RegExp(`${mode} ${measure}`),
       );
     }
-  } finally { await rm(fixture.root, { recursive: true, force: true }); }
+  } finally {
+    await rm(fixture.root, { recursive: true, force: true });
+  }
 });
 
 test("preservation baseline updates never remove routes", async () => {
@@ -221,8 +301,13 @@ test("preservation baseline updates never remove routes", async () => {
     assert.deepEqual(Object.keys(baseline.routes), ["/", "/kept/"]);
     await rm(path.join(fixture.output, "kept"), { recursive: true });
     await writeFile(path.join(fixture.output, "index.html"), page(""));
-    await assert.rejects(updateBaselines({ output: fixture.output, file: fixture.baseline, root: fixture.root }), /preserved route was removed|cannot remove/);
-  } finally { await rm(fixture.root, { recursive: true, force: true }); }
+    await assert.rejects(
+      updateBaselines({ output: fixture.output, file: fixture.baseline, root: fixture.root }),
+      /preserved route was removed|cannot remove/,
+    );
+  } finally {
+    await rm(fixture.root, { recursive: true, force: true });
+  }
 });
 
 test("baseline update can refresh a route ceiling without weakening global caps", async () => {
@@ -232,7 +317,9 @@ test("baseline update can refresh a route ceiling without weakening global caps"
     await writeFile(path.join(fixture.output, "index.html"), page("larger ".repeat(200)));
     const second = await updateBaselines({ output: fixture.output, file: fixture.baseline, root: fixture.root });
     assert.ok(second.routes["/"].cached.bytes > first.routes["/"].cached.bytes);
-  } finally { await rm(fixture.root, { recursive: true, force: true }); }
+  } finally {
+    await rm(fixture.root, { recursive: true, force: true });
+  }
 });
 
 test("social card is fresh and exactly 1200 by 630", async () => {
@@ -252,16 +339,100 @@ test("SSIM is one for identical data", () => {
   assert.equal(structuralSimilarity(image, image), 1);
 });
 
-test("CLI exposes test, theme, baselines, and sync routing", async () => {
+test("CLI generates top-level and command help", async () => {
+  const topLevel = await runCli([]);
+  assert.equal(topLevel.error, undefined);
+  for (const command of ["start", "theme", "test", "format", "new", "baselines", "sync", "assets"]) {
+    assert.match(topLevel.stdout, new RegExp(`\\b${command}\\b`));
+  }
+
+  for (const argv of [
+    ["start", "--help"],
+    ["audit", "--help"],
+    ["assets", "fonts", "--help"],
+  ]) {
+    const result = await runCli(argv);
+    assert.equal(result.error, undefined);
+    assert.match(
+      result.stdout,
+      new RegExp(`Usage: npm run site -- ${argv.filter((token) => token !== "--help").join(" ")}`),
+    );
+  }
+
+  const inlineValue = await runCli(["start", "--port=1414", "--help"]);
+  assert.equal(inlineValue.error, undefined);
+  assert.match(inlineValue.stdout, /--port <port>/);
+});
+
+test("CLI converts audit options and applies the theme preview preset", async () => {
+  const program = createSiteProgram({ writeOut: () => {}, writeErr: () => {} });
+  const audit = program.commands.find((command) => command.name() === "audit");
+  let options;
+  audit.action((parsed) => {
+    options = parsed;
+  });
+  await program.parseAsync(
+    ["audit", "--url=https://example.test/", "--name", "example", "--latency-ms", "0", "--width", "900"],
+    { from: "user" },
+  );
+  assert.deepEqual(options, {
+    url: "https://example.test/",
+    name: "example",
+    path: "/",
+    output: "artifacts/load-states",
+    latencyMs: 0,
+    downloadKbps: 250,
+    fontDelayMs: 250,
+    settleMs: 1800,
+    width: 900,
+    height: 1000,
+  });
+  assert.deepEqual(themePreviewOptions({ port: 1414, liveReload: false }), {
+    port: 1414,
+    liveReload: false,
+    publishedOnly: true,
+    environment: "development",
+    landingPath: "/exercises/",
+  });
+});
+
+test("CLI rejects malformed commands and options before running actions", async () => {
+  const cases = [
+    [["unknown"], /unknown command/i],
+    [["build", "--bas-url", "https://example.com/"], /unknown option/i],
+    [["build", "extra"], /too many arguments/i],
+    [["new"], /missing required argument/i],
+    [["start", "--port"], /argument missing/i],
+    [["start", "--port", "0"], /port must be an integer greater than 0/i],
+    [["start", "--port", "65536"], /port must be an integer greater than 0 and at most 65535/i],
+    [["images", "--format", "jpeg"], /allowed choices/i],
+    [["images", "--target", "1.1"], /target must be a number greater than 0 and at most 1/i],
+    [["start", "--image-lab", "--environment", "production"], /cannot be used with option/i],
+    [["assets", "fonts", "--setup", "--check"], /cannot be used with option/i],
+    [["audit", "--width", "0"], /width must be an integer greater than 0/i],
+    [["audit", "--name", "orphan"], /--name can only be used with --url/i],
+  ];
+
+  for (const [argv, expected] of cases) {
+    const result = await runCli(argv);
+    assert.ok(result.error, `expected ${argv.join(" ")} to fail`);
+    assert.match(`${result.stderr}\n${result.error.message}`, expected);
+  }
+});
+
+test("CLI keeps help-only selectors and nested sync routing", async () => {
+  for (const argv of [["setup"], ["baselines"], ["sync"], ["assets"]]) {
+    const result = await runCli(argv);
+    assert.equal(result.error, undefined);
+    assert.match(result.stdout, /Usage:/);
+  }
+
   const messages = [];
   const original = console.log;
   console.log = (...parts) => messages.push(parts.join(" "));
   try {
-    await main(["help"]);
-    for (const command of ["test", "theme", "baselines", "sync"]) assert.match(messages.join("\n"), new RegExp(`\\b${command}\\b`));
-    await assert.rejects(main(["unknown"]), /Unknown command/);
-    messages.length = 0;
-    await main(["sync", "box"]);
+    const result = await runCli(["sync", "box"]);
+    assert.equal(result.error, undefined);
     assert.match(messages.join("\n"), /checked-in imports\/box snapshot/);
   } finally {
     console.log = original;

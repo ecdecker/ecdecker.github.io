@@ -25,7 +25,10 @@ async function renderPlate(source, size) {
   // The source is a square portrait crop, not actually round — this clips it
   // to a circle (transparent corners) so the favicon reads as a round avatar
   // against a tab bar instead of a hard-edged square.
-  const round = await sharp(square).composite([{ input: circleMask(size), blend: "dest-in" }]).png().toBuffer();
+  const round = await sharp(square)
+    .composite([{ input: circleMask(size), blend: "dest-in" }])
+    .png()
+    .toBuffer();
   // Palette-quantized PNG: at 16-32px a photographic source has no gradient
   // detail left for truecolor to preserve, so a reduced palette is free
   // savings rather than a visible quality trade. The uniform transparent
@@ -59,9 +62,7 @@ function packIco(frames) {
 
 export async function renderFavicon({ root = projectRoot } = {}) {
   const source = path.join(root, "assets/images/profile.jpeg");
-  const frames = await Promise.all(
-    FAVICON_SIZES.map(async (size) => ({ size, png: await renderPlate(source, size) })),
-  );
+  const frames = await Promise.all(FAVICON_SIZES.map(async (size) => ({ size, png: await renderPlate(source, size) })));
   return packIco(frames);
 }
 

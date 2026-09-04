@@ -12,7 +12,11 @@ export async function renderSocialCard({ root = projectRoot } = {}) {
   const source = path.join(root, "assets/images/folio-sketchbooks-stem.png");
   const metadata = await sharp(source).metadata();
   const imageHeight = Math.min(550, metadata.height || 550);
-  const imageWidth = Math.min(420, metadata.width || 420, Math.floor((metadata.width || 420) * imageHeight / (metadata.height || imageHeight)));
+  const imageWidth = Math.min(
+    420,
+    metadata.width || 420,
+    Math.floor(((metadata.width || 420) * imageHeight) / (metadata.height || imageHeight)),
+  );
   const svg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
     <rect width="1200" height="630" fill="#efece4"/>
     <rect x="48" y="48" width="1104" height="534" rx="4" fill="#fff" stroke="#d8d3c8"/>
@@ -27,7 +31,13 @@ export async function renderSocialCard({ root = projectRoot } = {}) {
     .toBuffer();
   const plateMeta = await sharp(plate).metadata();
   return sharp(svg)
-    .composite([{ input: plate, left: 805 + Math.floor((300 - plateMeta.width) / 2), top: 40 + Math.floor((550 - plateMeta.height) / 2) }])
+    .composite([
+      {
+        input: plate,
+        left: 805 + Math.floor((300 - plateMeta.width) / 2),
+        top: 40 + Math.floor((550 - plateMeta.height) / 2),
+      },
+    ])
     .jpeg({ quality: 82, chromaSubsampling: "4:4:4", progressive: false, mozjpeg: false })
     .toBuffer();
 }

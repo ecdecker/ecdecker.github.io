@@ -1,101 +1,11 @@
-#!/usr/bin/env node
-
-import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import hugoPath from "hugo-bin";
 import { chromium } from "playwright";
 
-const defaults = {
-  output: "artifacts/load-states",
-  latencyMs: 300,
-  downloadKbps: 250,
-  fontDelayMs: 250,
-  settleMs: 1800,
-  width: 1440,
-  height: 1000,
-  path: "/",
-  withLiveReload: false,
-};
-
-function usage() {
-  console.log(`
-Capture every distinct compositor frame and correlate it with layout events.
-
-Usage:
-  npm run site -- audit
-  npm run site -- audit --path /posts/ --latency-ms 500 --download-kbps 150
-  npm run site -- audit --url http://localhost:1313/ --name my-build
-
-Options:
-  --url URL              Capture one already-running site instead of both Hugo variants
-  --name NAME            Name used with --url (default: custom)
-  --path PATH            Page path when managing Hugo (default: /)
-  --output DIR           Artifact directory (default: artifacts/load-states)
-  --latency-ms N         Delay applied to every intercepted response (default: 300)
-  --download-kbps N      Per-response transfer-rate simulation (default: 250)
-  --font-delay-ms N      Additional delay for font responses (default: 250)
-  --settle-ms N          Time to record after load and fonts.ready (default: 1800)
-  --width N              Viewport width (default: 1440)
-  --height N             Viewport height (default: 1000)
-  --with-live-reload     Include the preview server's injected client
-  --help                  Show this help
-`);
-}
-
-function parseArgs(argv) {
-  const args = { ...defaults };
-  const numeric = new Set([
-    "latency-ms",
-    "download-kbps",
-    "font-delay-ms",
-    "settle-ms",
-    "width",
-    "height",
-  ]);
-  const keyMap = {
-    "latency-ms": "latencyMs",
-    "download-kbps": "downloadKbps",
-    "font-delay-ms": "fontDelayMs",
-    "settle-ms": "settleMs",
-  };
-
-  for (let index = 0; index < argv.length; index += 1) {
-    const token = argv[index];
-    if (token === "--help") {
-      usage();
-      process.exit(0);
-    }
-    if (token === "--with-live-reload") {
-      args.withLiveReload = true;
-      continue;
-    }
-    if (!token.startsWith("--")) {
-      throw new Error(`Unexpected argument: ${token}`);
-    }
-    const option = token.slice(2);
-    const value = argv[index + 1];
-    if (value === undefined || value.startsWith("--")) {
-      throw new Error(`Missing value for ${token}`);
-    }
-    index += 1;
-    const key = keyMap[option] ?? option;
-    if (!(key in args) && !["url", "name"].includes(key)) {
-      throw new Error(`Unknown option: ${token}`);
-    }
-    args[key] = numeric.has(option) ? Number(value) : value;
-  }
-
-  for (const key of ["latencyMs", "downloadKbps", "fontDelayMs", "settleMs", "width", "height"]) {
-    if (!Number.isFinite(args[key]) || args[key] < 0) {
-      throw new Error(`Invalid numeric value for ${key}`);
-    }
-  }
-  return args;
-}
+import { hugoPath, projectRoot, spawnManaged } from "./lib/project.mjs";
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -131,8 +41,8 @@ async function startHugo({ name, port, environment, withLiveReload }) {
   if (!withLiveReload) command.push("--disableLiveReload");
   if (environment) command.push("--environment", environment);
 
-  const child = spawn(hugoPath, command, {
-    cwd: process.cwd(),
+  const child = spawnManaged(hugoPath, command, {
+    cwd: projectRoot,
     stdio: ["ignore", "pipe", "pipe"],
   });
   let diagnostics = "";
@@ -154,10 +64,7 @@ async function startHugo({ name, port, environment, withLiveReload }) {
 async function stopChild(child) {
   if (!child || child.exitCode !== null) return;
   child.kill("SIGTERM");
-  await Promise.race([
-    new Promise((resolve) => child.once("exit", resolve)),
-    sleep(2_000),
-  ]);
+  await Promise.race([new Promise((resolve) => child.once("exit", resolve)), sleep(2_000)]);
   if (child.exitCode === null) child.kill("SIGKILL");
 }
 
@@ -196,12 +103,13 @@ function installPageObservers() {
       detail,
     });
   };
-  const rectJson = (rect) => rect && ({
-    x: Number(rect.x.toFixed(2)),
-    y: Number(rect.y.toFixed(2)),
-    width: Number(rect.width.toFixed(2)),
-    height: Number(rect.height.toFixed(2)),
-  });
+  const rectJson = (rect) =>
+    rect && {
+      x: Number(rect.x.toFixed(2)),
+      y: Number(rect.y.toFixed(2)),
+      width: Number(rect.width.toFixed(2)),
+      height: Number(rect.height.toFixed(2)),
+    };
 
   window.addEventListener("error", (event) => {
     emit("page-error", { message: event.message, source: event.filename });
@@ -213,12 +121,7 @@ function installPageObservers() {
     emit("ready-state", { value: document.readyState });
   });
 
-  for (const entryType of [
-    "paint",
-    "largest-contentful-paint",
-    "layout-shift",
-    "resource",
-  ]) {
+  for (const entryType of ["paint", "largest-contentful-paint", "layout-shift", "resource"]) {
     try {
       new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
@@ -275,17 +178,21 @@ function installPageObservers() {
       });
     });
   }
-  window.addEventListener("load", async () => {
-    await document.fonts.ready;
-    emit("fonts-ready", {
-      status: document.fonts.status,
-      faces: [...document.fonts].map((face) => ({
-        family: face.family,
-        style: face.style,
-        status: face.status,
-      })),
-    });
-  }, { once: true });
+  window.addEventListener(
+    "load",
+    async () => {
+      await document.fonts.ready;
+      emit("fonts-ready", {
+        status: document.fonts.status,
+        faces: [...document.fonts].map((face) => ({
+          family: face.family,
+          style: face.style,
+          status: face.status,
+        })),
+      });
+    },
+    { once: true },
+  );
 
   const startDomObservers = () => {
     if (!document.documentElement) {
@@ -303,13 +210,17 @@ function installPageObservers() {
     });
     const observeTree = (root) => {
       if (root instanceof Element) resizeObserver.observe(root);
-      root.querySelectorAll?.("*").forEach((node) => resizeObserver.observe(node));
+      root.querySelectorAll?.("*").forEach((node) => {
+        resizeObserver.observe(node);
+      });
     };
     observeTree(document.documentElement);
 
     new MutationObserver((records) => {
       for (const record of records) {
-        record.addedNodes.forEach((node) => observeTree(node));
+        record.addedNodes.forEach((node) => {
+          observeTree(node);
+        });
       }
       emit("mutation", {
         count: records.length,
@@ -411,12 +322,8 @@ async function captureVariant(browser, variant, args) {
   await cdp.send("Network.emulateNetworkConditions", {
     offline: false,
     latency: args.latencyMs,
-    downloadThroughput: args.downloadKbps > 0
-      ? (args.downloadKbps * 1000) / 8
-      : -1,
-    uploadThroughput: args.downloadKbps > 0
-      ? (Math.max(32, args.downloadKbps / 4) * 1000) / 8
-      : -1,
+    downloadThroughput: args.downloadKbps > 0 ? (args.downloadKbps * 1000) / 8 : -1,
+    uploadThroughput: args.downloadKbps > 0 ? (Math.max(32, args.downloadKbps / 4) * 1000) / 8 : -1,
     connectionType: "cellular2g",
   });
   cdp.on("Network.requestWillBeSent", ({ requestId, request, type, timestamp }) => {
@@ -550,9 +457,7 @@ async function captureVariant(browser, variant, args) {
       return !best || distance < best.distance ? { frame, distance } : best;
     }, null);
     event.nearestFrame = nearest?.frame.filename ?? null;
-    event.frameDeltaMs = nearest
-      ? nearest.frame.capturedAtMs - event.receivedAtMs
-      : null;
+    event.frameDeltaMs = nearest ? nearest.frame.capturedAtMs - event.receivedAtMs : null;
   }
 
   const cls = timeline
@@ -574,9 +479,7 @@ async function captureVariant(browser, variant, args) {
       layoutShiftEntries: timeline.filter((event) => event.type === "layout-shift").length,
       cumulativeLayoutShift: Number(cls.toFixed(6)),
       observedResponses: responses.length,
-      encodedResponseBytes: Math.round(
-        responses.reduce((total, item) => total + (item.encodedBytes ?? 0), 0),
-      ),
+      encodedResponseBytes: Math.round(responses.reduce((total, item) => total + (item.encodedBytes ?? 0), 0)),
     },
     frames,
     responses,
@@ -624,29 +527,35 @@ function escapeHtml(value) {
 
 function contactSheet(report) {
   const eventSummary = report.timeline
-    .filter((event) => [
-      "layout-shift",
-      "geometry-change",
-      "fonts-loading",
-      "fonts-loadingdone",
-      "fonts-ready",
-      "DOMContentLoaded",
-      "load",
-    ].includes(event.type))
-    .map((event) => `
+    .filter((event) =>
+      [
+        "layout-shift",
+        "geometry-change",
+        "fonts-loading",
+        "fonts-loadingdone",
+        "fonts-ready",
+        "DOMContentLoaded",
+        "load",
+      ].includes(event.type),
+    )
+    .map(
+      (event) => `
       <tr>
         <td>${escapeHtml(event.receivedAtMs)}</td>
         <td>${escapeHtml(event.type)}</td>
         <td>${escapeHtml(event.nearestFrame ?? "—")}</td>
         <td><code>${escapeHtml(JSON.stringify(event.detail ?? {}))}</code></td>
-      </tr>`)
+      </tr>`,
+    )
     .join("");
   const cards = report.frames
-    .map((frame) => `
+    .map(
+      (frame) => `
       <figure id="${frame.filename}">
         <a href="frames/${frame.filename}"><img src="frames/${frame.filename}" loading="lazy"></a>
         <figcaption>${frame.filename} · ${frame.capturedAtMs} ms</figcaption>
-      </figure>`)
+      </figure>`,
+    )
     .join("");
   return `<!doctype html>
 <html lang="en">
@@ -673,7 +582,9 @@ function contactSheet(report) {
   <header>
     <h1>${escapeHtml(report.variant)} load states</h1>
     <ul class="summary">
-      ${Object.entries(report.summary).map(([key, value]) => `<li><strong>${escapeHtml(key)}</strong>: ${escapeHtml(value)}</li>`).join("")}
+      ${Object.entries(report.summary)
+        .map(([key, value]) => `<li><strong>${escapeHtml(key)}</strong>: ${escapeHtml(value)}</li>`)
+        .join("")}
     </ul>
     <p>Every distinct compositor frame is below. The event table correlates geometry, font, and Layout Instability events with the most recently captured frame. Full data is in <a href="report.json">report.json</a>.</p>
     <h2>Dependency-cut state: HTML only</h2>
@@ -691,7 +602,9 @@ function contactSheet(report) {
 }
 
 function comparisonIndex(reports) {
-  const cards = reports.map((report) => `
+  const cards = reports
+    .map(
+      (report) => `
     <section>
       <h2>${escapeHtml(report.variant)}</h2>
       <p>
@@ -703,7 +616,9 @@ function comparisonIndex(reports) {
         <img src="${encodeURIComponent(report.variant)}/final.png" alt="${escapeHtml(report.variant)} final state">
       </a>
       <p><a href="${encodeURIComponent(report.variant)}/index.html">Open every captured state</a></p>
-    </section>`).join("");
+    </section>`,
+    )
+    .join("");
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -730,55 +645,50 @@ function comparisonIndex(reports) {
 `;
 }
 
-async function main() {
-  const args = parseArgs(process.argv.slice(2));
+export async function captureLoadStates(args) {
   const managedServers = [];
-  let variants;
-  if (args.url) {
-    variants = [{ name: args.name || "custom", url: args.url }];
-  } else {
-    const instrument = await startHugo({
-      name: "instrument",
-      port: 1413,
-      withLiveReload: args.withLiveReload,
-    });
-    managedServers.push(instrument.child);
-    const system = await startHugo({
-      name: "system",
-      port: 1414,
-      environment: "system",
-      withLiveReload: args.withLiveReload,
-    });
-    managedServers.push(system.child);
-    variants = [
-      { name: "instrument", url: `${instrument.url}${args.path}` },
-      { name: "system", url: `${system.url}${args.path}` },
-    ];
-  }
-
-  const browser = await chromium.launch({ headless: true });
+  let browser;
   const reports = [];
   try {
+    let variants;
+    if (args.url) {
+      variants = [{ name: args.name || "custom", url: args.url }];
+    } else {
+      const instrument = await startHugo({
+        name: "instrument",
+        port: 1413,
+        withLiveReload: args.withLiveReload,
+      });
+      managedServers.push(instrument.child);
+      const system = await startHugo({
+        name: "system",
+        port: 1414,
+        environment: "system",
+        withLiveReload: args.withLiveReload,
+      });
+      managedServers.push(system.child);
+      variants = [
+        { name: "instrument", url: `${instrument.url}${args.path}` },
+        { name: "system", url: `${system.url}${args.path}` },
+      ];
+    }
+
+    browser = await chromium.launch({ headless: true });
     for (const variant of variants) {
       console.log(`Capturing ${variant.name}: ${variant.url}`);
       const report = await captureVariant(browser, variant, args);
       reports.push(report);
       console.log(
         `  ${report.summary.distinctPaintedFrames} frames, ` +
-        `${report.summary.geometryChanges} geometry changes, ` +
-        `CLS ${report.summary.cumulativeLayoutShift}`,
+          `${report.summary.geometryChanges} geometry changes, ` +
+          `CLS ${report.summary.cumulativeLayoutShift}`,
       );
     }
   } finally {
-    await browser.close();
+    await browser?.close();
     await Promise.all(managedServers.map(stopChild));
   }
   await mkdir(path.resolve(args.output), { recursive: true });
   await writeFile(path.resolve(args.output, "index.html"), comparisonIndex(reports));
   console.log(`Reports: ${path.resolve(args.output)}`);
 }
-
-main().catch((error) => {
-  console.error(error.stack || error);
-  process.exitCode = 1;
-});

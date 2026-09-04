@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
-import { gzipSync } from "node:zlib";
 import { readdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { gzipSync } from "node:zlib";
 import { parse as parseYaml } from "yaml";
 
 import { exists, projectRoot, SiteError } from "./project.mjs";
@@ -14,10 +14,10 @@ export const GLOBAL_BUDGETS = Object.freeze({
 
 export const baselinePath = path.join(projectRoot, "tools/site-baselines.json");
 const SITE_ORIGIN = "https://emilycdecker.com";
-const IMAGE_EXTENSIONS = new Set([".avif", ".gif", ".jpeg", ".jpg", ".png", ".svg", ".webp"]);
 const SOURCE_IMAGE_EXTENSIONS = new Set([".jpeg", ".jpg", ".png", ".tif", ".tiff"]);
 const DISALLOWED_ARTIFACTS = /(?:^|\/)(?:\.DS_Store|Thumbs\.db)$|\.(?:js|mjs|cjs|map|ts|tsx)$/i;
-const TRACKING = /google-analytics|googletagmanager|gtag\s*\(|\bfbq\s*\(|facebook\.net\/tr|hotjar|segment\.com\/analytics|mixpanel|doubleclick|document\.cookie|localStorage|sessionStorage|sendBeacon/i;
+const TRACKING =
+  /google-analytics|googletagmanager|gtag\s*\(|\bfbq\s*\(|facebook\.net\/tr|hotjar|segment\.com\/analytics|mixpanel|doubleclick|document\.cookie|localStorage|sessionStorage|sendBeacon/i;
 
 export function routeForHtml(relative) {
   const posix = relative.split(path.sep).join("/");
@@ -39,7 +39,7 @@ async function walk(directory) {
   const found = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const item = path.join(directory, entry.name);
-    if (entry.isDirectory()) found.push(...await walk(item));
+    if (entry.isDirectory()) found.push(...(await walk(item)));
     else if (entry.isFile()) found.push(item);
   }
   return found;
@@ -50,8 +50,7 @@ function stripSuffix(value) {
 }
 
 function localUrl(value) {
-  return value && !value.startsWith("#") && !value.startsWith("//")
-    && !/^[a-z][a-z0-9+.-]*:/i.test(value);
+  return value && !value.startsWith("#") && !value.startsWith("//") && !/^[a-z][a-z0-9+.-]*:/i.test(value);
 }
 
 function urlsFromMarkdown(markdown) {
@@ -78,15 +77,23 @@ function urlsFromMarkdown(markdown) {
 
 async function resolvesMarkdownImage(file, destination, root) {
   let decoded;
-  try { decoded = decodeURIComponent(stripSuffix(destination)); } catch { return false; }
+  try {
+    decoded = decodeURIComponent(stripSuffix(destination));
+  } catch {
+    return false;
+  }
   if (!decoded || decoded.includes("\0")) return false;
   const candidates = decoded.startsWith("/")
     ? [path.join(root, "static", decoded), path.join(root, "assets", decoded)]
     : [path.resolve(path.dirname(file), decoded), path.resolve(root, "assets", decoded)];
-  return (await Promise.all(candidates.map(async (candidate) => {
-    const relative = path.relative(root, candidate);
-    return !relative.startsWith("..") && !path.isAbsolute(relative) && await exists(candidate);
-  }))).some(Boolean);
+  return (
+    await Promise.all(
+      candidates.map(async (candidate) => {
+        const relative = path.relative(root, candidate);
+        return !relative.startsWith("..") && !path.isAbsolute(relative) && (await exists(candidate));
+      }),
+    )
+  ).some(Boolean);
 }
 
 export async function auditMarkdownImages({ root = projectRoot } = {}) {
@@ -103,7 +110,8 @@ export async function auditMarkdownImages({ root = projectRoot } = {}) {
       }
     }
   }
-  if (failures.length) throw new SiteError(`Markdown image audit failed:\n${failures.map((item) => `- ${item}`).join("\n")}`);
+  if (failures.length)
+    throw new SiteError(`Markdown image audit failed:\n${failures.map((item) => `- ${item}`).join("\n")}`);
   return true;
 }
 
@@ -121,10 +129,16 @@ function resolveOutputUrl(value, pageRelative, output) {
   try {
     const pageUrl = new URL(routeForHtml(pageRelative), `${SITE_ORIGIN}/`);
     url = new URL(value, pageUrl);
-  } catch { return { invalid: true, value }; }
+  } catch {
+    return { invalid: true, value };
+  }
   if (url.origin !== SITE_ORIGIN) return { remote: true, value, url };
   let pathname;
-  try { pathname = decodeURIComponent(url.pathname); } catch { return { invalid: true, value }; }
+  try {
+    pathname = decodeURIComponent(url.pathname);
+  } catch {
+    return { invalid: true, value };
+  }
   if (pathname.includes("\0") || pathname.split("/").includes("..")) return { invalid: true, value };
   let target = path.join(output, pathname.replace(/^\/+/, ""));
   if (pathname.endsWith("/")) target = path.join(target, "index.html");
@@ -161,7 +175,11 @@ async function sourceImageHashes(root) {
   for (const base of ["assets", "content"]) {
     for (const file of await walk(path.join(root, base))) {
       if (!SOURCE_IMAGE_EXTENSIONS.has(path.extname(file).toLowerCase())) continue;
-      hashes.add(createHash("sha256").update(await readFile(file)).digest("hex"));
+      hashes.add(
+        createHash("sha256")
+          .update(await readFile(file))
+          .digest("hex"),
+      );
     }
   }
   return hashes;
@@ -176,13 +194,18 @@ function htmlLinks(html) {
 }
 
 function sizesForUrlList(urls, pageRelative, output) {
-  return urls.map((url) => resolveOutputUrl(url, pageRelative, output))
+  return urls
+    .map((url) => resolveOutputUrl(url, pageRelative, output))
     .filter((item) => item?.target)
     .map((item) => item.target);
 }
 
 async function readSize(target) {
-  try { return (await stat(target)).isFile() ? (await stat(target)).size : 0; } catch { return 0; }
+  try {
+    return (await stat(target)).isFile() ? (await stat(target)).size : 0;
+  } catch {
+    return 0;
+  }
 }
 
 export async function routeWeight(page, html, output) {
@@ -197,7 +220,8 @@ export async function routeWeight(page, html, output) {
 
   for (const match of html.matchAll(/<(?:picture|img)\b[\s\S]*?(?:<\/picture>|(?=<\/|$))/gi)) {
     const block = match[0];
-    const img = block.match(/<img\b[^>]*>/i)?.[0] || (block.startsWith("<img") ? block.match(/<img\b[^>]*>/i)?.[0] : null);
+    const img =
+      block.match(/<img\b[^>]*>/i)?.[0] || (block.startsWith("<img") ? block.match(/<img\b[^>]*>/i)?.[0] : null);
     if (!img) continue;
     const imageAttrs = attributes(img);
     if ((imageAttrs.get("loading") || "eager").toLowerCase() === "lazy") continue;
@@ -231,7 +255,11 @@ export async function routeWeight(page, html, output) {
   const htmlBuffer = Buffer.from(html);
   let coldGzip = deterministicGzip(htmlBuffer).length;
   for (const target of seenTargets) {
-    try { coldGzip += deterministicGzip(await readFile(target)).length; } catch { /* reported elsewhere */ }
+    try {
+      coldGzip += deterministicGzip(await readFile(target)).length;
+    } catch {
+      /* reported elsewhere */
+    }
   }
   return {
     cold: { bytes: coldBytes, gzip: coldGzip },
@@ -240,7 +268,9 @@ export async function routeWeight(page, html, output) {
 }
 
 async function readBaseline(file = baselinePath) {
-  try { return JSON.parse(await readFile(file, "utf8")); } catch (error) {
+  try {
+    return JSON.parse(await readFile(file, "utf8"));
+  } catch (error) {
     if (error.code === "ENOENT") return { version: 1, global: GLOBAL_BUDGETS, fileExceptions: {}, routes: {} };
     throw new SiteError(`Cannot read ${path.relative(projectRoot, file)}: ${error.message}`);
   }
@@ -296,7 +326,8 @@ async function contentRoutePolicy(root) {
       const end = markdown.indexOf("\n---", 4);
       if (end >= 0) frontMatter = parseYaml(markdown.slice(4, end)) || {};
     }
-    for (const language of ["fr", "mg"]) if (!languages.has(language)) fallback.add(contentRoute(relative, frontMatter, language));
+    for (const language of ["fr", "mg"])
+      if (!languages.has(language)) fallback.add(contentRoute(relative, frontMatter, language));
   }
   return { forbidden, fallback };
 }
@@ -305,8 +336,12 @@ function budgetFailures(route, actual, ceiling, failures) {
   for (const mode of ["cold", "cached"]) {
     for (const measure of ["bytes", "gzip"]) {
       const global = GLOBAL_BUDGETS[mode][measure];
-      if (actual[mode][measure] > global) failures.push(`${route}: ${mode} ${measure} ${actual[mode][measure]} exceeds global cap ${global}`);
-      if (ceiling && actual[mode][measure] > ceiling[mode]?.[measure]) failures.push(`${route}: ${mode} ${measure} ${actual[mode][measure]} exceeds route ceiling ${ceiling[mode]?.[measure]}`);
+      if (actual[mode][measure] > global)
+        failures.push(`${route}: ${mode} ${measure} ${actual[mode][measure]} exceeds global cap ${global}`);
+      if (ceiling && actual[mode][measure] > ceiling[mode]?.[measure])
+        failures.push(
+          `${route}: ${mode} ${measure} ${actual[mode][measure]} exceeds route ceiling ${ceiling[mode]?.[measure]}`,
+        );
     }
   }
 }
@@ -319,20 +354,38 @@ function socialFailures(relative, html, failures) {
     const key = attrs.get("property") || attrs.get("name");
     if (key && attrs.has("content")) metadata.set(key, attrs.get("content"));
   }
-  const required = ["og:title", "og:description", "og:url", "og:type", "og:image", "twitter:card", "twitter:title", "twitter:description", "twitter:image"];
+  const required = [
+    "og:title",
+    "og:description",
+    "og:url",
+    "og:type",
+    "og:image",
+    "twitter:card",
+    "twitter:title",
+    "twitter:description",
+    "twitter:image",
+  ];
   for (const name of required) {
     const value = metadata.get(name);
     if (!value) failures.push(`${relative}: missing ${name} metadata`);
-    else if ((name.endsWith("url") || name.endsWith("image")) && !value.startsWith(`${SITE_ORIGIN}/`)) failures.push(`${relative}: ${name} must be an absolute same-origin URL`);
+    else if ((name.endsWith("url") || name.endsWith("image")) && !value.startsWith(`${SITE_ORIGIN}/`))
+      failures.push(`${relative}: ${name} must be an absolute same-origin URL`);
   }
   const image = metadata.get("og:image");
-  if (image !== `${SITE_ORIGIN}/social-card.jpg`) failures.push(`${relative}: unexpected social card ${image || "(missing)"}`);
+  if (image !== `${SITE_ORIGIN}/social-card.jpg`)
+    failures.push(`${relative}: unexpected social card ${image || "(missing)"}`);
   const type = metadata.get("og:type");
   const expected = relative === "index.html" || /^(?:fr|mg)\/index\.html$/.test(relative) ? "website" : "article";
   if (type !== expected) failures.push(`${relative}: og:type is ${type || "missing"}, expected ${expected}`);
 }
 
-export async function auditOutput({ output, root = projectRoot, baselineFile = baselinePath, requireBaseline = true, enforceRouteBudgets = true } = {}) {
+export async function auditOutput({
+  output,
+  root = projectRoot,
+  baselineFile = baselinePath,
+  requireBaseline = true,
+  enforceRouteBudgets = true,
+} = {}) {
   const failures = [];
   const files = await walk(output);
   const baseline = await readBaseline(baselineFile);
@@ -345,19 +398,30 @@ export async function auditOutput({ output, root = projectRoot, baselineFile = b
   for (const file of files) {
     const relative = path.relative(output, file).split(path.sep).join("/");
     const info = await stat(file);
-    if (DISALLOWED_ARTIFACTS.test(relative)) failures.push(`${relative}: JavaScript or development artifact is forbidden`);
+    if (DISALLOWED_ARTIFACTS.test(relative))
+      failures.push(`${relative}: JavaScript or development artifact is forbidden`);
     if (info.size > GLOBAL_BUDGETS.maximumFileBytes) {
       const exception = exceptionMap[relative];
-      if (!exception || typeof exception.reason !== "string" || !exception.reason.trim() || typeof exception.reviewedBy !== "string" || !exception.reviewedBy.trim()) failures.push(`${relative}: ${info.size} bytes exceeds maximum file size without a reviewed exception`);
+      if (
+        !exception ||
+        typeof exception.reason !== "string" ||
+        !exception.reason.trim() ||
+        typeof exception.reviewedBy !== "string" ||
+        !exception.reviewedBy.trim()
+      )
+        failures.push(`${relative}: ${info.size} bytes exceeds maximum file size without a reviewed exception`);
     }
     if (SOURCE_IMAGE_EXTENSIONS.has(path.extname(file).toLowerCase()) && relative !== "social-card.jpg") {
-      const hash = createHash("sha256").update(await readFile(file)).digest("hex");
+      const hash = createHash("sha256")
+        .update(await readFile(file))
+        .digest("hex");
       if (sourceHashes.has(hash)) failures.push(`${relative}: original source image escaped into the build`);
     }
     if (/\.css$/i.test(file)) {
       const css = await readFile(file, "utf8");
       if (TRACKING.test(css)) failures.push(`${relative}: tracking construct`);
-      if (/url\(\s*["']?(?:https?:)?\/\//i.test(css) || /@import\s+["']?(?:https?:)?\/\//i.test(css)) failures.push(`${relative}: remote CSS subresource`);
+      if (/url\(\s*["']?(?:https?:)?\/\//i.test(css) || /@import\s+["']?(?:https?:)?\/\//i.test(css))
+        failures.push(`${relative}: remote CSS subresource`);
     }
   }
 
@@ -367,18 +431,22 @@ export async function auditOutput({ output, root = projectRoot, baselineFile = b
     htmlByPath.set(relative, html);
     if (/<script\b/i.test(html) || /javascript\s*:/i.test(html)) failures.push(`${relative}: JavaScript is forbidden`);
     if (TRACKING.test(html)) failures.push(`${relative}: tracking construct`);
-    if (/(?:^|\/)exercises(?:\/|$)/.test(routeForHtml(relative))) failures.push(`${relative}: development route escaped into production`);
+    if (/(?:^|\/)exercises(?:\/|$)/.test(routeForHtml(relative)))
+      failures.push(`${relative}: development route escaped into production`);
 
     for (const match of html.matchAll(/<img\b[^>]*>/gi)) {
       const attrs = attributes(match[0]);
-      for (const name of ["src", "alt", "width", "height"]) if (!attrs.has(name)) failures.push(`${relative}: image lacks ${name}`);
-      if (attrs.get("width") === "1" && attrs.get("height") === "1") failures.push(`${relative}: tracking-pixel-sized image`);
+      for (const name of ["src", "alt", "width", "height"])
+        if (!attrs.has(name)) failures.push(`${relative}: image lacks ${name}`);
+      if (attrs.get("width") === "1" && attrs.get("height") === "1")
+        failures.push(`${relative}: tracking-pixel-sized image`);
     }
     for (const url of resourceCandidates(html)) {
       const resolved = resolveOutputUrl(url, relative, output);
       if (resolved?.remote) failures.push(`${relative}: remote page-load subresource ${url}`);
       else if (resolved?.invalid) failures.push(`${relative}: invalid subresource URL ${url}`);
-      else if (resolved?.target && !(await targetExists(resolved))) failures.push(`${relative}: missing subresource ${url}`);
+      else if (resolved?.target && !(await targetExists(resolved)))
+        failures.push(`${relative}: missing subresource ${url}`);
     }
     socialFailures(relative, html, failures);
     weights[routeForHtml(relative)] = await routeWeight(relative, html, output);
@@ -388,41 +456,66 @@ export async function auditOutput({ output, root = projectRoot, baselineFile = b
     for (const href of htmlLinks(html)) {
       const resolved = resolveOutputUrl(href, relative, output);
       if (!resolved || resolved.remote) continue;
-      if (resolved.invalid || !(await targetExists(resolved))) failures.push(`${relative}: broken internal link ${href}`);
+      if (resolved.invalid || !(await targetExists(resolved)))
+        failures.push(`${relative}: broken internal link ${href}`);
       else if (resolved.hash) {
         let target = resolved.target;
-        try { if ((await stat(target)).isDirectory()) target = path.join(target, "index.html"); } catch { /* failure already recorded */ }
+        try {
+          if ((await stat(target)).isDirectory()) target = path.join(target, "index.html");
+        } catch {
+          /* failure already recorded */
+        }
         const targetRelative = path.relative(output, target).split(path.sep).join("/");
         const targetHtml = htmlByPath.get(targetRelative);
         let id;
-        try { id = decodeURIComponent(resolved.hash.slice(1)); } catch { id = null; }
+        try {
+          id = decodeURIComponent(resolved.hash.slice(1));
+        } catch {
+          id = null;
+        }
         if (targetHtml && id && !getIds(targetHtml).has(id)) failures.push(`${relative}: broken fragment ${href}`);
       }
     }
   }
 
   const routePolicy = await contentRoutePolicy(root);
-  for (const route of routePolicy.forbidden) if (weights[route]) failures.push(`${route}: draft or future content escaped into production`);
-  for (const route of routePolicy.fallback) if (weights[route]) failures.push(`${route}: untranslated article fallback route is forbidden`);
+  for (const route of routePolicy.forbidden)
+    if (weights[route]) failures.push(`${route}: draft or future content escaped into production`);
+  for (const route of routePolicy.fallback)
+    if (weights[route]) failures.push(`${route}: untranslated article fallback route is forbidden`);
 
   for (const [route, ceiling] of Object.entries(baseline.routes || {})) {
-    if (!weights[route]) failures.push(`${route}: preserved route was removed; retain a page, redirect, or deliberate tombstone`);
+    if (!weights[route])
+      failures.push(`${route}: preserved route was removed; retain a page, redirect, or deliberate tombstone`);
     else budgetFailures(route, weights[route], enforceRouteBudgets ? ceiling : null, failures);
   }
   for (const [route, actual] of Object.entries(weights)) {
-    if (requireBaseline && !baseline.routes?.[route]) failures.push(`${route}: new route needs explicit baseline acceptance with npm run site -- baselines --update`);
+    if (requireBaseline && !baseline.routes?.[route])
+      failures.push(`${route}: new route needs explicit baseline acceptance with npm run site -- baselines --update`);
     budgetFailures(route, actual, enforceRouteBudgets ? baseline.routes?.[route] : null, failures);
   }
 
-  if (failures.length) throw new SiteError(`Production artifact audit failed (${failures.length}):\n${failures.map((item) => `- ${item}`).join("\n")}`);
+  if (failures.length)
+    throw new SiteError(
+      `Production artifact audit failed (${failures.length}):\n${failures.map((item) => `- ${item}`).join("\n")}`,
+    );
   return { routes: weights, files: files.length };
 }
 
 export async function updateBaselines({ output, file = baselinePath, root = projectRoot } = {}) {
   const previous = await readBaseline(file);
-  const result = await auditOutput({ output, root, baselineFile: file, requireBaseline: false, enforceRouteBudgets: false });
+  const result = await auditOutput({
+    output,
+    root,
+    baselineFile: file,
+    requireBaseline: false,
+    enforceRouteBudgets: false,
+  });
   const missing = Object.keys(previous.routes || {}).filter((route) => !result.routes[route]);
-  if (missing.length) throw new SiteError(`Baseline update cannot remove preserved routes:\n${missing.map((route) => `- ${route}`).join("\n")}`);
+  if (missing.length)
+    throw new SiteError(
+      `Baseline update cannot remove preserved routes:\n${missing.map((route) => `- ${route}`).join("\n")}`,
+    );
   const routes = {};
   for (const [route, actual] of Object.entries(result.routes).sort(([a], [b]) => a.localeCompare(b))) {
     routes[route] = {

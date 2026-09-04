@@ -12,7 +12,9 @@ export function validateBoxMounts(mounts) {
   if (!Array.isArray(mounts)) throw new SiteError("emily.box.mounts must be an array.");
   const normalized = mounts.map((mount, index) => {
     if (!mount || typeof mount !== "object") throw new SiteError(`Box mount ${index + 1} must be an object.`);
-    const source = String(mount.source || "").replace(/\\/g, "/").replace(/\/+$/, "");
+    const source = String(mount.source || "")
+      .replace(/\\/g, "/")
+      .replace(/\/+$/, "");
     let target = String(mount.target || "").replace(/\\/g, "/");
     if (!source || source.startsWith("/") || /^[a-z][a-z0-9+.-]*:/i.test(source) || source.split("/").includes("..")) {
       throw new SiteError(`Box mount ${index + 1} source must be a relative Box path without traversal.`);
@@ -27,8 +29,10 @@ export function validateBoxMounts(mounts) {
     for (let j = i + 1; j < normalized.length; j += 1) {
       const a = normalized[i];
       const b = normalized[j];
-      if (a.target.startsWith(b.target) || b.target.startsWith(a.target)) throw new SiteError(`Box targets overlap: ${a.target} and ${b.target}`);
-      if (`${a.source}/`.startsWith(`${b.source}/`) || `${b.source}/`.startsWith(`${a.source}/`)) throw new SiteError(`Box sources overlap: ${a.source} and ${b.source}`);
+      if (a.target.startsWith(b.target) || b.target.startsWith(a.target))
+        throw new SiteError(`Box targets overlap: ${a.target} and ${b.target}`);
+      if (`${a.source}/`.startsWith(`${b.source}/`) || `${b.source}/`.startsWith(`${a.source}/`))
+        throw new SiteError(`Box sources overlap: ${a.source} and ${b.source}`);
     }
   }
   return normalized;
@@ -38,7 +42,8 @@ function markdownDestinations(markdown) {
   const found = [];
   for (const match of markdown.matchAll(/!?\[[^\]]*\]\(\s*(?:<([^>]+)>|([^\s)]+))/g)) found.push(match[1] || match[2]);
   for (const match of markdown.matchAll(/^\s*\[[^\]]+\]:\s*(?:<([^>]+)>|(\S+))/gm)) found.push(match[1] || match[2]);
-  for (const match of markdown.matchAll(/<(?:a|img|source)\b[^>]*\b(?:href|src)\s*=\s*["']([^"']+)["'][^>]*>/gi)) found.push(match[1]);
+  for (const match of markdown.matchAll(/<(?:a|img|source)\b[^>]*\b(?:href|src)\s*=\s*["']([^"']+)["'][^>]*>/gi))
+    found.push(match[1]);
   return found;
 }
 
@@ -47,17 +52,26 @@ export function extractBoxReferences(markdown, mounts, { file = "Markdown" } = {
   const references = [];
   for (const raw of markdownDestinations(markdown)) {
     let url;
-    try { url = new URL(raw, "https://emilycdecker.com/"); } catch { continue; }
+    try {
+      url = new URL(raw, "https://emilycdecker.com/");
+    } catch {
+      continue;
+    }
     if (url.origin !== "https://emilycdecker.com") continue;
     let pathname;
-    try { pathname = decodeURIComponent(url.pathname); } catch { throw new SiteError(`${file}: malformed encoded URL ${raw}`); }
+    try {
+      pathname = decodeURIComponent(url.pathname);
+    } catch {
+      throw new SiteError(`${file}: malformed encoded URL ${raw}`);
+    }
     const mount = valid.find((candidate) => pathname.startsWith(candidate.target));
     if (!mount) {
       if (pathname.startsWith("/box/")) throw new SiteError(`${file}: unconfigured Box path ${raw}`);
       continue;
     }
     const relative = pathname.slice(mount.target.length);
-    if (!relative || relative.startsWith("/") || relative.split("/").includes("..")) throw new SiteError(`${file}: invalid Box file path ${raw}`);
+    if (!relative || relative.startsWith("/") || relative.split("/").includes(".."))
+      throw new SiteError(`${file}: invalid Box file path ${raw}`);
     references.push({ mount, relative, sitePath: `${mount.target}${relative}` });
   }
   return references;
@@ -69,7 +83,7 @@ async function walkMarkdown(directory) {
   const files = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const item = path.join(directory, entry.name);
-    if (entry.isDirectory()) files.push(...await walkMarkdown(item));
+    if (entry.isDirectory()) files.push(...(await walkMarkdown(item)));
     else if (entry.isFile() && /\.md$/i.test(entry.name)) files.push(item);
   }
   return files;
@@ -81,7 +95,7 @@ export async function configuredBoxMounts(root = projectRoot) {
 }
 
 export async function scanBoxReferences({ root = projectRoot, mounts } = {}) {
-  const configured = mounts || await configuredBoxMounts(root);
+  const configured = mounts || (await configuredBoxMounts(root));
   const unique = new Map();
   for (const file of await walkMarkdown(path.join(root, "content"))) {
     const markdown = await readFile(file, "utf8");
@@ -98,7 +112,7 @@ async function walkSnapshot(directory) {
   const files = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const item = path.join(directory, entry.name);
-    if (entry.isDirectory()) files.push(...await walkSnapshot(item));
+    if (entry.isDirectory()) files.push(...(await walkSnapshot(item)));
     else if (entry.isFile() && entry.name !== ".gitkeep") files.push(item);
   }
   return files;
@@ -112,7 +126,12 @@ export async function auditBoxSnapshot({ root = projectRoot } = {}) {
   const missing = [...expected].filter((file) => !actual.has(file));
   const extra = [...actual].filter((file) => !expected.has(file));
   if (missing.length || extra.length) {
-    throw new SiteError(`Box snapshot does not match referenced files:\n${missing.map((file) => `- missing ${file}`).concat(extra.map((file) => `- unreferenced ${file}`)).join("\n")}`);
+    throw new SiteError(
+      `Box snapshot does not match referenced files:\n${missing
+        .map((file) => `- missing ${file}`)
+        .concat(extra.map((file) => `- unreferenced ${file}`))
+        .join("\n")}`,
+    );
   }
   return { files: actual.size };
 }
@@ -133,7 +152,8 @@ export async function syncBox({ root = projectRoot, runner = run } = {}) {
       const source = `${remote}:${reference.mount.source}/${reference.relative}`;
       const destination = path.join(temporary, reference.sitePath.replace(/^\/+/, ""));
       const relative = path.relative(temporary, destination);
-      if (relative.startsWith("..") || path.isAbsolute(relative)) throw new SiteError(`Box path traverses the snapshot: ${reference.sitePath}`);
+      if (relative.startsWith("..") || path.isAbsolute(relative))
+        throw new SiteError(`Box path traverses the snapshot: ${reference.sitePath}`);
       await mkdir(path.dirname(destination), { recursive: true });
       await runner(process.env.RCLONE_BIN || "rclone", ["copyto", source, destination, "--checksum"]);
     }

@@ -78,6 +78,7 @@ See the entire design system on one page by running `npm run site -- theme`.
 npm run site -- help                  # list every command
 npm run site -- start                 # preview the site, including drafts
 npm run site -- new "Article title"   # create a draft article folder
+npm run site -- format                # format and safely fix JavaScript tools
 npm run site -- check                 # translations, images, and a full draft build
 npm run site -- build                 # production build into public/
 npm run site -- images                # optimize new or changed source images

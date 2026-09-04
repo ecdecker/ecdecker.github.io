@@ -1,14 +1,5 @@
 import { createHash } from "node:crypto";
-import {
-  copyFile,
-  mkdir,
-  mkdtemp,
-  readFile,
-  readdir,
-  rm,
-  stat,
-  writeFile,
-} from "node:fs/promises";
+import { copyFile, mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -27,7 +18,11 @@ function excludedSource(file) {
   const relative = path.relative(projectRoot, file).split(path.sep).join("/");
   // profile.jpeg is favicon.mjs's source, never rendered through
   // partial "image.html" — measuring it here would just be wasted work.
-  return relative.startsWith("assets/images/lemur-sprites/png/") || /-sprite-sheet\.[^.]+$/i.test(relative) || relative === "assets/images/profile.jpeg";
+  return (
+    relative.startsWith("assets/images/lemur-sprites/png/") ||
+    /-sprite-sheet\.[^.]+$/i.test(relative) ||
+    relative === "assets/images/profile.jpeg"
+  );
 }
 
 async function walk(directory, found = []) {
@@ -35,7 +30,8 @@ async function walk(directory, found = []) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const target = path.join(directory, entry.name);
     if (entry.isDirectory()) await walk(target, found);
-    else if (entry.isFile() && extensions.has(path.extname(entry.name).toLowerCase()) && !excludedSource(target)) found.push(target);
+    else if (entry.isFile() && extensions.has(path.extname(entry.name).toLowerCase()) && !excludedSource(target))
+      found.push(target);
   }
   return found;
 }
@@ -54,7 +50,9 @@ export async function discoverImages() {
 }
 
 async function digest(file) {
-  return createHash("sha256").update(await readFile(file)).digest("hex");
+  return createHash("sha256")
+    .update(await readFile(file))
+    .digest("hex");
 }
 
 async function readData() {
@@ -81,15 +79,14 @@ export async function imageStatus(parameters = defaultParameters) {
     if (!staleParameters && previous?.hash === hash && Number.isInteger(previous?.quality)) cached.push(key);
     else stale.push(key);
   }
-  const dropped = Object.keys(data.images || {}).filter((key) => !images.has(key)).sort();
+  const dropped = Object.keys(data.images || {})
+    .filter((key) => !images.has(key))
+    .sort();
   return { images, data, stale, cached, dropped, staleParameters, parameters };
 }
 
 async function decodeLuma(file) {
-  const { data, info } = await sharp(file)
-    .greyscale()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
+  const { data, info } = await sharp(file).greyscale().raw().toBuffer({ resolveWithObject: true });
   return { width: info.width, height: info.height, data };
 }
 
@@ -126,11 +123,9 @@ export function structuralSimilarity(reference, candidate) {
       const varianceA = squareA / 64 - meanA * meanA;
       const varianceB = squareB / 64 - meanB * meanB;
       const covariance = product / 64 - meanA * meanB;
-      total += (
-        (2 * meanA * meanB + c1) * (2 * covariance + c2)
-      ) / (
-        (meanA * meanA + meanB * meanB + c1) * (varianceA + varianceB + c2)
-      );
+      total +=
+        ((2 * meanA * meanB + c1) * (2 * covariance + c2)) /
+        ((meanA * meanA + meanB * meanB + c1) * (varianceA + varianceB + c2));
       blocks += 1;
     }
   }
@@ -189,13 +184,10 @@ ${variantLines}{{- end -}}
     const referencePath = path.join(this.directory, "public", referenceMatch[1].replace(/^\//, ""));
     const variants = new Map();
     for (const match of manifest.matchAll(/(AVIF|WEBP)\|(\d+)\|([^|]+)\|(\d+)\|/g)) {
-      variants.set(
-        `${match[1].toLowerCase()}:${match[2]}`,
-        {
-          file: path.join(this.directory, "public", match[3].replace(/^\//, "")),
-          bytes: Number(match[4]),
-        },
-      );
+      variants.set(`${match[1].toLowerCase()}:${match[2]}`, {
+        file: path.join(this.directory, "public", match[3].replace(/^\//, "")),
+        bytes: Number(match[4]),
+      });
     }
     return { referencePath, variants };
   }
@@ -242,7 +234,9 @@ async function cheapestQuality(lab, flat, formats, target) {
     for (const [format, quality] of probes) {
       const result = seen.get(`${format}:${quality}`);
       const middle = Math.floor((low[format] + high[format]) / 2);
-      console.log(`    ${format.padEnd(4)} q${String(quality).padEnd(3)} ssim ${result.score.toFixed(5)} ${String(result.bytes).padStart(8)} B`);
+      console.log(
+        `    ${format.padEnd(4)} q${String(quality).padEnd(3)} ssim ${result.score.toFixed(5)} ${String(result.bytes).padStart(8)} B`,
+      );
       if (result.score >= target) {
         best[format] = { quality, ...result, reached: true };
         high[format] = middle - 1;
@@ -285,7 +279,9 @@ export async function optimizeImages({ force = false, format = "avif", target = 
   }
   console.log(
     `${status.images.size} image(s): ${Object.keys(entries).length} cached, ${todo.length} to measure` +
-    (status.dropped.length ? `; dropping ${status.dropped.length} stale entr${status.dropped.length === 1 ? "y" : "ies"}` : ""),
+      (status.dropped.length
+        ? `; dropping ${status.dropped.length} stale entr${status.dropped.length === 1 ? "y" : "ies"}`
+        : ""),
   );
 
   if (todo.length) {
@@ -316,13 +312,16 @@ export async function optimizeImages({ force = false, format = "avif", target = 
   const orderedEntries = Object.fromEntries(
     Object.entries(entries)
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([key, entry]) => [key, {
-        bytes: entry.bytes,
-        hash: entry.hash,
-        quality: entry.quality,
-        ssim: entry.ssim,
-        ...(entry.below_target ? { below_target: true } : {}),
-      }]),
+      .map(([key, entry]) => [
+        key,
+        {
+          bytes: entry.bytes,
+          hash: entry.hash,
+          quality: entry.quality,
+          ssim: entry.ssim,
+          ...(entry.below_target ? { below_target: true } : {}),
+        },
+      ]),
   );
   const document = {
     _generated_by: "npm run site -- images",

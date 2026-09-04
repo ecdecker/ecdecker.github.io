@@ -32,6 +32,7 @@ npm run site -- setup --audit
 npm run site -- start
 npm run site -- theme
 npm run site -- test
+npm run site -- format
 npm run site -- new "Article title"
 npm run site -- check
 npm run site -- build
@@ -40,7 +41,10 @@ npm run site -- build
 - `start` previews drafts at <http://localhost:1313/> and watches for edits.
 - `theme` serves the single development-only Folio exercise at
   <http://localhost:1313/exercises/> through the same local server.
-- `test` runs the CLI, budget, URL, synchronization, and artifact-policy tests.
+- `test` checks JavaScript formatting and lint rules, then runs the CLI,
+  budget, URL, synchronization, and artifact-policy tests.
+- `format` formats the JavaScript tools, organizes their imports, and applies
+  safe lint fixes.
 - `new` creates `content/posts/<slug>/index.md` with safe draft front matter.
 - `check` validates translation parity, reports stale image measurements, and
   performs a complete temporary build including drafts.

@@ -13,7 +13,9 @@ const ignoredPaths = new Set(["title"]);
 
 function flatten(value, prefix = "", found = new Set()) {
   if (Array.isArray(value)) {
-    value.forEach((item, index) => flatten(item, `${prefix}[${index}]`, found));
+    value.forEach((item, index) => {
+      flatten(item, `${prefix}[${index}]`, found);
+    });
   } else if (value && typeof value === "object") {
     for (const [key, item] of Object.entries(value)) {
       flatten(item, prefix ? `${prefix}.${key}` : key, found);
@@ -34,7 +36,7 @@ async function readFrontMatter(file) {
   const text = await readFile(file, "utf8");
   if (!text.startsWith("---")) return {};
   const end = text.indexOf("\n---", 3);
-  return end < 0 ? {} : (parseYaml(text.slice(3, end)) || {});
+  return end < 0 ? {} : parseYaml(text.slice(3, end)) || {};
 }
 
 async function readCopyBlocks(file) {
@@ -44,9 +46,7 @@ async function readCopyBlocks(file) {
   const order = [];
   const blocks = text.matchAll(/\{\{<\s*(copy|principle)\s+([^>]*?)\s*>\}\}/g);
   for (const [, name, args] of blocks) {
-    const named = Object.fromEntries(
-      [...args.matchAll(/(\w+)="([^"]*)"/g)].map((match) => [match[1], match[2]]),
-    );
+    const named = Object.fromEntries([...args.matchAll(/(\w+)="([^"]*)"/g)].map((match) => [match[1], match[2]]));
     if (name === "copy") {
       const key = args.match(/^"([^"]*)"/)?.[1] || named.key;
       if (key) paths[`copy.${key}`] = "";
@@ -83,11 +83,17 @@ function compare(label, reference, defaultLanguage, others, problems, quiet) {
         console.log(`  ${language.padEnd(4)} OK (${have.size} keys)`);
       } else {
         console.log(`  ${language.padEnd(4)} ${have.size} keys`);
-        missing.forEach((key) => console.log(`         MISSING  ${key}`));
-        extra.forEach((key) => console.log(`         extra    ${key}`));
+        missing.forEach((key) => {
+          console.log(`         MISSING  ${key}`);
+        });
+        extra.forEach((key) => {
+          console.log(`         extra    ${key}`);
+        });
       }
     }
-    missing.forEach((key) => problems.push(`${label}: ${language} missing ${key}`));
+    missing.forEach((key) => {
+      problems.push(`${label}: ${language} missing ${key}`);
+    });
   }
 }
 
@@ -111,8 +117,8 @@ function compareOrder(label, reference, defaultLanguage, others, problems, quiet
 }
 
 export async function checkTranslations({ quiet = false } = {}) {
-  const languagesConfig = await readToml(path.join(configDir, "languages.toml")) || {};
-  const siteConfig = await readToml(path.join(configDir, "hugo.toml")) || {};
+  const languagesConfig = (await readToml(path.join(configDir, "languages.toml"))) || {};
+  const siteConfig = (await readToml(path.join(configDir, "hugo.toml"))) || {};
   const defaultLanguage = siteConfig.defaultContentLanguage || "en";
   const languages = Object.keys(languagesConfig).sort(
     (a, b) => (languagesConfig[a].weight || 99) - (languagesConfig[b].weight || 99),
@@ -129,32 +135,31 @@ export async function checkTranslations({ quiet = false } = {}) {
   for (const [label, directory, filename, reader] of comparisons) {
     compare(
       label,
-      await reader(path.join(directory, filename(defaultLanguage))) || {},
+      (await reader(path.join(directory, filename(defaultLanguage)))) || {},
       defaultLanguage,
-      await Promise.all(others.map(async (language) => [
-        language,
-        await reader(path.join(directory, filename(language))),
-      ])),
+      await Promise.all(
+        others.map(async (language) => [language, await reader(path.join(directory, filename(language)))]),
+      ),
       problems,
       quiet,
     );
   }
 
-  const homeFile = (language) => path.join(
-    contentDir,
-    language === defaultLanguage ? "_index.md" : `_index.${language}.md`,
-  );
+  const homeFile = (language) =>
+    path.join(contentDir, language === defaultLanguage ? "_index.md" : `_index.${language}.md`);
   compare(
     "homepage front matter",
-    await readFrontMatter(homeFile(defaultLanguage)) || {},
+    (await readFrontMatter(homeFile(defaultLanguage))) || {},
     defaultLanguage,
     await Promise.all(others.map(async (language) => [language, await readFrontMatter(homeFile(language))])),
     problems,
     quiet,
   );
 
-  const referenceBlocks = await readCopyBlocks(homeFile(defaultLanguage)) || { paths: {}, order: [] };
-  const otherBlocks = await Promise.all(others.map(async (language) => [language, await readCopyBlocks(homeFile(language))]));
+  const referenceBlocks = (await readCopyBlocks(homeFile(defaultLanguage))) || { paths: {}, order: [] };
+  const otherBlocks = await Promise.all(
+    others.map(async (language) => [language, await readCopyBlocks(homeFile(language))]),
+  );
   compare(
     "homepage copy blocks",
     referenceBlocks.paths,
@@ -173,7 +178,11 @@ export async function checkTranslations({ quiet = false } = {}) {
   );
 
   if (problems.length) {
-    if (quiet) problems.forEach((problem) => console.error(`- ${problem}`));
+    if (quiet) {
+      problems.forEach((problem) => {
+        console.error(`- ${problem}`);
+      });
+    }
     throw new SiteError(`${problems.length} translation problem(s) found.`);
   }
   if (!quiet) console.log("\nRESULT: all languages complete");
