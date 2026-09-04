@@ -15,10 +15,10 @@
       "ssim": 0.933
     },
     "images/EmilyDecker.jpeg": {
-      "bytes": 9543,
-      "hash": "807539c4473874ea0ebf0c2a93f2f7720417b58e332a28b486b8c6cc18f14821",
+      "bytes": 10626,
+      "hash": "ee717600f46a243f278a22028986eb4d0a7211ebbcc606ee1ebd41cedb98556f",
       "quality": 25,
-      "ssim": 0.9734
+      "ssim": 0.95116
     },
     "images/folio-sketchbooks-stem.png": {
       "bytes": 61757,

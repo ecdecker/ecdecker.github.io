@@ -10,11 +10,6 @@ https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pag
 
 - SEO
 
-- assets/images/EmilyDecker.jpeg is an AI-upscaled placeholder (source was
-  only 333x500, too small for the homepage hero at its display size).
-  Swap in the real high-resolution original once it's found, then run
-  `npm run site -- images`.
-
 - Notes should be Posts
 - Index can be removed from the header.
 - Research can be a new Header item
