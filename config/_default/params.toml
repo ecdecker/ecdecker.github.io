@@ -60,6 +60,6 @@
   # once here rather than repeated in three content files, where an icon name
   # is three chances to mistype it and no chance to translate it.
   [folio.principleIcons]
-    serif = 'feather'
-    hairlines = 'minus'
-    ink = 'layers'
+    serif = 'zap'
+    hairlines = 'stethoscope'
+    ink = 'shield'

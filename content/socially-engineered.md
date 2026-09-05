@@ -45,7 +45,12 @@ the full cold visit is larger because of the optional type. That distinction
 matters. A small HTML file that quietly calls several megabytes of scripts and
 images is not a small page.
 
-<<todo-can-we-use-a-minimal-font-that-still-looks-similar?>>
+The closest zero-download alternative is the site's system-serif stack, which
+can be selected without changing the templates. It cannot preserve the same
+appearance consistently across operating systems, however. The current
+compromise keeps Instrument Serif optional and limits it to two Latin subsets
+totalling 29.8 kB; readers on constrained connections see the metric-matched
+local fallback without waiting for either file.
 
 For scale, the [2024 HTTP
 Archive](https://almanac.httparchive.org/en/2024/sustainability) found that the
