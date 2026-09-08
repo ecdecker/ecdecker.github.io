@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------------
-   Brand mark — turning lemur
+   Brand mark — turning and running lemur
    --------------------------------------------------------------------- */
 
 .brand {
@@ -18,30 +18,51 @@
   display: inline-block;
   width: 16px;
   height: 24px;
-  color: var(--color-text);
-  flex: none;
 }
 
-.brand-mark__rest,
-.brand-mark__hover {
+.brand-mark > svg,
+.brand-mark > img {
   position: absolute;
   inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
   transition: opacity var(--dur-fast) var(--ease-quiet);
 }
 
-.brand-mark__hover {
+.brand-mark > img:first-of-type {
   opacity: 0;
 }
 
-.brand:is(:hover, :focus, :active) .brand-mark__rest {
+.brand-mark > img:last-child {
+  display: none;
+  position: absolute;
+  inset: 0;
+  max-width: none;
+  object-fit: cover;
+  object-position: 0;
+}
+
+.brand-mark:is(:hover, :focus) > svg {
   opacity: 0;
 }
 
-.brand:is(:hover, :focus, :active) .brand-mark__hover {
+.brand-mark:is(:hover, :focus) > img:first-of-type {
   opacity: 1;
+}
+
+.brand[open] .brand-mark > :not(:last-child) {
+  opacity: 0;
+}
+
+.brand[open] .brand-mark > img:last-child {
+  display: block;
+  animation: ld 1.8s linear forwards, lf .32s steps(6) infinite;
+}
+
+@keyframes lf {
+  to { object-position: 100%; }
+}
+
+@keyframes ld {
+  to { transform: translateX(-100vw); }
 }
 
 .brand-wordmark {

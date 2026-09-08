@@ -247,7 +247,7 @@ The **four-point Folio spark** — a compass-style star with concave sides — i
 
 It is never recolored, never animated, never used as a repeating pattern, and never larger than 24px inside running content.
 
-The brand mark itself is the **lemur mark** — a resting frame traced from the site's lemur illustration (`assets/images/lemur-sprites/svg/turning-00.svg`), inlined as an SVG symbol and sized to its own portrait proportions rather than squared off. A neighboring turning frame (`assets/images/lemur-sprites/svg/turning-01.svg`) crossfades in on pointer, focus, or active interaction. It replaces the spark specifically in that one role; it remains a plain, single-color glyph and is never repeated.
+The brand mark itself is the **lemur mark** — a resting frame traced from the site's lemur illustration (`assets/images/lemur-sprites/svg/turning-00.svg`), inlined as an SVG symbol and sized to its own portrait proportions rather than squared off. A neighboring turning frame (`assets/images/lemur-sprites/svg/turning-01.svg`) crossfades in on pointer and focus interaction; clicking the mark releases the existing six-frame running sprite (`assets/images/lemur-sprites/svg/jumping-strip.svg`) toward the left edge. It replaces the spark specifically in that one role; it remains a plain, single-color glyph and is never repeated.
 
 ## Components
 
@@ -283,7 +283,7 @@ The brand mark itself is the **lemur mark** — a resting frame traced from the 
 - Do use Stone (not Ink) for body paragraphs and helper text.
 - Do reserve Ink as the only "action" color — primary button fill, checkbox checked, focus ring.
 - Do use the four-point spark exclusively as the optional divider ornament and inline marquee glyph.
-- Do use the lemur mark exclusively as the brand mark, with its subtle turning response to pointer and focus interaction.
+- Do use the lemur mark exclusively as the brand mark, with its subtle turning response and one-shot leftward run on click.
 - Do prefer generous whitespace over visual chrome to communicate hierarchy.
 - Do collapse split layouts into a single column on mobile and let media sit below text.
 
@@ -294,7 +294,7 @@ The brand mark itself is the **lemur mark** — a resting frame traced from the 
 - Don't tint hover states with color — use a 1px lift on buttons or Whisper infill on secondaries.
 - Don't mix more than two type voices. Instrument Serif + the native system UI sans only.
 - Don't decorate with the spark, repeat it as a pattern, or recolor it.
-- Don't recolor or repeat the lemur mark — its only motion is the small turning response to interaction.
+- Don't recolor or repeat the lemur mark — its motion is limited to the turning response and click-to-run interaction.
 - Don't use double borders, 2px borders, or inset rings — the hairline is the voice.
 - Don't center every section. Editorial left alignment is the default.
 - Don't add badges, pills, or chips above headings as eyebrows or kickers.
