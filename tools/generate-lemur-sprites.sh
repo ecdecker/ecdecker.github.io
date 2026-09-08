@@ -191,8 +191,9 @@ make_frame_png() {
     "$output"
 }
 
-# The site ships one animated strip and one static source frame for the brand
-# mark. The original sheet remains the source for any future pose.
+# The site ships one animated strip and two static source frames for the
+# brand mark's resting and pointer states. The original sheet remains the
+# source for any future pose.
 frame_pngs=()
 for ((col=0; col<COLS; col++)); do
   png="$TMPDIR/jumping-$(printf "%02d" "$col").png"
@@ -222,9 +223,20 @@ potrace "$TMPDIR/turning-00.pbm" \
 recolor_svg "$OUTDIR/svg/turning-00.svg"
 optimize_svg "$OUTDIR/svg/turning-00.svg"
 
+echo "Generating turning-01"
+make_frame_png 3 1 "$TMPDIR/turning-01.png"
+magick "$TMPDIR/turning-01.png" "$TMPDIR/turning-01.pbm"
+potrace "$TMPDIR/turning-01.pbm" \
+  --svg \
+  --tight \
+  --output "$OUTDIR/svg/turning-01.svg"
+recolor_svg "$OUTDIR/svg/turning-01.svg"
+optimize_svg "$OUTDIR/svg/turning-01.svg"
+
 echo
 echo "Done."
 echo
 echo "SVG assets:"
 echo "  $OUTDIR/svg/jumping-strip.svg"
 echo "  $OUTDIR/svg/turning-00.svg"
+echo "  $OUTDIR/svg/turning-01.svg"

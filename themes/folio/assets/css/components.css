@@ -14,10 +14,34 @@
   /* The lemur's traced viewBox (115.566 x 176.099) is portrait, ~0.656:1 —
      sized to that ratio so it fills its box instead of letterboxing
      inside a square one. */
+  position: relative;
+  display: inline-block;
   width: 16px;
   height: 24px;
   color: var(--color-text);
   flex: none;
+}
+
+.brand-mark__rest,
+.brand-mark__hover {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: opacity var(--dur-fast) var(--ease-quiet);
+}
+
+.brand-mark__hover {
+  opacity: 0;
+}
+
+.brand:is(:hover, :focus, :active) .brand-mark__rest {
+  opacity: 0;
+}
+
+.brand:is(:hover, :focus, :active) .brand-mark__hover {
+  opacity: 1;
 }
 
 .brand-wordmark {
