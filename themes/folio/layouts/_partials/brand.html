@@ -9,7 +9,8 @@
 {{- with resources.Copy "t.svg" (resources.Get "images/lemur-sprites/svg/turning-01.svg") -}}
   {{- $hover = . -}}
 {{- end -}}
-<details class="brand">
+<div class="brand">
+  <details class="brand-toggle">
   <summary class="brand-mark" aria-label="{{ site.Title }}">
     <svg width="16" height="24"><use href="#folio-lemur-mark"/></svg>
     {{- with $hover -}}
@@ -19,5 +20,6 @@
       <img src="{{ .RelPermalink }}" width="24" height="24" alt="" loading="lazy">
     {{- end -}}
   </summary>
+  </details>
   <a class="brand-wordmark" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
-</details>
+</div>

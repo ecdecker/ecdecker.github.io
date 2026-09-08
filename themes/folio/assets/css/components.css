@@ -10,6 +10,10 @@
   border-bottom: 0;
 }
 
+.brand-toggle {
+  display: inline-block;
+}
+
 .brand-mark {
   /* The lemur's traced viewBox (115.566 x 176.099) is portrait, ~0.656:1 —
      sized to that ratio so it fills its box instead of letterboxing
@@ -19,6 +23,12 @@
   width: 16px;
   height: 24px;
   flex: none;
+  list-style: none;
+  cursor: pointer;
+}
+
+.brand-mark::-webkit-details-marker {
+  display: none;
 }
 
 .brand-mark > svg,
@@ -48,11 +58,11 @@
   opacity: 1;
 }
 
-.brand[open] .brand-mark > :not(:last-child) {
+.brand-toggle[open] .brand-mark > :not(:last-child) {
   opacity: 0;
 }
 
-.brand[open] .brand-mark > img:last-child {
+.brand-toggle[open] .brand-mark > img:last-child {
   display: block;
   animation: ld 1.8s linear forwards, lf .32s steps(6) infinite;
 }
