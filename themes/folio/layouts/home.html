@@ -40,6 +40,12 @@
   {{- $f := .Params }}
   {{- $site := site.Params.folio | default dict }}
   {{- $posts := where site.RegularPages "Section" "posts" }}
+  {{- $mapPosts := slice }}
+  {{- range hugo.Sites }}
+    {{- range where .RegularPages "Section" "posts" }}
+      {{- $mapPosts = $mapPosts | append . }}
+    {{- end }}
+  {{- end }}
 
   {{/* Hero — profile card followed by the full-width research notebook. */}}
   <section class="hero">
@@ -111,7 +117,7 @@
       </article>
 
       <div class="card notebook-card">
-        {{ partial "research-map.html" (dict "label" $f.heroImageCaption "posts" $posts) }}
+        {{ partial "research-map.html" (dict "label" $f.heroImageCaption "posts" $mapPosts) }}
       </div>
     </div>
   </section>
@@ -163,12 +169,12 @@
   </section>
   {{- end }}
 
-  {{/* Recent notes */}}
+  {{/* Recent posts */}}
   {{- with $posts }}
-  <section class="section-block" id="notes">
+  <section class="section-block" id="posts">
     <div class="container">
       <div class="section-head">
-        <h2>{{ T "publishedNotes" }}</h2>
+        <h2>{{ T "publishedPosts" }}</h2>
       </div>
       {{ partial "post-list.html" . }}
     </div>

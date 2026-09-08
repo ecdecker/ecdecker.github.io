@@ -1,12 +1,12 @@
 ---
-title: "Emily C. Decker"
+title: "Emily Decker"
 volume: "Université Duke · 2026"
 heroImageCaption: "Carnet de recherche"
 hint: "Économie de l'environnement, politiques publiques et résilience."
 ---
 
 {{< copy "hero" >}}
-Emily C. Decker
+Emily Decker
 ================
 
 Emily est doctorante en systèmes sociaux environnementaux à la

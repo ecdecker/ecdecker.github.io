@@ -1,5 +1,5 @@
 ---
-title: "Fanamarihana"
+title: "Lahatsoratra"
 ---
 
-Fanamarihana miasa momba ny rafitra — ny vidin'ny safidy tsirairay, sy izay azony.
+Lahatsoratra momba ny toekarena ara-tontolo iainana, ny fahasalamana ary ny faharetana manoloana ny toetrandro.

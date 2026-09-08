@@ -400,9 +400,21 @@
   border: var(--border-hairline);
 }
 
+.media-frame > picture,
+.media-frame > img,
+.media-frame > video {
+  display: block;
+  width: 100%;
+}
+
+.media-frame > picture > img,
 .media-frame > img,
 .media-frame > video {
   width: 100%;
+  height: auto;
+}
+
+.media-frame > video {
   height: 100%;
   object-fit: cover;
 }

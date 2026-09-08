@@ -1,12 +1,12 @@
 ---
-title: "Emily C. Decker"
+title: "Emily Decker"
 volume: "Duke University · 2026"
 heroImageCaption: "Research notebook"
 hint: "Environmental economics, policy, and resilience."
 ---
 
 {{< copy "hero" >}}
-Emily C. Decker
+Emily Decker
 ================
 
 Emily is a Ph.D. student in Environmental Social Systems at Duke University's

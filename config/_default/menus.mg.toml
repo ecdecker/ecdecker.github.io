@@ -5,14 +5,9 @@
 # tsotra amin'ny TOML.
 
 [[main]]
-  name = "Fandraisana"
-  pageRef = '/'
-  weight = 10
-
-[[main]]
-  name = "Fanamarihana"
+  name = "Lahatsoratra"
   pageRef = '/posts'
-  weight = 20
+  weight = 10
 
 [[home]]
   name = "Semantic Scholar"
@@ -27,7 +22,7 @@
 
 [[footer]]
   identifier = 'folio'
-  name = "Emily C. Decker"
+  name = "Emily Decker"
   weight = 10
 
 [[footer]]
@@ -38,7 +33,7 @@
 
 [[footer]]
   parent = 'folio'
-  name = "Fanamarihana"
+  name = "Lahatsoratra"
   pageRef = '/posts'
   weight = 12
 

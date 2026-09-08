@@ -55,15 +55,16 @@
 {{- with $page.Params.images }}{{ if isset . "ondemand" }}{{ $onDemand = .onDemand }}{{ end }}{{ end -}}
 {{- $defer := and $onDemand (not $first) -}}
 
-{{- /* .post-body is capped at 64ch, so above that breakpoint the slot is
-       fixed and there is no reason to fetch a wider variant. */ -}}
-{{- $sizes := "(min-width: 880px) 640px, 100vw" -}}
+{{- /* .post-body fills the post card. At the card's maximum width its inner
+       content is about 800px; below that, subtract the page and card padding. */ -}}
+{{- $sizes := "(min-width: 968px) 800px, calc(100vw - 2 * clamp(1.25rem, 4vw, 3rem) - 2 * clamp(1.5rem, 3vw, 3rem))" -}}
 
 {{- /* Full-resolution on request.
 
-       The ladder tops out at 640px because that is the widest the plate is
-       ever drawn, which is right for reading and wrong for looking closely
-       at a plate — the whole point of this corpus. So each plate gets a
+       The post-body slot tops out at about 800 CSS pixels, while the candidate
+       ladder can offer a wider derivative for high-density screens. That is
+       right for reading and wrong for looking closely at a plate — the whole point
+       of this corpus. So each plate gets a
        link to a bigger encode, placed after the figure and never fetched
        until it is clicked. Transfer stays opt-in, which is the only version
        of "full resolution" that is defensible on a metered connection.

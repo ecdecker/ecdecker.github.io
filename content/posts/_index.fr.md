@@ -1,5 +1,5 @@
 ---
-title: "Notes"
+title: "Articles"
 ---
 
-Notes de travail sur le système — ce que chaque décision coûte, et ce qu'elle rapporte.
+Articles de recherche sur l'économie de l'environnement, la santé et la résilience climatique.

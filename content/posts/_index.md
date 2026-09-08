@@ -1,5 +1,5 @@
 ---
-title: "Notes"
+title: "Posts"
 ---
 
-Working notes on the system — what each decision costs, and what it buys.
+Research posts on environmental economics, health, and climate resilience.

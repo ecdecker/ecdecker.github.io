@@ -90,7 +90,7 @@
 }
 
 .post-body {
-  max-width: 64ch;
+  width: 100%;
   padding-block: clamp(2rem, 5vw, 3rem);
 }
 

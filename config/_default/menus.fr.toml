@@ -2,14 +2,9 @@
 # pourquoi : un lien est un nom plus une destination, et seul le nom se traduit.
 
 [[main]]
-  name = "Accueil"
-  pageRef = '/'
-  weight = 10
-
-[[main]]
-  name = "Notes"
+  name = "Articles"
   pageRef = '/posts'
-  weight = 20
+  weight = 10
 
 [[home]]
   name = "Semantic Scholar"
@@ -24,7 +19,7 @@
 
 [[footer]]
   identifier = 'folio'
-  name = "Emily C. Decker"
+  name = "Emily Decker"
   weight = 10
 
 [[footer]]
@@ -35,7 +30,7 @@
 
 [[footer]]
   parent = 'folio'
-  name = "Notes"
+  name = "Articles"
   pageRef = '/posts'
   weight = 12
 

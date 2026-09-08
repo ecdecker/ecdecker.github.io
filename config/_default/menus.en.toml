@@ -7,14 +7,9 @@
 # supplies the words and nothing else.
 
 [[main]]
-  name = 'Index'
-  pageRef = '/'
-  weight = 10
-
-[[main]]
-  name = 'Notes'
+  name = 'Posts'
   pageRef = '/posts'
-  weight = 20
+  weight = 10
 
 # Homepage call-to-action buttons. The research-notes link lives on the
 # notebook card itself.
@@ -36,7 +31,7 @@
 # destination of its own; its children are the links.
 [[footer]]
   identifier = 'folio'
-  name = 'Emily C. Decker'
+  name = 'Emily Decker'
   weight = 10
 
 [[footer]]
@@ -47,7 +42,7 @@
 
 [[footer]]
   parent = 'folio'
-  name = 'Notes'
+  name = 'Posts'
   pageRef = '/posts'
   weight = 12
 

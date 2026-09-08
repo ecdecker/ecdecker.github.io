@@ -1,12 +1,12 @@
 ---
-title: "Emily C. Decker"
+title: "Emily Decker"
 volume: "Oniversiten'i Duke · 2026"
 heroImageCaption: "Boky fikarohana"
 hint: "Toekarena momba ny tontolo iainana, politika ary faharetana."
 ---
 
 {{< copy "hero" >}}
-Emily C. Decker
+Emily Decker
 ================
 
 Emily dia mpianatra Ph.D. ao amin'ny Environmental Social Systems ao amin'ny
