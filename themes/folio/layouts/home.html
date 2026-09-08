@@ -95,13 +95,15 @@
                  so this half-card never exceeds (1200 - 96) / 2 = 552px however
                  wide the window gets. The old "50vw" claimed 720px at a 1440px
                  viewport and bought the 800w candidate to fill 552px of
-                 screen. */}}
+                 screen. The final 853w candidate reaches the full width of
+                 the current source on higher-density screens. */}}
             {{ partial "image.html" (dict
               "src" .
               "alt" ""
               "eager" true
               "fit" "fill"
               "ratio" "4:5"
+              "widths" (slice 320 480 640 800 853)
               "sizes" "(min-width: 1200px) 552px, (min-width: 880px) 46vw, 100vw") }}
           </div>
           {{- end }}
