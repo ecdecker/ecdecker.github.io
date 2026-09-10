@@ -17,6 +17,8 @@ cross households, public institutions, and markets.
 - Clean energy transitions
 - Environmental health impacts
 - Climate resilience and climate finance
+
+Contact: [emily.decker@duke.edu](mailto:emily.decker@duke.edu)
 {{< /copy >}}
 
 {{< copy "principles" >}}
