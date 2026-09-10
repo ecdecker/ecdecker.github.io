@@ -19,6 +19,19 @@ enableRobotsTXT = true
   source = "imports/box"
   target = "static"
 
+# The Box snapshot is mounted into assets as well as static. Static delivers
+# the file at its public path; assets is what layouts/_markup/render-link.html
+# resolves against to annotate a link with its file type and size, which the
+# site promises for every dataset and paper. Declaring any assets mount
+# replaces Hugo's default, so the ordinary assets directory is named too --
+# without it resources.Get in brand.html finds nothing.
+[[module.mounts]]
+  source = "assets"
+  target = "assets"
+[[module.mounts]]
+  source = "imports/box"
+  target = "assets"
+
 # Page-bundle originals are not published. Hugo copies every bundle resource
 # into public/ by default, so the multi-megabyte source PNGs shipped alongside
 # their own optimized derivatives. With this off, a resource is published only

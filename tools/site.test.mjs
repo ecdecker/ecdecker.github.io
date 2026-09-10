@@ -456,14 +456,24 @@ test("CLI keeps help-only selectors and nested sync routing", async () => {
     assert.match(result.stdout, /Usage:/);
   }
 
+  // `sync box` has to reach the Box command instead of printing the group's
+  // help. What that command does next depends on repo state, and either
+  // outcome proves the route: with no mounts configured it reports the
+  // checked-in snapshot, and with a mount configured it demands BOX_REMOTE
+  // before going near rclone. Asserting only the first recorded "mounts are
+  // empty" as though it were a routing fact, so configuring the first real
+  // mount failed this test without anything about routing having changed.
   const messages = [];
   const original = console.log;
+  const remote = process.env.BOX_REMOTE;
+  delete process.env.BOX_REMOTE;
   console.log = (...parts) => messages.push(parts.join(" "));
   try {
     const result = await runCli(["sync", "box"]);
-    assert.equal(result.error, undefined);
-    assert.match(messages.join("\n"), /checked-in imports\/box snapshot/);
+    const reached = `${messages.join("\n")}\n${result.error?.message ?? ""}`;
+    assert.match(reached, /checked-in imports\/box snapshot|BOX_REMOTE is required/);
   } finally {
     console.log = original;
+    if (remote !== undefined) process.env.BOX_REMOTE = remote;
   }
 });

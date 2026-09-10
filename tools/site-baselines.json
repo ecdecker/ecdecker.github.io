@@ -15,12 +15,12 @@
   "routes": {
     "/": {
       "cold": {
-        "bytes": 138837,
-        "gzip": 94264
+        "bytes": 126004,
+        "gzip": 77154
       },
       "cached": {
-        "bytes": 44487,
-        "gzip": 11418
+        "bytes": 44890,
+        "gzip": 12523
       }
     },
     "/admin/": {
@@ -35,172 +35,172 @@
     },
     "/categories/": {
       "cold": {
-        "bytes": 86438,
-        "gzip": 44318
+        "bytes": 73025,
+        "gzip": 46241
       },
       "cached": {
-        "bytes": 36747,
-        "gzip": 10236
+        "bytes": 36958,
+        "gzip": 10145
       }
     },
     "/en/": {
       "cold": {
-        "bytes": 255,
-        "gzip": 179
+        "bytes": 271,
+        "gzip": 183
       },
       "cached": {
-        "bytes": 255,
-        "gzip": 179
+        "bytes": 271,
+        "gzip": 183
       }
     },
     "/fr/": {
       "cold": {
-        "bytes": 90666,
-        "gzip": 45758
+        "bytes": 81514,
+        "gzip": 48824
       },
       "cached": {
-        "bytes": 40974,
-        "gzip": 11676
+        "bytes": 45447,
+        "gzip": 12727
       }
     },
     "/fr/categories/": {
       "cold": {
-        "bytes": 86643,
-        "gzip": 44442
+        "bytes": 73245,
+        "gzip": 46328
       },
       "cached": {
-        "bytes": 36952,
-        "gzip": 10359
+        "bytes": 37178,
+        "gzip": 10232
       }
     },
     "/fr/posts/": {
       "cold": {
-        "bytes": 86757,
-        "gzip": 44525
+        "bytes": 73386,
+        "gzip": 46361
       },
       "cached": {
-        "bytes": 37066,
-        "gzip": 10443
+        "bytes": 37319,
+        "gzip": 10265
       }
     },
     "/fr/research/": {
       "cold": {
-        "bytes": 75320,
-        "gzip": 47097
+        "bytes": 73762,
+        "gzip": 46610
       },
       "cached": {
-        "bytes": 39253,
-        "gzip": 11000
+        "bytes": 37695,
+        "gzip": 10513
       }
     },
     "/fr/tags/": {
       "cold": {
-        "bytes": 86584,
-        "gzip": 44428
+        "bytes": 73186,
+        "gzip": 46316
       },
       "cached": {
-        "bytes": 36892,
-        "gzip": 10346
+        "bytes": 37119,
+        "gzip": 10219
       }
     },
     "/fr/tags/couleur/": {
       "cold": {
-        "bytes": 86239,
-        "gzip": 44337
+        "bytes": 72831,
+        "gzip": 46217
       },
       "cached": {
-        "bytes": 36548,
-        "gzip": 10255
+        "bytes": 36765,
+        "gzip": 10120
       }
     },
     "/mg/": {
       "cold": {
-        "bytes": 90734,
-        "gzip": 45672
+        "bytes": 81800,
+        "gzip": 48846
       },
       "cached": {
-        "bytes": 45317,
-        "gzip": 11590
+        "bytes": 45733,
+        "gzip": 12749
       }
     },
     "/mg/categories/": {
       "cold": {
-        "bytes": 86654,
-        "gzip": 44418
+        "bytes": 73309,
+        "gzip": 46323
       },
       "cached": {
-        "bytes": 36963,
-        "gzip": 10336
+        "bytes": 37242,
+        "gzip": 10226
       }
     },
     "/mg/posts/": {
       "cold": {
-        "bytes": 86816,
-        "gzip": 44514
+        "bytes": 73494,
+        "gzip": 46359
       },
       "cached": {
-        "bytes": 37124,
-        "gzip": 10432
+        "bytes": 37427,
+        "gzip": 10262
       }
     },
     "/mg/research/": {
       "cold": {
-        "bytes": 75278,
-        "gzip": 47050
+        "bytes": 73720,
+        "gzip": 46579
       },
       "cached": {
-        "bytes": 39211,
-        "gzip": 10953
+        "bytes": 37653,
+        "gzip": 10482
       }
     },
     "/mg/tags/": {
       "cold": {
-        "bytes": 86595,
-        "gzip": 44406
+        "bytes": 73249,
+        "gzip": 46309
       },
       "cached": {
-        "bytes": 36903,
-        "gzip": 10324
+        "bytes": 37183,
+        "gzip": 10213
       }
     },
     "/posts/": {
       "cold": {
-        "bytes": 86533,
-        "gzip": 44395
+        "bytes": 73119,
+        "gzip": 46270
       },
       "cached": {
-        "bytes": 36842,
-        "gzip": 10313
+        "bytes": 37052,
+        "gzip": 10173
       }
     },
     "/research/": {
       "cold": {
-        "bytes": 75146,
-        "gzip": 46981
+        "bytes": 73588,
+        "gzip": 46510
       },
       "cached": {
-        "bytes": 39079,
-        "gzip": 10885
+        "bytes": 37521,
+        "gzip": 10413
       }
     },
     "/socially-engineered/": {
       "cold": {
-        "bytes": 97105,
-        "gzip": 49018
+        "bytes": 84243,
+        "gzip": 51262
       },
       "cached": {
-        "bytes": 47414,
-        "gzip": 14935
+        "bytes": 48176,
+        "gzip": 15165
       }
     },
     "/tags/": {
       "cold": {
-        "bytes": 86353,
-        "gzip": 44307
+        "bytes": 72939,
+        "gzip": 46230
       },
       "cached": {
-        "bytes": 36661,
-        "gzip": 10225
+        "bytes": 36872,
+        "gzip": 10134
       }
     }
   }

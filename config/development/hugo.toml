@@ -39,3 +39,16 @@
 [[module.mounts]]
   source = "exercises"
   target = "content/exercises"
+
+# Declaring mounts above also replaced the _default mounts wholesale. Hugo has
+# an implicit default for static/, but not for the Box snapshot, so a /box/...
+# link resolves in production and 404s in development without this. The
+# exercise checker builds with --environment development, so the omission
+# surfaced as a broken-link failure on the first real Box link.
+[[module.mounts]]
+  source = "static"
+  target = "static"
+
+[[module.mounts]]
+  source = "imports/box"
+  target = "static"
