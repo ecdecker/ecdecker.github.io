@@ -5,6 +5,18 @@ mjdiloreto is code-owner of the site and repository, ecdecker is the owner for c
 
 Authoring / publishing can only be done by people with access to this repository.
 
+## Documents
+
+| Question | Document |
+|---|---|
+| What are the rules? | this file |
+| What must the site owner do herself? | [SITE-OWNER.md](./SITE-OWNER.md) |
+| How is writing published, and who owns which files? | [AUTHORING.md](./AUTHORING.md), and [README.org](../README.org) for the plain guide |
+| How do I run, check, and build the project? | [TOOLS.md](./TOOLS.md) |
+| How is the domain pointed at the site? | [DNS-SETUP.md](./DNS-SETUP.md) |
+
+Outstanding work is tracked in [TODO.md](./TODO.md).
+
 # Content
 Index is a profile page for Emily Decker, a Ph.D student at Duke studying Environmental Economics & Policy. Interested in clean energy transitions, environmental health impacts, climate change resilience, as well as the role of climate finance to address these issues. This describes the intended subject matter rather than the current implementation: the published index is the Folio homepage in English, French, and Malagasy.
 
@@ -47,7 +59,7 @@ Potential exceptions and their current status are recorded below:
 
 # Externalities
 - The domain name is provided by iwantmyname.com under the mjdiloreto account.
-  - The instructions for the site owner to configure DNS records on iwantmyname are recorded at [DNS-SETUP.md](../DNS-SETUP.md)
+  - The instructions for the site owner to configure DNS records on iwantmyname are recorded at [DNS-SETUP.md](./DNS-SETUP.md)
 
 - Content and citations can be synchronized from Box and Zotero: `npm run sync`  is the retired command spelling; the supported offline authoring commands are `npm run site -- sync box` and `npm run site -- sync zotero`, and they write reviewed, checked-in snapshots.
   - That content is inferred through links and citations in markdown sources.  Box synchronization scans Markdown links, images, reference definitions, and HTML `href`/`src` values below configured mounts; citation shortcodes resolve only IDs present in the checked-in CSL-JSON data.
@@ -72,29 +84,17 @@ the production content tree.
 See the entire design system on one page by running `npm run site -- theme`.
 
 ## Scripts
-`site` is the only npm script. Every action is a subcommand of it.
+`site` is the only npm script. Every action is a subcommand of it, and
+`package.json` scripts are the only supported entrypoint for a checked-out
+repository.
 
 ```sh
 npm run site -- help                  # list every command
-npm run site -- start                 # preview the site, including drafts
-npm run site -- new "Article title"   # create a draft article folder
-npm run site -- format                # format and safely fix JavaScript tools
-npm run site -- check                 # translations, images, and a full draft build
-npm run site -- build                 # production build into public/
-npm run site -- images                # optimize new or changed source images
-npm run site -- doctor                # report whether the checkout is ready to use
 ```
 
-Optional and advanced:
-
-```sh
-npm run site -- setup --audit         # install Chromium for the audit
-npm run site -- audit                 # capture slow-network loading states
-npm run site -- assets sprites        # regenerate the lemur sprite assets
-npm run site -- assets fonts          # regenerate the optimized heading fonts
-```
-
-Run any command with `--help` for its options.
+The full command surface, including setup, the offline Box and Zotero inputs,
+route baselines, and the design-asset pipelines, is documented once in
+[TOOLS.md](./TOOLS.md). Run any command with `--help` for its options.
 
 ## AI Agents
 - Most of the non-framework code that runs this site is AI-generated.
@@ -118,4 +118,4 @@ Run any command with `--help` for its options.
 ## Policy: controlled-publishing+content-safety
 - Publishing occurs only from the exact `refs/heads/main` ref. The build job has read-only contents access; only the deploy job receives Pages and OIDC permissions. Node, Hugo, npm dependencies, and GitHub Actions are immutably pinned.
 - Global code ownership belongs to `mjdiloreto`; `ecdecker` additionally owns `content/`, Box snapshots, and bibliography data. Every publication is reviewed for rights, attribution, confidential data, human review of machine translation, stable URLs, and the correct owner approval.
-- Repository administrators must rename the default branch to `main`, require the site checks and CODEOWNERS review, dismiss stale reviews, enable secret-scanning push protection, and prohibit direct production pushes, as recorded in [PUBLISHING.md](./PUBLISHING.md).
+- Repository administrators must rename the default branch to `main`, require the site checks and CODEOWNERS review, dismiss stale reviews, enable secret-scanning push protection, and prohibit direct production pushes, as recorded in [SITE-OWNER.md](./SITE-OWNER.md).

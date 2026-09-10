@@ -7,6 +7,11 @@ file editor, or a local checkout. They all edit the same files in Git, so Pages
 CMS is a convenience rather than a required or separate publishing system. You
 do not need to edit the design or understand how the site is built.
 
+Some tasks are not day-to-day writing at all: claiming your author profiles,
+filling in your social and scholarly links, taking the repository over, and
+pointing the domain at it. Those are one-time steps only you can do, and they
+are collected in [[file:docs/SITE-OWNER.md][Steps for the site owner]].
+
 The important folders are:
 
 - =content/posts/= — articles
@@ -48,7 +53,7 @@ Box and Zotero synchronization is a separate input workflow. Imported Box
 snapshots and generated Zotero bibliographies are intentionally not editable
 in Pages CMS. Do not author one article independently in both Box and Pages
 CMS; choose one authority for that article. The technical ownership and trial
-instructions are in [[file:docs/PAGES-CMS.md][the Pages CMS authoring note]].
+instructions are in [[file:docs/AUTHORING.md][the authoring note]].
 
 * Edit an existing article
 
