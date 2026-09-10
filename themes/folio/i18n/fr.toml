@@ -13,6 +13,7 @@ references = "Références"
 backToCitation = "Retour à la citation"
 socialLinks = "Profils sociaux"
 elsewhere = "Ailleurs"
+heroPortraitAlt = "Photographie de portrait d'Emily Decker"
 
 # Meta de fichier, ex. "(CSV, 2,4 Mo)" — voir layouts/_markup/render-link.html
 fileMeta = "({{ .kind }}, {{ .size }})"

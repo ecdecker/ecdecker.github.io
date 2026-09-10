@@ -13,6 +13,7 @@ references = "Loharano"
 backToCitation = "Miverina amin'ny fanononana"
 socialLinks = "Mombamomba sosialy"
 elsewhere = "Any an-kafa"
+heroPortraitAlt = "Sarin'i Emily Decker"
 
 # Mombamomba ny rakitra, oh. "(CSV, 2,4 Mo)" — jereo layouts/_markup/render-link.html
 fileMeta = "({{ .kind }}, {{ .size }})"
