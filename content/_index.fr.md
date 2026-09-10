@@ -18,6 +18,8 @@ ménages, les institutions publiques et les marchés.
 - Transitions vers une énergie propre
 - Effets de l'environnement sur la santé
 - Résilience climatique et financement climatique
+
+Contact : [emily.decker@duke.edu](mailto:emily.decker@duke.edu)
 {{< /copy >}}
 
 {{< copy "principles" >}}

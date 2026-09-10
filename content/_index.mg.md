@@ -18,6 +18,8 @@ ary tsena ny asany.
 - Fifindrana mankany amin'ny angovo madio
 - Fiantraikan'ny tontolo iainana amin'ny fahasalamana
 - Faharetana manoloana ny toetrandro sy famatsiam-bola ho an'ny toetrandro
+
+Fifandraisana: [emily.decker@duke.edu](mailto:emily.decker@duke.edu)
 {{< /copy >}}
 
 {{< copy "principles" >}}
