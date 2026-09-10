@@ -1,4 +1,13 @@
-# Pages CMS authoring
+# Authoring
+
+How writing becomes a published page: the browser editor, who owns which
+files, and the front-matter contract behind the homepage research map.
+
+For the plain, step-by-step version of the same ground, see
+[`README.org`](../README.org) at the repository root. This note records the
+boundaries and the reasoning that guide is deliberately quiet about.
+
+## Pages CMS
 
 Pages CMS is an optional browser editor over the same Git repository used by
 GitHub's file editor and local checkouts. It does not replace Hugo, GitHub
@@ -6,7 +15,7 @@ Actions, GitHub's editor, local Markdown tools, Box, or Zotero. Every Pages CMS
 save is an ordinary Git commit. Saves merged to the publishing branch (`main`) pass
 through the existing build and deployment workflow.
 
-## Try the branch
+### Try the branch
 
 1. Open <https://app.pagescms.org/> and sign in with GitHub.
 2. Install the Pages CMS GitHub App for `mjdiloreto/emilycdecker.com` only.
@@ -64,22 +73,6 @@ Renaming and deleting notes are disabled in Pages CMS because either can break
 published URLs. Hide a note with `draft: true`; use Git directly for a reviewed
 rename or deletion.
 
-## Research map locations
-
-The **Research locations** field is a repeatable group. Add a place name,
-latitude, and longitude for every geography represented by a note; saving the
-note is enough to put each place on the homepage map. Latitude and longitude
-are decimal numbers from -90 to 90 and -180 to 180 respectively. South and
-west are negative.
-
-The map reads `locations` directly, so there is deliberately no parallel map
-tag or checkbox to keep synchronized. Ordinary topical tags remain unchanged.
-The repository check rejects an incomplete place or an out-of-range
-coordinate before publication.
-
-The rendering and byte-budget decisions are recorded in
-[RESEARCH-MAP.md](./RESEARCH-MAP.md).
-
 ## Concurrency and recovery
 
 Pages CMS does not lock files against other Git clients. Before local work,
@@ -93,3 +86,63 @@ a draft save on `pagescms` and manually dispatch its Pages workflow. After
 merging `.pages.yml` to `main`, verify a draft save there and confirm the
 normal push workflow. Test publishing by disabling **Draft** only with content
 that is genuinely ready for the live site.
+
+## The homepage research map
+
+The homepage research map is a progressively enhanced list of links drawn on a
+geographically faithful world land mask. A post joins the map by declaring one or more
+`locations` in front matter; Hugo projects those coordinates and writes normal
+links into the SVG at build time.
+
+### Content contract
+
+```yaml
+locations:
+  - name: "Saint Paul, Minnesota, United States"
+    latitude: 44.9537
+    longitude: -93.09
+```
+
+`locations` is optional and repeatable. Presence alone opts the post into the
+map, avoiding a second tag or checkbox that could disagree with the coordinate
+data. The build rejects missing names, non-numeric values, latitudes outside
+-90…90, and longitudes outside -180…180.
+
+In Pages CMS the same contract appears as the **Research locations** field, a
+repeatable group of place name, latitude, and longitude. South and west are
+negative. Pages CMS applies the same numeric bounds in its authoring controls,
+and `npm run site -- check` rejects an incomplete place or an out-of-range
+coordinate before publication.
+
+Only pages available in the current language are mapped. Drafts remain visible
+in the normal preview but cannot leak into a production map, and an
+untranslated English note does not appear as fallback content on translated
+homepages.
+
+### Performance plan
+
+The component has three firm constraints:
+
+- no JavaScript, tile service, remote subresource, or browser-side data fetch;
+- the land image uses native lazy loading and remains a local resource;
+- map-only CSS must not inflate article or taxonomy responses.
+
+The land source is COBE's 256×128, one-bit equirectangular mask, derived from
+Wikimedia's public-domain `World_map_blank_without_borders.svg`. The local
+image uses `loading="lazy"`; its dimensions reserve the complete map area while
+the immediately available SVG overlay provides linked markers. Each pixel
+represents 1.40625 degrees in both axes. This is accurate at the component's
+display scale, though it is deliberately not a political-boundary or survey
+map.
+
+`npm run site -- assets map` can reproduce the checked-in mask from a pinned
+COBE revision. The command and every build verify its SHA-256 checksum and
+256×128 dimensions. A detailed GeoJSON outline or mapping library would spend
+substantially more bytes without improving location selection at this scale.
+
+The shared inline-CSS partial compiles both the global bundle and the separate
+homepage map bundle. The map-specific CSS is 1,306 bytes (533 bytes with
+deterministic gzip), and the lazy land image is 1,108 bytes. The 2026-09-04
+production measurement is 91,600 bytes cold / 63,371 bytes gzip and 39,282
+bytes cached / 11,022 bytes gzip. Run `npm run site -- build` to print the
+current measurement after future changes.
