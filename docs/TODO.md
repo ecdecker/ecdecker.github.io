@@ -27,10 +27,5 @@ Every item a subagent. Orchestrate appropriately. Repo must be kept in clean sta
 - Do the iwantmyname DNS cutover, following docs/DNS-SETUP.md.
   - Verify whether their URL forwarding serves HTTPS on the apex, or old https:// links warn before redirecting.
 
-- footer.html calls T "colophon" but the key is commented out in all three i18n files.
-  - Emits an empty span and a MISSING_TRANSLATION warning on every page.
-
 - Externalize folio-lemur-mark to cut 5,488 bytes from every page.
   - use href="external.svg#id" is unsupported in Chrome and Safari, so mask-image with currentColor is the no-JS route.
-
-- Rename the default branch to main, which CONSTRAINTS and PUBLISHING both already require for publishing.
