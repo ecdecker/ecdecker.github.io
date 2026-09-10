@@ -247,7 +247,7 @@ The **four-point Folio spark** — a compass-style star with concave sides — i
 
 It is never recolored, never animated, never used as a repeating pattern, and never larger than 24px inside running content.
 
-The brand mark itself is the **lemur mark** — a resting frame traced from the site's lemur illustration (`assets/images/lemur-sprites/svg/turning-00.svg`), inlined as an SVG symbol and sized to its own portrait proportions rather than squared off. A neighboring turning frame (`assets/images/lemur-sprites/svg/turning-01.svg`) crossfades in on pointer and focus interaction; clicking the mark releases the existing six-frame running sprite (`assets/images/lemur-sprites/svg/jumping-strip.svg`) toward the left edge. It replaces the spark specifically in that one role; it remains a plain, single-color glyph and is never repeated.
+The brand mark itself is the **lemur mark** — a resting frame traced from the site's lemur illustration (`assets/images/lemur-sprites/svg/turning-00.svg`), painted with a currentColor CSS `mask-image` on an external, cacheable copy of that asset (sized to its own portrait proportions rather than squared off) rather than inlined as an SVG symbol. A neighboring turning frame (`assets/images/lemur-sprites/svg/turning-01.svg`) crossfades in on pointer and focus interaction; clicking the mark releases the existing six-frame running sprite (`assets/images/lemur-sprites/svg/jumping-strip.svg`) toward the left edge. It replaces the spark specifically in that one role; it remains a plain, single-color glyph and is never repeated.
 
 ## Components
 

@@ -31,11 +31,29 @@
   display: none;
 }
 
-.brand-mark > svg,
+.brand-mark > .brand-mark__rest,
 .brand-mark > img {
   position: absolute;
   inset: 0;
   transition: opacity var(--dur-fast) var(--ease-quiet);
+}
+
+/* The resting frame: an external, cacheable SVG (see brand.html) painted
+   with the surrounding text color via a mask instead of an inline
+   <symbol> + <use>, which would put the traced path back into every
+   page. mask-size: contain mirrors the inline symbol's own viewBox fit
+   (115.566 x 176.099, ~0.656:1) inside this 16x24 box. */
+.brand-mark__rest {
+  display: block;
+  background-color: currentColor;
+  -webkit-mask-image: var(--lemur-rest);
+  mask-image: var(--lemur-rest);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
 }
 
 .brand-mark > img:first-of-type {
@@ -50,7 +68,7 @@
   object-position: 0;
 }
 
-.brand-mark:is(:hover, :focus) > svg {
+.brand-mark:is(:hover, :focus) > .brand-mark__rest {
   opacity: 0;
 }
 
