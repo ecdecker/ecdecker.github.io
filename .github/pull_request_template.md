@@ -11,4 +11,4 @@
 
 - [ ] `npm run site -- test`
 - [ ] `npm run site -- check`
-- [ ] `npm run site -- build --base-url https://emilycdecker.com/`
+- [ ] `npm run site -- build --base-url https://blog.emilycdecker.com/`

@@ -26,7 +26,7 @@ import {
   spawnManaged,
   withTemporaryDirectory,
 } from "./lib/project.mjs";
-import { auditMarkdownImages, auditOutput, updateBaselines } from "./lib/site-audit.mjs";
+import { auditMarkdownImages, auditOutput, SITE_BASE_URL, updateBaselines } from "./lib/site-audit.mjs";
 import { prepareSocialCard } from "./lib/social-card.mjs";
 import { syncZotero } from "./lib/zotero.mjs";
 
@@ -188,7 +188,7 @@ async function commandCheck({ strictImages = false } = {}) {
       env: { ...process.env, HUGO_BIN: hugoPath },
     });
     console.log("Auditing a production artifact...");
-    await buildTo(destination, { production: true, baseUrl: "https://emilycdecker.com/" });
+    await buildTo(destination, { production: true, baseUrl: SITE_BASE_URL });
     await auditOutput({ output: destination });
   });
   console.log("All checks passed.");
@@ -216,7 +216,7 @@ async function commandBuild({ baseUrl, skipImages = false } = {}) {
 async function commandBaselines() {
   await prepareInputs({ check: true });
   await withTemporaryDirectory("emily-baselines-", async (destination) => {
-    await buildTo(destination, { production: true, baseUrl: "https://emilycdecker.com/" });
+    await buildTo(destination, { production: true, baseUrl: SITE_BASE_URL });
     const baseline = await updateBaselines({ output: destination });
     console.log(
       `Recorded ${Object.keys(baseline.routes).length} preserved HTML route(s) in tools/site-baselines.json.`,

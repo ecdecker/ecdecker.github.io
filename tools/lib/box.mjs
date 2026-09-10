@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 
 import { exists, projectRoot, run, SiteError } from "./project.mjs";
+import { SITE_BASE_URL, SITE_ORIGIN } from "./site-audit.mjs";
 
 function posix(value) {
   return value.split(path.sep).join("/");
@@ -53,11 +54,11 @@ export function extractBoxReferences(markdown, mounts, { file = "Markdown" } = {
   for (const raw of markdownDestinations(markdown)) {
     let url;
     try {
-      url = new URL(raw, "https://emilycdecker.com/");
+      url = new URL(raw, SITE_BASE_URL);
     } catch {
       continue;
     }
-    if (url.origin !== "https://emilycdecker.com") continue;
+    if (url.origin !== SITE_ORIGIN) continue;
     let pathname;
     try {
       pathname = decodeURIComponent(url.pathname);
