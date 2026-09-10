@@ -14,6 +14,8 @@ import {
   ceilingFor,
   deterministicGzip,
   routeForHtml,
+  SITE_BASE_URL,
+  SITE_ORIGIN,
   updateBaselines,
 } from "./lib/site-audit.mjs";
 import { prepareSocialCard, SOCIAL_CARD_HEIGHT, SOCIAL_CARD_WIDTH } from "./lib/social-card.mjs";
@@ -39,7 +41,8 @@ async function runCli(argv) {
 }
 
 function socialMeta({ type = "website" } = {}) {
-  return `<meta property="og:title" content="Test"><meta property="og:description" content="Description"><meta property="og:url" content="https://emilycdecker.com/"><meta property="og:type" content="${type}"><meta property="og:image" content="https://emilycdecker.com/social-card.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Test"><meta name="twitter:description" content="Description"><meta name="twitter:image" content="https://emilycdecker.com/social-card.jpg">`;
+  const card = `${SITE_ORIGIN}/social-card.jpg`;
+  return `<meta property="og:title" content="Test"><meta property="og:description" content="Description"><meta property="og:url" content="${SITE_BASE_URL}"><meta property="og:type" content="${type}"><meta property="og:image" content="${card}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Test"><meta name="twitter:description" content="Description"><meta name="twitter:image" content="${card}">`;
 }
 
 function page(body = "", options = {}) {

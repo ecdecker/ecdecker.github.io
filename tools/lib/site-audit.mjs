@@ -13,7 +13,11 @@ export const GLOBAL_BUDGETS = Object.freeze({
 });
 
 export const baselinePath = path.join(projectRoot, "tools/site-baselines.json");
-const SITE_ORIGIN = "https://emilycdecker.com";
+// The canonical origin the production artifact is built for. Every tool that
+// needs it imports this constant; the other copies live outside JavaScript
+// (config/_default/hugo.toml, static/CNAME, and the deploy workflow).
+export const SITE_ORIGIN = "https://blog.emilycdecker.com";
+export const SITE_BASE_URL = `${SITE_ORIGIN}/`;
 const SOURCE_IMAGE_EXTENSIONS = new Set([".jpeg", ".jpg", ".png", ".tif", ".tiff"]);
 const DISALLOWED_ARTIFACTS = /(?:^|\/)(?:\.DS_Store|Thumbs\.db)$|\.(?:js|mjs|cjs|map|ts|tsx)$/i;
 const TRACKING =

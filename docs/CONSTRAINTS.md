@@ -1,5 +1,5 @@
 # About
-This is a blog site hosted at emilycdecker.com.
+This is a blog site hosted at blog.emilycdecker.com.
 Only users mjdiloreto and ecdecker have access. Here, “access” means repository write and administration access; the built site is intentionally public and readable without an account.
 mjdiloreto is code-owner of the site and repository, ecdecker is the owner for content. 
 
