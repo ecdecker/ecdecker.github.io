@@ -14,7 +14,12 @@
   },
   "emily": {
     "box": {
-      "mounts": []
+      "mounts": [
+        {
+          "source": "Research",
+          "target": "/box/research/"
+        }
+      ]
     }
   },
   "devDependencies": {
