@@ -1,12 +1,5 @@
 Every item a subagent. Orchestrate appropriately. Repo must be kept in clean state at all times, changes are atomically merged into master after being validated on worktrees. Items are popped from this list and removed from the document. Follow the principle of minimalism and value terseness. Indent as a plain markdown list to arbitrary depth, but only 1 sentence or sentence fragment per line. Each item gets a subagent set to /plan, subitems are part of that plan.
 
-- Steps for Emily:
-  - Deploy this site as your own free Github pages site
-  - Claim your semantic scholar profile
-  - [ ] Fill in social media variables in config/_default/params.toml
-  
-  - Subsequent docs consolidation.
-
 - SEO
   - Add a layouts/robots.txt carrying a Sitemap: line, which costs zero page bytes.
   - Give /posts/, /tags/ and /categories/ their own description front matter in all three languages.

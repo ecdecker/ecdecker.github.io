@@ -1,5 +1,5 @@
 # Pages CMS is an optional editor over the Git repository, not the publishing
-# system or the owner of synchronized research inputs. See docs/PAGES-CMS.md.
+# system or the owner of synchronized research inputs. See docs/AUTHORING.md.
 media:
   input: assets/uploads
   output: /uploads
