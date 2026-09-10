@@ -9,6 +9,11 @@
   pageRef = '/posts'
   weight = 10
 
+[[main]]
+  name = "Fikarohana"
+  pageRef = '/research'
+  weight = 20
+
 [[home]]
   name = "Semantic Scholar"
   url = 'https://www.semanticscholar.org/author/Emily-Decker/2346865864'

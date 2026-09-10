@@ -83,6 +83,16 @@
         "gzip": 10443
       }
     },
+    "/fr/research/": {
+      "cold": {
+        "bytes": 75320,
+        "gzip": 47097
+      },
+      "cached": {
+        "bytes": 39253,
+        "gzip": 11000
+      }
+    },
     "/fr/tags/": {
       "cold": {
         "bytes": 86584,
@@ -133,6 +143,16 @@
         "gzip": 10432
       }
     },
+    "/mg/research/": {
+      "cold": {
+        "bytes": 75278,
+        "gzip": 47050
+      },
+      "cached": {
+        "bytes": 39211,
+        "gzip": 10953
+      }
+    },
     "/mg/tags/": {
       "cold": {
         "bytes": 86595,
@@ -151,6 +171,16 @@
       "cached": {
         "bytes": 36842,
         "gzip": 10313
+      }
+    },
+    "/research/": {
+      "cold": {
+        "bytes": 75146,
+        "gzip": 46981
+      },
+      "cached": {
+        "bytes": 39079,
+        "gzip": 10885
       }
     },
     "/socially-engineered/": {

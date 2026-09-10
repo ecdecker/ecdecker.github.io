@@ -11,6 +11,15 @@
   pageRef = '/posts'
   weight = 10
 
+# Research is a page of direct downloads rather than a list of articles: it
+# links straight to files mirrored from Box under /box/research/. It is still
+# an ordinary menu entry, so pageRef resolves /research/, /fr/research/ and
+# /mg/research/ from the one spelling here.
+[[main]]
+  name = 'Research'
+  pageRef = '/research'
+  weight = 20
+
 # Homepage call-to-action buttons. The research-notes link lives on the
 # notebook card itself.
 [[home]]
