@@ -1,10 +1,23 @@
 {{- /*
   The wordmark: the lemur brand mark (a resting frame traced from the site's
-  lemur illustration, see sprite.html) to the left of an italic-serif name.
-  A neighboring turning frame appears on pointer and focus interaction; a
-  click releases the running sprite toward the left edge.
+  lemur illustration) to the left of an italic-serif name. A neighboring
+  turning frame appears on pointer and focus interaction; a click releases
+  the running sprite toward the left edge.
   DESIGN.md documents this as the canonical brand mark.
+
+  The resting frame used to be an inline <symbol> in sprite.html
+  (folio-lemur-mark), which put its ~5.5KB traced path into every page.
+  <use href="external.svg#id"> can't reach across documents in Chrome or
+  Safari, so instead the frame is copied out as its own asset (like the
+  hover and running frames just below) and painted with a currentColor
+  CSS mask-image on a plain <span> — see .brand-mark__rest in
+  components.css. mask-image has full support in current Chrome, Firefox,
+  and Safari; only Safari still needs the -webkit- prefix.
 */ -}}
+{{- $rest := "" -}}
+{{- with resources.Copy "m.svg" (resources.Get "images/lemur-sprites/svg/turning-00.svg") -}}
+  {{- $rest = . -}}
+{{- end -}}
 {{- $hover := "" -}}
 {{- with resources.Copy "t.svg" (resources.Get "images/lemur-sprites/svg/turning-01.svg") -}}
   {{- $hover = . -}}
@@ -12,7 +25,9 @@
 <div class="brand">
   <details class="brand-toggle">
   <summary class="brand-mark" aria-label="{{ site.Title }}">
-    <svg width="16" height="24"><use href="#folio-lemur-mark"/></svg>
+    {{- with $rest -}}
+      <span class="brand-mark__rest" aria-hidden="true" style="--lemur-rest:url({{ .RelPermalink }})"></span>
+    {{- end -}}
     {{- with $hover -}}
       <img src="{{ .RelPermalink }}" width="16" height="24" alt="">
     {{- end -}}
