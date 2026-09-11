@@ -12,6 +12,64 @@ A subdomain also needs one `CNAME` record, where an apex needs four `A`
 records pointing at GitHub's IP addresses that have to be re-checked
 whenever GitHub changes them. That is the other reason for this shape.
 
+## How to check DNS from this machine
+
+Every verification step below uses one of these. `dig` is not installed by
+default on this machine; either install it once —
+
+    sudo apt install dnsutils
+
+— or use the Node fallback, which needs nothing beyond the Node this
+project already requires:
+
+    node -e 'const d=require("dns").promises;const h=process.argv[1];
+    (async()=>{for(const t of ["NS","SOA","A","CNAME"]){
+    try{console.log(t+": "+JSON.stringify(await d.resolve(h,t)))}
+    catch(e){console.log(t+": "+e.code)}}})()' emilycdecker.com
+
+`ENOTFOUND` for a record type means the name does not exist at all.
+`ENODATA` means the name exists but has no record of that type. The
+difference matters a lot below.
+
+## 0. Confirm the domain exists and is delegated
+
+Do this first. Everything from step 1 onward assumes the zone is live, and
+none of it can be verified while it is not.
+
+    node -e '...' emilycdecker.com          # per the block above
+
+You want `NS` to list nameservers and `SOA` to return a record.
+
+**Observed state, checked 2026-09-10: `emilycdecker.com` returns
+`ENOTFOUND` for NS, SOA, A, and TXT alike, while `mjdiloreto.github.io`
+resolves normally from the same machine.** The domain is therefore not
+delegated in DNS at all. Resolution is not partially broken or slow to
+propagate; there is no zone to query.
+
+Exactly one of these is true, and they are told apart at the registrar,
+not in DNS:
+
+- **The domain was never registered.** Log in to iwantmyname and check
+  whether `emilycdecker.com` is in the account's domain list. If it is
+  not, register it. Nothing else in this document applies until then.
+- **It is registered but has no nameservers assigned.** It appears in the
+  domain list, but its DNS or nameserver page is empty or shows a
+  "pending" / "not configured" state. Assign iwantmyname's own
+  nameservers, which is what the DNS-record steps below assume. Their
+  panel usually offers this as "use our nameservers" or "default DNS".
+- **It is registered and delegated elsewhere.** It appears in the list and
+  names some other provider's nameservers. In that case the records in
+  steps 3 to 5 must be created at *that* provider, not at iwantmyname,
+  and iwantmyname's URL forwarding in step 5 is unavailable — use the
+  other provider's redirect feature or a `CNAME` on the apex only if that
+  provider supports apex aliasing (a plain apex `CNAME` is not valid DNS).
+
+Re-run the check until NS and SOA both answer. Delegation can take up to
+24 hours to appear after a change at the registrar, and a registration
+that has never resolved sometimes takes a few hours to first appear.
+
+Only once the zone answers do the remaining steps mean anything.
+
 ## 1. Claim the domain in GitHub first
 
 Do this *before* pointing any DNS at GitHub. A hostname that resolves
@@ -66,8 +124,12 @@ Two things to get right:
 
 ## 4. Remove the old apex and www records
 
-These were for the previous apex configuration and must go, or they
-keep sending traffic to GitHub for hostnames that no repo claims:
+This step is a cleanup, and on a zone that has just been created there is
+nothing to clean up — skip it if the DNS page is empty. It applies only
+where a previous apex configuration is still present.
+
+These records must go, or they keep sending traffic to GitHub for
+hostnames that no repo claims:
 
 - The four apex/blank/"@" `A` records
   (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153).
@@ -128,8 +190,15 @@ Usually it resolves within an hour. Confirm the record itself with:
 
     dig blog.emilycdecker.com +nostats +nocomments +nocmd
 
+or, without `dig` installed, the Node fallback from the top of this
+document, run against `blog.emilycdecker.com`.
+
 The answer should be a `CNAME` to `mjdiloreto.github.io.`, followed by
-that name's `A` records.
+that name's `A` records — which, as of this writing, are
+185.199.108.153, 185.199.109.153, 185.199.110.153, and 185.199.111.153.
+Seeing those four addresses under the `CNAME` is the signal that the
+record is correct; seeing them *without* a `CNAME` means something
+created apex-style `A` records instead, which is step 4's problem.
 
 Then return to Settings → Pages and confirm GitHub now reports the DNS
 check as successful.
@@ -142,14 +211,41 @@ after the domain is configured before the option becomes available.
 
 ## 9. Verify
 
-- `https://blog.emilycdecker.com/` loads the site over HTTPS.
-- `http://blog.emilycdecker.com/` upgrades to HTTPS.
-- `http://emilycdecker.com/` redirects (301) to
-  `https://blog.emilycdecker.com/`.
-- `https://emilycdecker.com/` — check whether it redirects or shows a
-  certificate warning, per the limitation in step 5.
-- `www.emilycdecker.com` does whatever step 4 decided, and in
-  particular does not return a GitHub Pages 404.
+Each line below prints the status code and any redirect target, without
+downloading the page. `-sS` keeps it quiet but still shows errors; `-o
+/dev/null` discards the body; `-w` prints what you actually want.
+
+    curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' https://blog.emilycdecker.com/
+    curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' http://blog.emilycdecker.com/
+    curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' http://emilycdecker.com/
+    curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' https://emilycdecker.com/
+    curl -sS -o /dev/null -w '%{http_code} %{redirect_url}\n' http://www.emilycdecker.com/
+
+What each should print:
+
+| Request | Expected |
+|---|---|
+| `https://blog…/` | `200` with no redirect — the site itself |
+| `http://blog…/` | `301` to `https://blog.emilycdecker.com/` (GitHub's HTTPS enforcement from step 8) |
+| `http://emilycdecker.com/` | `301` to `https://blog.emilycdecker.com/` (the apex forward from step 5) |
+| `https://emilycdecker.com/` | `301` to the same, **or** a curl TLS error — see below |
+| `http://www…/` | connection failure if `www` was removed; `301` to the blog if it was forwarded |
+
+A `404` anywhere means a hostname is pointed at GitHub Pages that no
+repository claims — re-check step 1 and step 4.
+
+The `https://` apex line is the one to look at closely, and it is the
+question step 5 flagged. If it prints a curl error mentioning the
+certificate rather than a status code, iwantmyname is not serving TLS on
+the forward, and an old `https://emilycdecker.com/` link will show a
+browser certificate warning before it ever reaches the redirect. To see
+the error rather than have curl swallow it:
+
+    curl -sSI https://emilycdecker.com/
+
+If that is the outcome and old HTTPS links matter more than keeping the
+apex free, the fallback from step 5 applies: point the apex back at
+GitHub Pages until the apex is actually needed for something else.
 
 ## Where the origin is recorded in this repo
 

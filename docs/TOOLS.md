@@ -62,6 +62,10 @@ npm run site -- sync zotero
 npm run site -- baselines --update
 ```
 
+Connecting Box for the first time — installing rclone, creating the remote,
+and finding the real folder name — is documented step by step in
+[BOX-SETUP.md](./BOX-SETUP.md).
+
 Box mounts are configured in `package.json` under `emily.box.mounts`. Syncing
 copies only files referenced beneath those site paths into the checked-in
 `imports/box` snapshot. Zotero follows API pagination and writes sorted CSL-JSON
