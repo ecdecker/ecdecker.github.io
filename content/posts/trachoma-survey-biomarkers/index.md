@@ -89,3 +89,16 @@ two implementations, choosing one biomarker gave a better cost-to-information
 balance than automatically collecting both.
 
 [^paper]: Emily C. Decker et al., “[Cost-effectiveness of adding measurement of *Chlamydia trachomatis* infection and serology to trachoma prevalence surveys in Tanzania and Mozambique](https://doi.org/10.1371/journal.pntd.0013257),” *PLOS Neglected Tropical Diseases* 19, no. 7 (2025): e0013257. The article, figures, and supporting materials are open access under CC BY 4.0.
+
+<!--
+<<todo-plos-pdf>> Host the CC BY 4.0 manuscript PDF for this paper (doi.org
+slash 10.1371 slash journal.pntd.0013257, PLOS Neglected Tropical Diseases)
+and link it from the footnote above -- Scholar's own advice for an individual
+author is to self-host the PDF rather than link only to the publisher page.
+Add the file under a Box mount (see docs/TOOLS.md, "Box mounts and their
+sharp edges") the same way content/research/index.md links its documents, or
+place it directly under static/ if it does not belong in Box. As of this
+writing imports/box holds no snapshot and no PDF exists anywhere in this
+repository, so do not invent or fetch one here.
+-->
+

@@ -350,6 +350,23 @@ function budgetFailures(route, actual, ceiling, failures) {
   }
 }
 
+// Mirrors the Kind-based rule in themes/folio/layouts/_partials/head.html:
+// home, section, taxonomy, and term routes are indexes ("website"); a single
+// content page (a post, /research/, /socially-engineered/) is an "article".
+// The built HTML carries no Kind, so this infers the same rule from path
+// shape: a language prefix is stripped, then /tags/... and /categories/...
+// are always lists (root and every term), and /posts/index.html is the
+// section root while anything deeper under posts/ is a single article.
+function expectedOgType(relative) {
+  let segments = relative.split("/");
+  if (segments.length > 1 && /^(?:fr|mg)$/.test(segments[0])) segments = segments.slice(1);
+  if (segments.length <= 1) return "website";
+  const [section] = segments;
+  if (section === "tags" || section === "categories") return "website";
+  if (section === "posts" && segments.length === 2) return "website";
+  return "article";
+}
+
 function socialFailures(relative, html, failures) {
   if (relative === "admin/index.html" || /http-equiv=(?:["']?refresh["']?)/i.test(html)) return;
   const metadata = new Map();
@@ -379,7 +396,7 @@ function socialFailures(relative, html, failures) {
   if (image !== `${SITE_ORIGIN}/social-card.jpg`)
     failures.push(`${relative}: unexpected social card ${image || "(missing)"}`);
   const type = metadata.get("og:type");
-  const expected = relative === "index.html" || /^(?:fr|mg)\/index\.html$/.test(relative) ? "website" : "article";
+  const expected = expectedOgType(relative);
   if (type !== expected) failures.push(`${relative}: og:type is ${type || "missing"}, expected ${expected}`);
 }
 
@@ -433,7 +450,15 @@ export async function auditOutput({
     const relative = path.relative(output, file).split(path.sep).join("/");
     const html = await readFile(file, "utf8");
     htmlByPath.set(relative, html);
-    if (/<script\b/i.test(html) || /javascript\s*:/i.test(html)) failures.push(`${relative}: JavaScript is forbidden`);
+    // The blanket script ban carries one narrow exemption: the minifier's
+    // unquoted `<script type=application/ld+json>` tag, for the homepages'
+    // Person/ProfilePage block (docs/CONSTRAINTS.md, "Policy: no-js"). Any
+    // other `<script` tag -- attributes, a different type, a src -- still
+    // fails. Widening this match would gut a release-gating policy.
+    const LD_JSON_SCRIPT_TAG = /^<script type=application\/ld\+json>$/i;
+    for (const tag of html.matchAll(/<script\b[^>]*>/gi))
+      if (!LD_JSON_SCRIPT_TAG.test(tag[0])) failures.push(`${relative}: JavaScript is forbidden`);
+    if (/javascript\s*:/i.test(html)) failures.push(`${relative}: JavaScript is forbidden`);
     if (TRACKING.test(html)) failures.push(`${relative}: tracking construct`);
     if (/(?:^|\/)exercises(?:\/|$)/.test(routeForHtml(relative)))
       failures.push(`${relative}: development route escaped into production`);

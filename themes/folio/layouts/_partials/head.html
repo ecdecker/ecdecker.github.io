@@ -4,13 +4,36 @@
 {{ with or .Description site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
 {{- $description := or .Description site.Params.description -}}
 {{- $socialImage := "social-card.jpg" | absURL -}}
+{{- /* Lists (home, section, taxonomy, term) are indexes of other content,
+       not a single work, so they get the "website" type; a single page
+       (a post, /research/, /socially-engineered/) is an "article". */ -}}
+{{- $ogType := cond (in (slice "home" "section" "taxonomy" "term") .Kind) "website" "article" -}}
 <meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
 <meta property="og:description" content="{{ $description }}">
 <meta property="og:url" content="{{ .Permalink }}">
-<meta property="og:type" content="{{ if .IsHome }}website{{ else }}article{{ end }}">
+<meta property="og:type" content="{{ $ogType }}">
 <meta property="og:image" content="{{ $socialImage }}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta property="og:locale" content="{{ replace site.Language.Locale "-" "_" }}">
+{{- range hugo.Sites }}
+{{- if ne .Language.Lang site.Language.Lang }}
+<meta property="og:locale:alternate" content="{{ replace .Language.Locale "-" "_" }}">
+{{- end }}
+{{- end }}
+{{- /* No Highwire citation_* tags (citation_title, citation_pdf_url, ...):
+       these posts summarize papers published elsewhere, and Scholar
+       excludes summaries rather than indexing them as the primary work. */}}
+{{- if eq .Kind "page" }}
+{{- if not .Date.IsZero }}
+<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+{{- end }}
+{{- if not .Lastmod.IsZero }}
+<meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+{{- end }}
+<meta name="author" content="Emily Decker">
+{{- end }}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
 <meta name="twitter:description" content="{{ $description }}">
@@ -20,9 +43,9 @@
 <link rel="icon" href="{{ "favicon.ico" | relURL }}">
 {{ partialCached "head/fonts.html" . }}
 {{ partialCached "head/css.html" . }}
-{{- range .AllTranslations }}
-<link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}">
-{{- end }}
+{{- /* Per-page hreflang <link> tags are gone: the sitemap carries the same
+       alternates (plus x-default, see layouts/sitemap.xml), which Google
+       treats as equivalent to the HTML markup, at a fraction of the cost. */}}
 {{- with .OutputFormats.Get "rss" }}
 <link rel="alternate" type="application/rss+xml" title="{{ site.Title }} RSS" href="{{ .Permalink }}">
 {{- end }}

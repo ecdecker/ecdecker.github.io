@@ -56,6 +56,7 @@ Potential exceptions and their current status are recorded below:
 |-----------------------|---------------------------|------|
 | search                | Unimplemented - postponed |      |
 | /admin Pages CMS      | No exception: static handoff to the externally hosted editor | [source](../static/admin/index.html) |
+| ProfilePage/Person JSON-LD (homepages only) | Implemented -- a `<script type="application/ld+json">` block never executes; the audit's blanket script ban carries one narrowly-scoped exemption for the minifier's unquoted rendering of exactly this tag | [source](../themes/folio/layouts/home.html), [audit exemption](../tools/lib/site-audit.mjs) |
 
 # Externalities
 - The domain name is provided by iwantmyname.com under the mjdiloreto account.

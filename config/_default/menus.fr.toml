@@ -22,6 +22,12 @@
   url = 'https://scholars.duke.edu/person/Emily.Decker'
   weight = 20
 
+# <<todo-orcid>> Voir menus.en.toml pour la marche à suivre complète.
+# [[home]]
+#   name = 'ORCID'
+#   url = 'https://orcid.org/0000-0000-0000-0000'
+#   weight = 15
+
 [[footer]]
   identifier = 'folio'
   name = "Emily Decker"

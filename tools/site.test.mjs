@@ -206,6 +206,85 @@ test("artifact audit rejects scripts, remote resources, and malformed images", a
   }
 });
 
+test("artifact audit accepts og:type website on section, taxonomy, and term lists", async () => {
+  const fixture = await artifactFixture({
+    "index.html": page(""),
+    "posts/index.html": page("", { type: "website" }),
+    "posts/example/index.html": page("", { type: "article" }),
+    "tags/index.html": page("", { type: "website" }),
+    "tags/color/index.html": page("", { type: "website" }),
+    "categories/index.html": page("", { type: "website" }),
+    "research/index.html": page("", { type: "article" }),
+  });
+  try {
+    await assert.doesNotReject(
+      auditOutput({
+        output: fixture.output,
+        root: fixture.root,
+        baselineFile: fixture.baseline,
+        requireBaseline: false,
+      }),
+    );
+  } finally {
+    await rm(fixture.root, { recursive: true, force: true });
+  }
+
+  const wrong = await artifactFixture({
+    "index.html": page(""),
+    "posts/index.html": page("", { type: "article" }),
+  });
+  try {
+    await assert.rejects(
+      auditOutput({ output: wrong.output, root: wrong.root, baselineFile: wrong.baseline, requireBaseline: false }),
+      /og:type is article, expected website/,
+    );
+  } finally {
+    await rm(wrong.root, { recursive: true, force: true });
+  }
+});
+
+test("artifact audit exempts only the minifier's unquoted ld+json script tag", async () => {
+  const good = await artifactFixture({
+    "index.html": page('<script type=application/ld+json>{"@context":"https://schema.org"}</script>'),
+  });
+  try {
+    await assert.doesNotReject(
+      auditOutput({ output: good.output, root: good.root, baselineFile: good.baseline, requireBaseline: false }),
+    );
+  } finally {
+    await rm(good.root, { recursive: true, force: true });
+  }
+
+  const quoted = await artifactFixture({
+    "index.html": page('<script type="application/ld+json">{}</script>'),
+  });
+  try {
+    await assert.rejects(
+      auditOutput({ output: quoted.output, root: quoted.root, baselineFile: quoted.baseline, requireBaseline: false }),
+      /JavaScript is forbidden/,
+    );
+  } finally {
+    await rm(quoted.root, { recursive: true, force: true });
+  }
+
+  const extraAttribute = await artifactFixture({
+    "index.html": page("<script type=application/ld+json src=evil.js>{}</script>"),
+  });
+  try {
+    await assert.rejects(
+      auditOutput({
+        output: extraAttribute.output,
+        root: extraAttribute.root,
+        baselineFile: extraAttribute.baseline,
+        requireBaseline: false,
+      }),
+      /JavaScript is forbidden/,
+    );
+  } finally {
+    await rm(extraAttribute.root, { recursive: true, force: true });
+  }
+});
+
 test("artifact audit rejects broken links and development routes", async () => {
   const fixture = await artifactFixture({
     "index.html": page('<a href="/missing/">missing</a>'),

@@ -1,3 +1,12 @@
+{{- /* An empty taxonomy (categories, until a post uses one) has nothing to
+       index; drop it from search results until a term is published, rather
+       than shipping an empty list page as a real result. */ -}}
+{{ define "head" }}
+  {{- if eq (len .Data.Terms.Alphabetical) 0 }}
+  <meta name="robots" content="noindex">
+  {{- end }}
+{{ end }}
+
 {{ define "main" }}
   <section class="section-block">
     <div class="container">

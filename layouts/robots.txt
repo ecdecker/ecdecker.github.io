@@ -1,0 +1,7 @@
+{{- /* Overrides Hugo's embedded robots.txt so it carries a Sitemap: line;
+       enableRobotsTXT in hugo.toml is what turns this template on. Costs
+       zero page bytes -- robots.txt isn't part of any page's budget. */ -}}
+User-agent: *
+Allow: /
+
+Sitemap: {{ "sitemap.xml" | absURL }}

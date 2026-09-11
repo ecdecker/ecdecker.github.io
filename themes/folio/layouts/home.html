@@ -3,6 +3,23 @@
        taxonomy route for a component they never render. */ -}}
 {{ define "head" }}
   {{- partialCached "head/inline-css.html" "css/research-map.css" "research-map" -}}
+  {{- /* A lean Person/ProfilePage block, homepages only (~450 B): the one
+         no-js exception recorded in docs/CONSTRAINTS.md under "Policy:
+         no-js", carved narrowly out of the audit's script ban in
+         tools/lib/site-audit.mjs for exactly this minified tag shape. */}}
+  {{- $ld := dict
+        "@context" "https://schema.org"
+        "@type" "ProfilePage"
+        "mainEntity" (dict
+          "@type" "Person"
+          "name" "Emily Decker"
+          "jobTitle" "Ph.D. student"
+          "affiliation" (dict "@type" "CollegeOrUniversity" "name" "Duke University")
+          "url" .Permalink
+          "sameAs" (slice
+            "https://www.semanticscholar.org/author/Emily-Decker/2346865864"
+            "https://scholars.duke.edu/person/Emily.Decker")) -}}
+  <script type="application/ld+json">{{ $ld | jsonify | safeJS }}</script>
 {{ end }}
 
 {{ define "main" }}
@@ -65,14 +82,19 @@
             <div class="hero-copy">{{ index $copy "hero" }}</div>
 
             <div class="hero-cta">
+              {{- /* rel="me" marks every one of these as Emily's own
+                     profile elsewhere -- the reciprocal half of the proof
+                     ORCID (and similar services) use to verify a personal
+                     site: that service must link back here with rel="me"
+                     too. */}}
               {{- range site.Menus.home }}
               {{- if eq .Identifier "duke" }}
-              <a class="btn btn--secondary btn--duke" href="{{ .URL }}">
+              <a class="btn btn--secondary btn--duke" rel="me" href="{{ .URL }}">
                 <svg width="14" height="14" aria-hidden="true"><use href="#logo-duke"/></svg>
                 {{- .Name -}}
               </a>
               {{- else }}
-              <a class="btn btn--secondary" href="{{ .URL }}">
+              <a class="btn btn--secondary" rel="me" href="{{ .URL }}">
                 {{- .Name -}}
               </a>
               {{- end }}
@@ -105,7 +127,7 @@
                  the current source on higher-density screens. */}}
             {{ partial "image.html" (dict
               "src" .
-              "alt" ""
+              "alt" (T "heroPortraitAlt")
               "eager" true
               "fit" "fill"
               "ratio" "4:5"

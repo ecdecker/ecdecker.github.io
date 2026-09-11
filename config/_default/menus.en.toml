@@ -36,6 +36,16 @@
   url = 'https://scholars.duke.edu/person/Emily.Decker'
   weight = 20
 
+# <<todo-orcid>> Uncomment with Emily's real ORCID iD in place of the zeros
+# (register free at https://orcid.org/register) -- see docs/SITE-OWNER.md
+# for the full walkthrough. No template change is needed: home.html's CTA
+# loop already renders any [[home]] entry with rel="me", which is also the
+# reciprocal half of ORCID's own site-verification feature.
+# [[home]]
+#   name = 'ORCID'
+#   url = 'https://orcid.org/0000-0000-0000-0000'
+#   weight = 15
+
 # Footer columns. A parent entry is the column heading and carries no
 # destination of its own; its children are the links.
 [[footer]]
