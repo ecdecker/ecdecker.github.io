@@ -14,6 +14,7 @@ Authoring / publishing can only be done by people with access to this repository
 | How is writing published, and who owns which files? | [AUTHORING.md](./AUTHORING.md), and [README.org](../README.org) for the plain guide |
 | How do I run, check, and build the project? | [TOOLS.md](./TOOLS.md) |
 | How is the domain pointed at the site? | [DNS-SETUP.md](./DNS-SETUP.md) |
+| How does Box get connected? | [BOX-SETUP.md](./BOX-SETUP.md) |
 
 Outstanding work is tracked in [TODO.md](./TODO.md).
 
@@ -63,6 +64,7 @@ Potential exceptions and their current status are recorded below:
   - The instructions for the site owner to configure DNS records on iwantmyname are recorded at [DNS-SETUP.md](./DNS-SETUP.md)
 
 - Content and citations can be synchronized from Box and Zotero: `npm run sync`  is the retired command spelling; the supported offline authoring commands are `npm run site -- sync box` and `npm run site -- sync zotero`, and they write reviewed, checked-in snapshots.
+  - The instructions for the site owner to connect Box are recorded at [BOX-SETUP.md](./BOX-SETUP.md)
   - That content is inferred through links and citations in markdown sources.  Box synchronization scans Markdown links, images, reference definitions, and HTML `href`/`src` values below configured mounts; citation shortcodes resolve only IDs present in the checked-in CSL-JSON data.
   
 - The site is hosted on GitHub pages.
