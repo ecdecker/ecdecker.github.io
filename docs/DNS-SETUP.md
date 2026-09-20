@@ -1,7 +1,7 @@
 # DNS Setup: blog.emilycdecker.com → GitHub Pages
 
 Registrar: iwantmyname.com
-Repo: git@github.com:mjdiloreto/emilycdecker.com.git
+Repo: git@github.com:ecdecker/emilycdecker.com.git
 Canonical origin: https://blog.emilycdecker.com/
 
 The site is served from the `blog` subdomain, not the apex. The apex
@@ -41,7 +41,7 @@ none of it can be verified while it is not.
 You want `NS` to list nameservers and `SOA` to return a record.
 
 **Observed state, checked 2026-09-10: `emilycdecker.com` returns
-`ENOTFOUND` for NS, SOA, A, and TXT alike, while `mjdiloreto.github.io`
+`ENOTFOUND` for NS, SOA, A, and TXT alike, while `ecdecker.github.io`
 resolves normally from the same machine.** The domain is therefore not
 delegated in DNS at all. Resolution is not partially broken or slow to
 propagate; there is no zone to query.
@@ -103,15 +103,15 @@ DNS management page (may be labeled "DNS", "DNS Zone Records", or
 
     Type:  CNAME
     Host:  blog
-    Value: mjdiloreto.github.io
+    Value: ecdecker.github.io
 
 (If the value field errors without a trailing dot, enter
-`mjdiloreto.github.io.` instead. If the host field wants the full name
+`ecdecker.github.io.` instead. If the host field wants the full name
 rather than the label, enter `blog.emilycdecker.com.`)
 
 Two things to get right:
 
-- The target is `mjdiloreto.github.io`, with **no repository name**. It
+- The target is `ecdecker.github.io`, with **no repository name**. It
   is GitHub's fixed Pages hostname, not a per-repo address. GitHub
   routes by matching the request's `Host` header against whichever repo
   has `blog.emilycdecker.com` set as its custom domain (step 1), so as
@@ -134,7 +134,7 @@ hostnames that no repo claims:
 - The four apex/blank/"@" `A` records
   (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153).
   Step 5 replaces them.
-- The `www` CNAME to `mjdiloreto.github.io`.
+- The `www` CNAME to `ecdecker.github.io`.
 
 `www` deserves a decision rather than a default. GitHub redirects
 automatically between an apex and its `www` only when one of the two is
@@ -193,7 +193,7 @@ Usually it resolves within an hour. Confirm the record itself with:
 or, without `dig` installed, the Node fallback from the top of this
 document, run against `blog.emilycdecker.com`.
 
-The answer should be a `CNAME` to `mjdiloreto.github.io.`, followed by
+The answer should be a `CNAME` to `ecdecker.github.io.`, followed by
 that name's `A` records — which, as of this writing, are
 185.199.108.153, 185.199.109.153, 185.199.110.153, and 185.199.111.153.
 Seeing those four addresses under the `CNAME` is the signal that the
