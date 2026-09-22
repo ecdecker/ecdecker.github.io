@@ -9,13 +9,12 @@ hint: "Environmental economics, policy, and resilience."
 Emily Decker
 ================
 
-Emily is a Ph.D. student in Environmental Social Systems at Duke University's
-[Nicholas School of the Environment](https://scholars.duke.edu/person/Emily.Decker).
-Her work brings economic and policy analysis to environmental problems that
-cross households, public institutions, and markets.
+I am a Ph.D. student in Environmental Economics & Policy at Duke University's
+[Nicholas School of the Environment](https://scholars.duke.edu/person/Emily.Decker) and Sanford School of Public Policy.
+My research focuses on policy solutions to interconnected challenges related to conservation, poverty, energy access, and global health in developing contexts. 
 
 - Clean energy transitions
-- Environmental health impacts
+- Conservation and restoration
 - Climate resilience and climate finance
 
 Contact: [emily.decker@duke.edu](mailto:emily.decker@duke.edu)
