@@ -9,15 +9,7 @@ hint: "Économie de l'environnement, politiques publiques et résilience."
 Emily Decker
 ================
 
-Emily est doctorante en systèmes sociaux environnementaux à la
-[Nicholas School of the Environment](https://scholars.duke.edu/person/Emily.Decker)
-de l'Université Duke. Ses travaux appliquent l'analyse économique et l'analyse
-des politiques publiques aux problèmes environnementaux qui traversent les
-ménages, les institutions publiques et les marchés.
-
-- Transitions vers une énergie propre
-- Effets de l'environnement sur la santé
-- Résilience climatique et financement climatique
+Je suis doctorante en économie et politiques environnementales à la Nicholas School of the Environment et à la Sanford School of Public Policy de l'Université Duke. Mes recherches portent sur des solutions de politiques publiques face à des enjeux interdépendants liés à la conservation de la biodiversité, à la pauvreté, à l'accès à l'énergie et à la santé mondiale dans les pays en développement.
 
 Contact : [emily.decker@duke.edu](mailto:emily.decker@duke.edu)
 {{< /copy >}}
