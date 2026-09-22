@@ -13,10 +13,6 @@ I am a Ph.D. student in Environmental Economics & Policy at Duke University's
 Nicholas School of the Environment and Sanford School of Public Policy.
 My research focuses on policy solutions to interconnected challenges related to conservation, poverty, energy access, and global health in developing contexts.
 
-- Clean energy transitions
-- Conservation and restoration
-- Climate resilience and climate finance
-
 Contact: [emily.decker@duke.edu](mailto:emily.decker@duke.edu)
 {{< /copy >}}
 
