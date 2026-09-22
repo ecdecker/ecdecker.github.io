@@ -18,8 +18,7 @@ Contact : [emily.decker@duke.edu](mailto:emily.decker@duke.edu)
 Des recherches sur les systèmes.
 ---------------------------------
 
-Emily étudie comment l'information, les incitations et les institutions
-façonnent les réponses aux risques environnementaux et sanitaires. Ses
+Mes recherches examinent comment l'information, les incitations et les institutions façonnent les réponses aux risques environnementaux, économiques et sanitaires. Mes
 publications sont également réunies sur
 [Semantic Scholar](https://www.semanticscholar.org/author/Emily-Decker/2346865864).
 {{< /copy >}}
