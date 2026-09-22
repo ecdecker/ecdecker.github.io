@@ -50,4 +50,4 @@ Both were reproduced and fixed in a scratch copy when this page was added; the
 fix moves no URL.
 -->
 
-- [The Value of Information and Benefits of Flood Forecasts: A Case Study of Saint Paul, Minnesota] (/box/research/van-houtven-et-al-2026-the-value-of-information-and-benefits-of-flood-forecasts-a-case-study-of-saint-paul-minnesota)
+- [The Value of Information and Benefits of Flood Forecasts: A Case Study of Saint Paul, Minnesota](/box/research/van-houtven-et-al-2026-the-value-of-information-and-benefits-of-flood-forecasts-a-case-study-of-saint-paul-minnesota)
