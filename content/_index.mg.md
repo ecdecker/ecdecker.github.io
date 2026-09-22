@@ -9,15 +9,7 @@ hint: "Toekarena momba ny tontolo iainana, politika ary faharetana."
 Emily Decker
 ================
 
-Emily dia mpianatra Ph.D. ao amin'ny Environmental Social Systems ao amin'ny
-[Nicholas School of the Environment](https://scholars.duke.edu/person/Emily.Decker),
-Oniversiten'i Duke. Mampifandray ny famakafakana ara-toekarena sy ara-politika
-amin'ny olana momba ny tontolo iainana mahakasika tokantrano, andrim-panjakana
-ary tsena ny asany.
-
-- Fifindrana mankany amin'ny angovo madio
-- Fiantraikan'ny tontolo iainana amin'ny fahasalamana
-- Faharetana manoloana ny toetrandro sy famatsiam-bola ho an'ny toetrandro
+Mpianatra manomana doctorat momba ny Toekarena sy ny Politika momba ny Tontolo Iainana aho, ao amin'ny Nicholas School of the Environment sy ny Sanford School of Public Policy ao amin'ny Université Duke. Ny fikarohako dia mifantoka amin'ny vahaolana ara-politika ho an'ireo olana mifamatotra mahakasika ny fiarovana ny zava-boahary, ny fahantrana, ny fahazoana angovo ary ny fahasalamana eran-tany, any amin'ireo firenena an-dalam-pandrosoana.
 
 Fifandraisana: [emily.decker@duke.edu](mailto:emily.decker@duke.edu)
 {{< /copy >}}
@@ -26,11 +18,9 @@ Fifandraisana: [emily.decker@duke.edu](mailto:emily.decker@duke.edu)
 Fikarohana manerana ny rafitra.
 --------------------------------
 
-Mandalina ny fomba anovan'ny vaovao, ny fandrisihana ary ny andrim-panjakana ny
-fandraisana andraikitra manoloana ny loza ara-tontolo iainana sy ara-pahasalamana
-i Emily. Hita ao amin'ny
+Ny fikarohako dia mandinika ny fomba iantraikan'ny fampahalalana, ny fandrisihana ary ny andrim-panjakana amin'ny fihetsiky ny olona manoloana ny loza mety hitranga eo amin'ny tontolo iainana, ny toekarena ary ny fahasalamana. Azo jerena ao amin'ny
 [Semantic Scholar](https://www.semanticscholar.org/author/Emily-Decker/2346865864)
-koa ny boky sy lahatsorany.
+ihany koa ireo asa soratra navoakako.
 {{< /copy >}}
 
 {{< principle key="serif" meta="Angovo" >}}
