@@ -3,9 +3,6 @@ title: "Research"
 description: "Papers, data, and reports, published here as direct downloads."
 ---
 
-Papers, data, and reports are published here as direct downloads: every link is
-the file itself.
-
 <!--
 <<todo-research-documents>> Replace the single paragraph below this comment
 with the list of documents, newest first, one Markdown link per document:
@@ -50,4 +47,8 @@ Both were reproduced and fixed in a scratch copy when this page was added; the
 fix moves no URL.
 -->
 
-- [The Value of Information and Benefits of Flood Forecasts: A Case Study of Saint Paul, Minnesota](https://ascelibrary.org/doi/full/10.1061/JWRMD5.WRENG-7205) with George Van Houtven, Lucy Angelis, Michael Crouch, and Ciara Pickering 
+- [The Value of Information and Benefits of Flood Forecasts: A Case Study of Saint Paul, Minnesota](https://ascelibrary.org/doi/full/10.1061/JWRMD5.WRENG-7205) with George Van Houtven, Lucy Angelis, Michael Crouch, and Ciara Pickering in the _Journal of Water Resources Planning and Management_
+- [The mortality and economic benefits of achieving air pollution standards in India](https://www.pnas.org/doi/abs/10.1073/pnas.2522228123) with Paramita Sinha, Emily Decker, Rishi Dey, Colin John Mathews, Jennifer Lloyd, James Cajka, Prakash Doraiswamy, and Maureen Cropper in _PNAS_
+- [Cost-effectiveness of adding measurement of Chlamydia trachomatis infection and serology to trachoma prevalence surveys in Tanzania and Mozambique](https://journals.plos.org/plosntds/article?id=10.1371/journal.pntd.0013257) with Molly Adams, William Oswald, Rebecca Flueckiger, Jeremiah Ngondi, Mawo Fall, Ezgi Yilmaz, Lisa C Brooks, George Kabona, Henis Mior Sitoe, Mabula Kasubi, Tamimo Momade, Thomas M Lietman, Thuy Doan, and Rachel Stelmach in _PLoS NTDs_
+- [Camel leasing as a resilience-building practice: Insights from Somali pastoralist households and dairy farms](https://www.sciencedirect.com/science/article/abs/pii/S245229292500013X) with Rebecca M Flueckiger, Micah Frumkin, Rebecca H Jeudin, Christelle Celestin, Abdul Kareem Osman Essa, and Ezgi E Yilmaz in _World Development Perspectives_
+
