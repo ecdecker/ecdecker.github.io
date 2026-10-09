@@ -1,8 +1,7 @@
 ---
 title: "Research"
-description: "Papers, data, and reports, published here as direct downloads."
+description: "Papers, data, and reports"
 ---
-
 <!--
 <<todo-research-documents>> Replace the single paragraph below this comment
 with the list of documents, newest first, one Markdown link per document:
