@@ -1,8 +1,8 @@
 ---
 title: "Bamboo Charcoal for Clean Energy Access in Madagascar"
-description: "Can a novel energy innovation promote forest restoration, sustainable livelihoods, and clean cooking in a biodiversity hotspot?"
+description: "Can a novel energy innovation promote forest restoration, sustainable livelihoods, and clean cooking in northeast Madagascar?"
 date: 2026-08-01
-tags: ["energy transitions", "bamboo charcoal". "biodiversity", "restoration", "Madagascar"]
+tags: ["energy transitions", "bamboo charcoal", "biodiversity", "restoration", "Madagascar"]
 locations:
   - name: "Andrapengy, SAVA, Madagascar"
     latitude: -14.68
