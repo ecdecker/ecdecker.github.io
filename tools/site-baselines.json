@@ -46,11 +46,11 @@
     "/cv/": {
       "cold": {
         "bytes": 73945,
-        "gzip": 46482
+        "gzip": 46484
       },
       "cached": {
         "bytes": 31784,
-        "gzip": 7801
+        "gzip": 7803
       }
     },
     "/en/": {
@@ -86,11 +86,11 @@
     "/fr/cv/": {
       "cold": {
         "bytes": 74060,
-        "gzip": 46543
+        "gzip": 46544
       },
       "cached": {
         "bytes": 31899,
-        "gzip": 7861
+        "gzip": 7862
       }
     },
     "/fr/posts/": {
@@ -156,11 +156,11 @@
     "/mg/cv/": {
       "cold": {
         "bytes": 74017,
-        "gzip": 46533
+        "gzip": 46534
       },
       "cached": {
         "bytes": 31856,
-        "gzip": 7851
+        "gzip": 7852
       }
     },
     "/mg/posts/": {
