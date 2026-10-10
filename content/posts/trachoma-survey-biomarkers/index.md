@@ -1,5 +1,5 @@
 ---
-title: "What do enhanced trachoma prevalences surveys cost, and what do public health practitioners learn from them?"
+title: "What enhanced trachoma prevalence surveys cost, and what public health practitioners learn from them"
 description: "A cost-effectiveness study compares clinical grading with ocular swabs and dried blood spots in trachoma surveys in Tanzania and Mozambique."
 date: 2025-07-21
 tags: ["global health", "cost-effectiveness", "neglected tropical diseases"]
