@@ -15,12 +15,12 @@
   "routes": {
     "/": {
       "cold": {
-        "bytes": 128200,
-        "gzip": 77703
+        "bytes": 129303,
+        "gzip": 77929
       },
       "cached": {
-        "bytes": 40992,
-        "gzip": 10487
+        "bytes": 42095,
+        "gzip": 10712
       }
     },
     "/admin/": {
@@ -65,12 +65,12 @@
     },
     "/fr/": {
       "cold": {
-        "bytes": 83085,
-        "gzip": 49192
+        "bytes": 83734,
+        "gzip": 49322
       },
       "cached": {
-        "bytes": 40924,
-        "gzip": 10511
+        "bytes": 41573,
+        "gzip": 10641
       }
     },
     "/fr/categories/": {
@@ -135,12 +135,12 @@
     },
     "/mg/": {
       "cold": {
-        "bytes": 83407,
-        "gzip": 49239
+        "bytes": 84056,
+        "gzip": 49365
       },
       "cached": {
-        "bytes": 41246,
-        "gzip": 10557
+        "bytes": 41895,
+        "gzip": 10684
       }
     },
     "/mg/categories/": {
@@ -195,12 +195,22 @@
     },
     "/posts/": {
       "cold": {
-        "bytes": 73884,
-        "gzip": 46338
+        "bytes": 74338,
+        "gzip": 46490
       },
       "cached": {
-        "bytes": 31723,
-        "gzip": 7656
+        "bytes": 32178,
+        "gzip": 7808
+      }
+    },
+    "/posts/bamboo-charcoal-madagascar/": {
+      "cold": {
+        "bytes": 77440,
+        "gzip": 47823
+      },
+      "cached": {
+        "bytes": 35280,
+        "gzip": 9141
       }
     },
     "/posts/camel-leasing-resilience/": {
@@ -235,12 +245,32 @@
     },
     "/tags/": {
       "cold": {
-        "bytes": 73817,
-        "gzip": 46193
+        "bytes": 74710,
+        "gzip": 46285
       },
       "cached": {
-        "bytes": 31656,
-        "gzip": 7511
+        "bytes": 32549,
+        "gzip": 7604
+      }
+    },
+    "/tags/bamboo-charcoal/": {
+      "cold": {
+        "bytes": 73650,
+        "gzip": 46236
+      },
+      "cached": {
+        "bytes": 31489,
+        "gzip": 7554
+      }
+    },
+    "/tags/biodiversity/": {
+      "cold": {
+        "bytes": 73627,
+        "gzip": 46239
+      },
+      "cached": {
+        "bytes": 31466,
+        "gzip": 7557
       }
     },
     "/tags/climate-resilience/": {
@@ -253,6 +283,16 @@
         "gzip": 7563
       }
     },
+    "/tags/energy-transitions/": {
+      "cold": {
+        "bytes": 73673,
+        "gzip": 46244
+      },
+      "cached": {
+        "bytes": 31512,
+        "gzip": 7563
+      }
+    },
     "/tags/livelihoods/": {
       "cold": {
         "bytes": 73647,
@@ -261,6 +301,26 @@
       "cached": {
         "bytes": 31486,
         "gzip": 7570
+      }
+    },
+    "/tags/madagascar/": {
+      "cold": {
+        "bytes": 73611,
+        "gzip": 46233
+      },
+      "cached": {
+        "bytes": 31451,
+        "gzip": 7552
+      }
+    },
+    "/tags/restoration/": {
+      "cold": {
+        "bytes": 73619,
+        "gzip": 46237
+      },
+      "cached": {
+        "bytes": 31458,
+        "gzip": 7555
       }
     },
     "/tags/shocks/": {
