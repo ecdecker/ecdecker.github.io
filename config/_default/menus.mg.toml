@@ -14,6 +14,11 @@
   pageRef = '/research'
   weight = 20
 
+[[main]]
+  name = "CV"
+  pageRef = '/cv'
+  weight = 30
+
 [[home]]
   name = "Semantic Scholar"
   url = 'https://www.semanticscholar.org/author/Emily-Decker/2346865864'
@@ -47,6 +52,12 @@
   name = "Lahatsoratra"
   pageRef = '/posts'
   weight = 12
+
+[[footer]]
+  parent = 'folio'
+  name = "CV"
+  pageRef = '/cv'
+  weight = 13
 
 [[footer]]
   identifier = 'system'

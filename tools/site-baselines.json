@@ -15,12 +15,12 @@
   "routes": {
     "/": {
       "cold": {
-        "bytes": 126922,
-        "gzip": 77288
+        "bytes": 128200,
+        "gzip": 77703
       },
       "cached": {
-        "bytes": 39714,
-        "gzip": 10075
+        "bytes": 40992,
+        "gzip": 10487
       }
     },
     "/admin/": {
@@ -35,12 +35,22 @@
     },
     "/categories/": {
       "cold": {
-        "bytes": 73215,
-        "gzip": 46119
+        "bytes": 73277,
+        "gzip": 46133
       },
       "cached": {
-        "bytes": 31055,
-        "gzip": 7442
+        "bytes": 31116,
+        "gzip": 7452
+      }
+    },
+    "/cv/": {
+      "cold": {
+        "bytes": 73945,
+        "gzip": 46482
+      },
+      "cached": {
+        "bytes": 31784,
+        "gzip": 7801
       }
     },
     "/en/": {
@@ -55,152 +65,222 @@
     },
     "/fr/": {
       "cold": {
-        "bytes": 82439,
-        "gzip": 48954
+        "bytes": 83085,
+        "gzip": 49192
       },
       "cached": {
-        "bytes": 40278,
-        "gzip": 10277
+        "bytes": 40924,
+        "gzip": 10511
       }
     },
     "/fr/categories/": {
       "cold": {
-        "bytes": 73353,
-        "gzip": 46197
+        "bytes": 73421,
+        "gzip": 46211
       },
       "cached": {
-        "bytes": 31192,
-        "gzip": 7520
+        "bytes": 31260,
+        "gzip": 7530
+      }
+    },
+    "/fr/cv/": {
+      "cold": {
+        "bytes": 74060,
+        "gzip": 46543
+      },
+      "cached": {
+        "bytes": 31899,
+        "gzip": 7861
       }
     },
     "/fr/posts/": {
       "cold": {
-        "bytes": 73616,
-        "gzip": 46219
+        "bytes": 73684,
+        "gzip": 46232
       },
       "cached": {
-        "bytes": 31455,
-        "gzip": 7542
+        "bytes": 31523,
+        "gzip": 7551
       }
     },
     "/fr/research/": {
       "cold": {
-        "bytes": 74184,
-        "gzip": 46561
+        "bytes": 74253,
+        "gzip": 46576
       },
       "cached": {
-        "bytes": 32024,
-        "gzip": 7884
+        "bytes": 32092,
+        "gzip": 7894
       }
     },
     "/fr/tags/": {
       "cold": {
-        "bytes": 73313,
-        "gzip": 46187
+        "bytes": 73381,
+        "gzip": 46200
       },
       "cached": {
-        "bytes": 31152,
-        "gzip": 7510
+        "bytes": 31221,
+        "gzip": 7519
       }
     },
     "/fr/tags/couleur/": {
       "cold": {
-        "bytes": 73372,
-        "gzip": 46122
+        "bytes": 73440,
+        "gzip": 46136
       },
       "cached": {
-        "bytes": 31211,
-        "gzip": 7445
+        "bytes": 31279,
+        "gzip": 7454
       }
     },
     "/mg/": {
       "cold": {
-        "bytes": 82704,
-        "gzip": 48943
+        "bytes": 83407,
+        "gzip": 49239
       },
       "cached": {
-        "bytes": 40543,
-        "gzip": 10266
+        "bytes": 41246,
+        "gzip": 10557
       }
     },
     "/mg/categories/": {
       "cold": {
-        "bytes": 73413,
-        "gzip": 46192
+        "bytes": 73482,
+        "gzip": 46206
       },
       "cached": {
-        "bytes": 31253,
-        "gzip": 7515
+        "bytes": 31321,
+        "gzip": 7524
+      }
+    },
+    "/mg/cv/": {
+      "cold": {
+        "bytes": 74017,
+        "gzip": 46533
+      },
+      "cached": {
+        "bytes": 31856,
+        "gzip": 7851
       }
     },
     "/mg/posts/": {
       "cold": {
-        "bytes": 73717,
-        "gzip": 46198
+        "bytes": 73785,
+        "gzip": 46211
       },
       "cached": {
-        "bytes": 31556,
-        "gzip": 7521
+        "bytes": 31624,
+        "gzip": 7530
       }
     },
     "/mg/research/": {
       "cold": {
-        "bytes": 74143,
-        "gzip": 46523
+        "bytes": 74211,
+        "gzip": 46543
       },
       "cached": {
-        "bytes": 31982,
-        "gzip": 7846
+        "bytes": 32050,
+        "gzip": 7861
       }
     },
     "/mg/tags/": {
       "cold": {
-        "bytes": 73374,
-        "gzip": 46182
+        "bytes": 73442,
+        "gzip": 46197
       },
       "cached": {
-        "bytes": 31213,
-        "gzip": 7505
+        "bytes": 31281,
+        "gzip": 7516
       }
     },
     "/posts/": {
       "cold": {
-        "bytes": 73391,
-        "gzip": 46136
+        "bytes": 73884,
+        "gzip": 46338
       },
       "cached": {
-        "bytes": 31231,
-        "gzip": 7458
+        "bytes": 31723,
+        "gzip": 7656
+      }
+    },
+    "/posts/camel-leasing-resilience/": {
+      "cold": {
+        "bytes": 76724,
+        "gzip": 47497
+      },
+      "cached": {
+        "bytes": 34564,
+        "gzip": 8816
       }
     },
     "/research/": {
       "cold": {
-        "bytes": 74011,
-        "gzip": 46462
+        "bytes": 75212,
+        "gzip": 47186
       },
       "cached": {
-        "bytes": 31850,
-        "gzip": 7785
+        "bytes": 33051,
+        "gzip": 8505
       }
     },
     "/socially-engineered/": {
       "cold": {
-        "bytes": 84984,
-        "gzip": 51242
+        "bytes": 85046,
+        "gzip": 51257
       },
       "cached": {
-        "bytes": 42823,
-        "gzip": 12565
+        "bytes": 42885,
+        "gzip": 12576
       }
     },
     "/tags/": {
       "cold": {
-        "bytes": 73133,
-        "gzip": 46109
+        "bytes": 73817,
+        "gzip": 46193
       },
       "cached": {
-        "bytes": 30972,
-        "gzip": 7432
+        "bytes": 31656,
+        "gzip": 7511
+      }
+    },
+    "/tags/climate-resilience/": {
+      "cold": {
+        "bytes": 73700,
+        "gzip": 46244
+      },
+      "cached": {
+        "bytes": 31540,
+        "gzip": 7563
+      }
+    },
+    "/tags/livelihoods/": {
+      "cold": {
+        "bytes": 73647,
+        "gzip": 46251
+      },
+      "cached": {
+        "bytes": 31486,
+        "gzip": 7570
+      }
+    },
+    "/tags/shocks/": {
+      "cold": {
+        "bytes": 73608,
+        "gzip": 46242
+      },
+      "cached": {
+        "bytes": 31447,
+        "gzip": 7561
+      }
+    },
+    "/tags/somaliland/": {
+      "cold": {
+        "bytes": 73639,
+        "gzip": 46242
+      },
+      "cached": {
+        "bytes": 31478,
+        "gzip": 7561
       }
     }
   }

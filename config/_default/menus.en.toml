@@ -20,6 +20,11 @@
   pageRef = '/research'
   weight = 20
 
+[[main]]
+  name = 'CV'
+  pageRef = '/cv'
+  weight = 30
+
 # Homepage call-to-action buttons. The research-notes link lives on the
 # notebook card itself.
 [[home]]
@@ -64,6 +69,12 @@
   name = 'Posts'
   pageRef = '/posts'
   weight = 12
+
+[[footer]]
+  parent = 'folio'
+  name = 'CV'
+  pageRef = '/cv'
+  weight = 13
 
 [[footer]]
   identifier = 'system'
