@@ -1,6 +1,6 @@
 ---
-title: "Posts"
-description: "Research posts on environmental economics, health, and climate resilience."
+title: "Projects"
+description: "Current and past research projects in environmental and development economics."
 ---
 
-Research posts on environmental economics, health, and climate resilience.
+Current and past research projects in environmental and development economics.
