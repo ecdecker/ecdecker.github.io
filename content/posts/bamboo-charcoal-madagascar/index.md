@@ -1,13 +1,13 @@
 ---
 title: "Bamboo Charcoal for Clean Energy Access in Madagascar"
-description: "ONE-SENTENCE SUMMARY HERE"
+description: "Can a novel energy innovation promote forest restoration, sustainable livelihoods, and clean cooking in a biodiversity hotspot?"
 date: 2026-08-01
-tags: ["energy access", "Madagascar"]
+tags: ["energy transitions", "bamboo charcoal". "biodiversity", "restoration", "Madagascar"]
 locations:
   - name: "Andrapengy, SAVA, Madagascar"
     latitude: -14.68
     longitude: 50.22
-draft: true
+draft: false
 ---
 
-ABSTRACT HERE
+Madagascar, a global hotspot for biodiversity, faces interconnected challenges of rapid deforestation, persistent poverty, and lack of clean energy access. A major contributor to deforestation and habitat loss of lemurs is charcoal production, which remains the predominant cooking fuel for most Malagasy households. Household use of traditional charcoal is also a significant source of indoor air pollution, which can have damaging health impacts; since women and girls are often responsible for cooking, they are disproportionately affected. To address these interconnected challenges related to charcoal dependency in Madagascar, the Duke Lemur Center’s SAVA Conservation Program, in partnership with Malagasy NGO CMBART, has piloted a novel innovation that produces charcoal from fast-growing, locally abundant bamboo using a high-efficiency kiln. As a pilot solution, little is known surrounding the benefits of bamboo charcoal for forests, health, and incomes, nor how the innovation could be scaled to meet household energy demand. This study leverages qualitative field research in charcoal-producing villages in the SAVA region of Madagascar using key informant interviews and focus group discussions to (1) describe traditional charcoal markets and charcoal as an income source for households, (2) characterize household preferences for cooking fuels and technologies, and (3) identify potential barriers to the production and adoption of bamboo charcoal. Findings show that many rural Malagasy households rely on charcoal production as a supplementary source of income and as a coping strategy in response to shocks. In particular, a price crash in the vanilla market, the main cash crop of the SAVA region, has shifted many households into charcoal production, with consequences for the environment and health. While bamboo charcoal requires high upfront learning costs, charcoal makers overwhelmingly prefer making bamboo charcoal to traditional. Furthermore, cooking tests and user reports indicate that bamboo charcoal cooks faster and produces less smoke than traditional charcoal. However, adoption of bamboo charcoal remains low due to information constraints, which can potentially be relaxed through cooking demonstrations. The results of this study will provide important evidence to guide scalable clean energy interventions that improve health, reduce deforestation, and support sustainable livelihoods in rural Madagascar.
