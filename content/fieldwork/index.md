@@ -1,6 +1,5 @@
 ---
 title: "Fieldwork"
-description: "Notes and photos from my research fieldwork."
+description: "Notes and photos from my fieldwork in SAVA, Madagascar."
 ---
 
-ENGLISH TEXT HERE
