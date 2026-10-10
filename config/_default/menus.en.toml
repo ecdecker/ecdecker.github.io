@@ -95,3 +95,14 @@
   name = 'Socially Engineered'
   url = '/socially-engineered/'
   weight = 22
+
+[[main]]
+  name = 'Fieldwork'
+  pageRef = '/fieldwork'
+  weight = 40
+
+[[footer]]
+  parent = 'folio'
+  name = 'Fieldwork'
+  pageRef = '/fieldwork'
+  weight = 14
