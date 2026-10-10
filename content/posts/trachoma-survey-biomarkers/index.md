@@ -10,7 +10,7 @@ locations:
   - name: "Mozambique"
     latitude: -18.67
     longitude: 35.53
-draft: true
+draft: false
 ---
 Accurate methods to measure trachoma prevalence are critical to monitor progress and guide mass drug administration as countries near elimination. Currently, countries conduct trachoma prevalence surveys via clinical examination using the simplified trachoma grading system. Grading can have reduced accuracy in low prevalence settings, potentially resulting in errors. Adding ocular swabbing and Chlamydia trachomatis (Ct) infection testing and dried blood spot (DBS) collection and testing can be more sensitive and specific methods for trachoma identification, with potential cost-saving and information benefits. While previous studies have examined the costs of trachoma prevalence surveys, we present the first costing and cost-effectiveness analysis of enhanced trachoma prevalence surveys with ocular swabs and DBS in addition to grading.
 
