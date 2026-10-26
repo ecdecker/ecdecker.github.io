@@ -15,12 +15,12 @@
   "routes": {
     "/": {
       "cold": {
-        "bytes": 131459,
-        "gzip": 78234
+        "bytes": 132940,
+        "gzip": 78699
       },
       "cached": {
-        "bytes": 44251,
-        "gzip": 11017
+        "bytes": 45732,
+        "gzip": 11482
       }
     },
     "/admin/": {
@@ -35,22 +35,22 @@
     },
     "/categories/": {
       "cold": {
-        "bytes": 73369,
-        "gzip": 46149
+        "bytes": 73769,
+        "gzip": 46241
       },
       "cached": {
-        "bytes": 31209,
-        "gzip": 7467
+        "bytes": 31608,
+        "gzip": 7560
       }
     },
     "/cv/": {
       "cold": {
-        "bytes": 74037,
-        "gzip": 46500
+        "bytes": 74436,
+        "gzip": 46588
       },
       "cached": {
-        "bytes": 31876,
-        "gzip": 7818
+        "bytes": 32276,
+        "gzip": 7906
       }
     },
     "/en/": {
@@ -65,352 +65,352 @@
     },
     "/fieldwork/": {
       "cold": {
-        "bytes": 73961,
-        "gzip": 46446
+        "bytes": 74382,
+        "gzip": 46524
       },
       "cached": {
-        "bytes": 31800,
-        "gzip": 7764
+        "bytes": 32222,
+        "gzip": 7842
       }
     },
     "/fr/": {
       "cold": {
-        "bytes": 85362,
-        "gzip": 49535
+        "bytes": 86861,
+        "gzip": 50026
       },
       "cached": {
-        "bytes": 43201,
-        "gzip": 10853
+        "bytes": 44700,
+        "gzip": 11345
       }
     },
     "/fr/categories/": {
       "cold": {
-        "bytes": 73516,
-        "gzip": 46229
+        "bytes": 73915,
+        "gzip": 46321
       },
       "cached": {
-        "bytes": 31355,
-        "gzip": 7548
+        "bytes": 31754,
+        "gzip": 7640
       }
     },
     "/fr/cv/": {
       "cold": {
-        "bytes": 74155,
-        "gzip": 46560
+        "bytes": 74554,
+        "gzip": 46650
       },
       "cached": {
-        "bytes": 31994,
-        "gzip": 7879
+        "bytes": 32393,
+        "gzip": 7969
       }
     },
     "/fr/fieldwork/": {
       "cold": {
-        "bytes": 74069,
-        "gzip": 46510
+        "bytes": 74468,
+        "gzip": 46603
       },
       "cached": {
-        "bytes": 31908,
-        "gzip": 7828
+        "bytes": 32307,
+        "gzip": 7922
       }
     },
     "/fr/posts/": {
       "cold": {
-        "bytes": 73779,
-        "gzip": 46249
+        "bytes": 74178,
+        "gzip": 46340
       },
       "cached": {
-        "bytes": 31618,
-        "gzip": 7567
+        "bytes": 32017,
+        "gzip": 7659
       }
     },
     "/fr/research/": {
       "cold": {
-        "bytes": 74347,
-        "gzip": 46593
+        "bytes": 74747,
+        "gzip": 46687
       },
       "cached": {
-        "bytes": 32186,
-        "gzip": 7912
+        "bytes": 32586,
+        "gzip": 8005
       }
     },
     "/fr/tags/": {
       "cold": {
-        "bytes": 73476,
-        "gzip": 46217
+        "bytes": 73875,
+        "gzip": 46309
       },
       "cached": {
-        "bytes": 31315,
-        "gzip": 7535
+        "bytes": 31715,
+        "gzip": 7628
       }
     },
     "/fr/tags/couleur/": {
       "cold": {
-        "bytes": 73534,
-        "gzip": 46154
+        "bytes": 73934,
+        "gzip": 46246
       },
       "cached": {
-        "bytes": 31374,
-        "gzip": 7473
+        "bytes": 31773,
+        "gzip": 7564
       }
     },
     "/mg/": {
       "cold": {
-        "bytes": 85695,
-        "gzip": 49584
+        "bytes": 87204,
+        "gzip": 50064
       },
       "cached": {
-        "bytes": 43534,
-        "gzip": 10903
+        "bytes": 45043,
+        "gzip": 11382
       }
     },
     "/mg/categories/": {
       "cold": {
-        "bytes": 73587,
-        "gzip": 46228
+        "bytes": 73986,
+        "gzip": 46319
       },
       "cached": {
-        "bytes": 31426,
-        "gzip": 7546
+        "bytes": 31826,
+        "gzip": 7638
       }
     },
     "/mg/cv/": {
       "cold": {
-        "bytes": 74123,
-        "gzip": 46554
+        "bytes": 74522,
+        "gzip": 46647
       },
       "cached": {
-        "bytes": 31962,
-        "gzip": 7872
+        "bytes": 32361,
+        "gzip": 7966
       }
     },
     "/mg/fieldwork/": {
       "cold": {
-        "bytes": 74160,
-        "gzip": 46513
+        "bytes": 74560,
+        "gzip": 46605
       },
       "cached": {
-        "bytes": 31999,
-        "gzip": 7831
+        "bytes": 32399,
+        "gzip": 7924
       }
     },
     "/mg/posts/": {
       "cold": {
-        "bytes": 73891,
-        "gzip": 46231
+        "bytes": 74290,
+        "gzip": 46321
       },
       "cached": {
-        "bytes": 31730,
-        "gzip": 7550
+        "bytes": 32129,
+        "gzip": 7640
       }
     },
     "/mg/research/": {
       "cold": {
-        "bytes": 74316,
-        "gzip": 46562
+        "bytes": 74716,
+        "gzip": 46657
       },
       "cached": {
-        "bytes": 32156,
-        "gzip": 7881
+        "bytes": 32555,
+        "gzip": 7975
       }
     },
     "/mg/tags/": {
       "cold": {
-        "bytes": 73548,
-        "gzip": 46219
+        "bytes": 73947,
+        "gzip": 46309
       },
       "cached": {
-        "bytes": 31387,
-        "gzip": 7538
+        "bytes": 31786,
+        "gzip": 7628
       }
     },
     "/posts/": {
       "cold": {
-        "bytes": 74961,
-        "gzip": 46695
+        "bytes": 75352,
+        "gzip": 46779
       },
       "cached": {
-        "bytes": 32800,
-        "gzip": 8014
+        "bytes": 33191,
+        "gzip": 8098
       }
     },
     "/posts/bamboo-charcoal-madagascar/": {
       "cold": {
-        "bytes": 77810,
-        "gzip": 47951
+        "bytes": 78209,
+        "gzip": 48043
       },
       "cached": {
-        "bytes": 35649,
-        "gzip": 9269
+        "bytes": 36049,
+        "gzip": 9361
       }
     },
     "/posts/camel-leasing-resilience/": {
       "cold": {
-        "bytes": 76817,
-        "gzip": 47512
+        "bytes": 77216,
+        "gzip": 47605
       },
       "cached": {
-        "bytes": 34656,
-        "gzip": 8830
+        "bytes": 35055,
+        "gzip": 8924
       }
     },
     "/posts/trachoma-survey-biomarkers/": {
       "cold": {
-        "bytes": 77422,
-        "gzip": 47541
+        "bytes": 77786,
+        "gzip": 47625
       },
       "cached": {
-        "bytes": 35261,
-        "gzip": 8860
+        "bytes": 35625,
+        "gzip": 8943
       }
     },
     "/research/": {
       "cold": {
-        "bytes": 75304,
-        "gzip": 47201
+        "bytes": 75704,
+        "gzip": 47295
       },
       "cached": {
-        "bytes": 33143,
-        "gzip": 8520
+        "bytes": 33543,
+        "gzip": 8613
       }
     },
     "/socially-engineered/": {
       "cold": {
-        "bytes": 85138,
-        "gzip": 51269
+        "bytes": 85538,
+        "gzip": 51361
       },
       "cached": {
-        "bytes": 42977,
-        "gzip": 12588
+        "bytes": 43377,
+        "gzip": 12679
       }
     },
     "/tags/": {
       "cold": {
-        "bytes": 75379,
-        "gzip": 46380
+        "bytes": 75778,
+        "gzip": 46471
       },
       "cached": {
-        "bytes": 33218,
-        "gzip": 7698
+        "bytes": 33618,
+        "gzip": 7790
       }
     },
     "/tags/bamboo-charcoal/": {
       "cold": {
-        "bytes": 73742,
-        "gzip": 46251
+        "bytes": 74142,
+        "gzip": 46345
       },
       "cached": {
-        "bytes": 31581,
-        "gzip": 7570
+        "bytes": 31981,
+        "gzip": 7663
       }
     },
     "/tags/biodiversity/": {
       "cold": {
-        "bytes": 73719,
-        "gzip": 46253
+        "bytes": 74118,
+        "gzip": 46347
       },
       "cached": {
-        "bytes": 31558,
-        "gzip": 7572
+        "bytes": 31958,
+        "gzip": 7665
       }
     },
     "/tags/climate-resilience/": {
       "cold": {
-        "bytes": 73793,
-        "gzip": 46260
+        "bytes": 74192,
+        "gzip": 46353
       },
       "cached": {
-        "bytes": 31632,
-        "gzip": 7578
+        "bytes": 32031,
+        "gzip": 7672
       }
     },
     "/tags/cost-effectiveness/": {
       "cold": {
-        "bytes": 73841,
-        "gzip": 46306
+        "bytes": 74232,
+        "gzip": 46393
       },
       "cached": {
-        "bytes": 31680,
-        "gzip": 7625
+        "bytes": 32071,
+        "gzip": 7711
       }
     },
     "/tags/energy-transitions/": {
       "cold": {
-        "bytes": 73765,
-        "gzip": 46260
+        "bytes": 74165,
+        "gzip": 46352
       },
       "cached": {
-        "bytes": 31605,
-        "gzip": 7578
+        "bytes": 32004,
+        "gzip": 7671
       }
     },
     "/tags/global-health/": {
       "cold": {
-        "bytes": 73803,
-        "gzip": 46308
+        "bytes": 74193,
+        "gzip": 46396
       },
       "cached": {
-        "bytes": 31642,
-        "gzip": 7627
+        "bytes": 32032,
+        "gzip": 7715
       }
     },
     "/tags/livelihoods/": {
       "cold": {
-        "bytes": 73739,
-        "gzip": 46266
+        "bytes": 74138,
+        "gzip": 46360
       },
       "cached": {
-        "bytes": 31578,
-        "gzip": 7585
+        "bytes": 31977,
+        "gzip": 7678
       }
     },
     "/tags/madagascar/": {
       "cold": {
-        "bytes": 73704,
-        "gzip": 46249
+        "bytes": 74103,
+        "gzip": 46342
       },
       "cached": {
-        "bytes": 31543,
-        "gzip": 7567
+        "bytes": 31942,
+        "gzip": 7661
       }
     },
     "/tags/neglected-tropical-diseases/": {
       "cold": {
-        "bytes": 73911,
-        "gzip": 46324
+        "bytes": 74301,
+        "gzip": 46412
       },
       "cached": {
-        "bytes": 31750,
-        "gzip": 7642
+        "bytes": 32140,
+        "gzip": 7730
       }
     },
     "/tags/restoration/": {
       "cold": {
-        "bytes": 73711,
-        "gzip": 46251
+        "bytes": 74111,
+        "gzip": 46346
       },
       "cached": {
-        "bytes": 31551,
-        "gzip": 7570
+        "bytes": 31950,
+        "gzip": 7664
       }
     },
     "/tags/shocks/": {
       "cold": {
-        "bytes": 73700,
-        "gzip": 46257
+        "bytes": 74100,
+        "gzip": 46349
       },
       "cached": {
-        "bytes": 31540,
-        "gzip": 7575
+        "bytes": 31939,
+        "gzip": 7667
       }
     },
     "/tags/somaliland/": {
       "cold": {
-        "bytes": 73731,
-        "gzip": 46257
+        "bytes": 74131,
+        "gzip": 46350
       },
       "cached": {
-        "bytes": 31570,
-        "gzip": 7575
+        "bytes": 31970,
+        "gzip": 7669
       }
     }
   }

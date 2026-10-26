@@ -65,8 +65,6 @@
   {{- end }}
 
   {{/* Hero — profile card followed by the full-width research notebook. */}}
-  <section class="hero">
-    <div class="container hero-stack">
       {{- with $f.banner }}
       <figure class="hero-banner">
         {{ partial "image.html" (dict
@@ -74,12 +72,14 @@
           "alt" $f.bannerAlt
           "eager" false
           "fit" "fill"
-          "ratio" "2:1"
-          "widths" (slice 480 720 960)
-          "sizes" "(min-width: 1200px) 1104px, 100vw") }}
+          "ratio" "3:1"
+          "widths" (slice 640 960 1280 1600 1920)
+          "sizes" "100vw") }}
         {{ with $f.bannerCaption }}<figcaption>{{ . }}</figcaption>{{ end }}
       </figure>
       {{- end }}
+  <section class="hero">
+    <div class="container hero-stack">
       <article class="card card--leaf hero-card">
         <div class="split">
           <div class="hero-text">

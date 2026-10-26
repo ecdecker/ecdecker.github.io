@@ -504,3 +504,23 @@ a:focus-visible, button:focus-visible, .btn:focus-visible, .input:focus-visible 
   opacity: 0.45;
   pointer-events: none;
 }
+
+/* Full-width homepage banner, slightly transparent, fading into the page. */
+.hero-banner {
+  margin: 0;
+}
+.hero-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0.85;
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+}
+.hero-banner figcaption {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 4vw, 3rem);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+}

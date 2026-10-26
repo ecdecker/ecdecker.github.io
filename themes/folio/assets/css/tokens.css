@@ -12,7 +12,7 @@
   --folio-whisper: #f6f3eb;
 
   /* Semantic color aliases */
-  --color-bg: var(--folio-bone);
+  --color-bg: #e3eadb;
   --color-surface: var(--folio-snow);
   --color-surface-subtle: var(--folio-whisper);
   --color-text: var(--folio-ink);
