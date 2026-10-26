@@ -1,4 +1,7 @@
 ---
+banner: "images/sava-landscape.jpg"
+bannerAlt: "Tontolo maitso amoron-dranomasina akaikin'i Masoala, misy ravinala sy kirihitra matevina eo aloha, tany honahona, ary havoana misy ala eo ambanin'ny lanitra manga."
+bannerCaption: "Eny an-dalana mankany Ambodilaitry, akaikin'i Masoala, SAVA, Madagasikara"
 title: "Emily Decker"
 volume: "Oniversiten'i Duke · 2026"
 heroImageCaption: "Boky fikarohana"

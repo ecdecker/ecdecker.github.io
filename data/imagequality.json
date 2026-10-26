@@ -38,6 +38,18 @@
       "quality": 70,
       "ssim": 0.92196
     },
+    "images/sava-landscape.jpeg": {
+      "bytes": 38047,
+      "hash": "9e990a2cc4cc747e392a26ff5deb257bf911d61ba926a520cb4247f209c23021",
+      "quality": 50,
+      "ssim": 0.94429
+    },
+    "images/sava-landscape.jpg": {
+      "bytes": 44455,
+      "hash": "56b37ce982f1f17b9ebbd3e0225a93e35133dfb4dd5c82524fa7b927fdd7c1e6",
+      "quality": 50,
+      "ssim": 0.94226
+    },
     "posts/camel-leasing-resilience/dairies-reasons-for-leasing.png": {
       "bytes": 12012,
       "hash": "8613d096c54146432d24f55454b9d90b9c4e7692df07fd05807279ee34a6a29e",

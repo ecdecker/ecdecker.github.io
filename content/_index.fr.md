@@ -1,4 +1,7 @@
 ---
+banner: "images/sava-landscape.jpg"
+bannerAlt: "Paysage côtier verdoyant près de Masoala : ravenalas et arbustes denses au premier plan, une clairière marécageuse et une colline boisée sous un ciel bleu vif."
+bannerCaption: "Sur la route d'Ambodilaitry, près de Masoala, SAVA, Madagascar"
 title: "Emily Decker"
 volume: "Université Duke · 2026"
 heroImageCaption: "Carnet de recherche"

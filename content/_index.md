@@ -1,4 +1,7 @@
 ---
+banner: "images/sava-landscape.jpg"
+bannerAlt: "Green coastal landscape near Masoala, with traveler's palms and dense shrubs in the foreground, a marshy clearing, and a forested hill under a bright blue sky."
+bannerCaption: "On the road to Ambodilaitry, near Masoala, SAVA, Madagascar"
 title: "Emily Decker"
 volume: "Duke University · 2026"
 heroImageCaption: "Research notebook"
